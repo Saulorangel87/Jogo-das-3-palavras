@@ -109,3 +109,11 @@ Registro de cada etapa: o que mudou e por quê. A entrada mais recente fica no f
 
 - No competitivo, quem acerta continua jogando, então um adulto pode emendar várias letras.
 - Valores da roleta e multiplicador podem gerar placares altos demais.
+
+## 2026-11-02 — Etapa 9: o jogo cabe na altura da tela
+
+**O que mudou:** em paisagem, o tamanho da interface agora acompanha a altura da tela, e a roleta e o teclado ficam sempre lado a lado.
+
+**Por quê:** o Saulo viu a parte de baixo cortada. Havia duas causas: a janela do Chrome tinha sido redimensionada no teste para um tamanho maior que a tela dele, e o jogo realmente passava da altura em 1366x768 e 1280x720. Em 1920x1080, o teclado descia para outra linha.
+
+**Verificado no Chrome, medindo em quadros de cada tamanho:** sem rolagem em 1920x1080, 1745x730, 1366x768 e 1280x720, no início do painel, após uma jogada e no resolver. O cooperativo foi medido só em 1745x730. Em 360x640 o jogo continua rolando até 181px, e o foco acompanha.

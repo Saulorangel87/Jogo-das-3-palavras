@@ -207,3 +207,20 @@
     margin: 0 0 0.5rem;
   }
 }
+
+/* Em paisagem, roleta e teclado ficam sempre lado a lado para o jogo caber na altura. */
+@media (min-aspect-ratio: 1/1) {
+  .jogo-acoes {
+    flex-wrap: nowrap;
+  }
+
+  .jogo-comandos {
+    flex: none;
+    margin-bottom: 0;
+  }
+
+  .jogo-acoes .teclado {
+    flex: 0 1 30rem;
+    min-width: 0;
+  }
+}

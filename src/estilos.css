@@ -20,6 +20,20 @@ html {
   font-size: calc(10px + 0.4vw + 1.3vh);
 }
 
+/* Em paisagem a altura é o limite: tudo escala com ela para o jogo caber sem rolar. */
+@media (min-aspect-ratio: 1/1) {
+  html {
+    font-size: 3vh;
+  }
+}
+
+/* Celular deitado: mantém a leitura e aceita rolagem. */
+@media (min-aspect-ratio: 1/1) and (max-height: 500px) {
+  html {
+    font-size: 14px;
+  }
+}
+
 body {
   margin: 0;
   background: var(--fundo);
