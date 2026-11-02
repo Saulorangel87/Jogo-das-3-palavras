@@ -16,3 +16,9 @@ Registro de cada etapa: o que mudou e por quê. A entrada mais recente fica no f
 
 - UVA é a única palavra fora do padrão CV (U-VA).
 - 🪁 e 🧃 (2019) e 🥥 (2017) podem não aparecer em TVs antigas. Conferir no teste na TV real.
+
+## 2026-11-02 — Etapa 2: estrutura do projeto
+
+**O que mudou:** projeto criado com Vite, React (JS), `@vitejs/plugin-legacy` e Vitest.
+
+**Por quê:** é a base prevista no `CLAUDE.md`. O alvo do pacote legado é Chromium 57, a primeira versão com CSS Grid. Por isso o CSS do jogo evita recursos mais novos, como `gap` em flexbox e `clamp()`.
