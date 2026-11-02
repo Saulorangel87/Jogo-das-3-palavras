@@ -63,3 +63,14 @@ Registro de cada etapa: o que mudou e por quê. A entrada mais recente fica no f
 **Ainda não verificado:** navegador antigo ou TV real, e toque em celular de verdade.
 
 **Próximo passo do roteiro:** teste com crianças reais.
+
+## 2026-11-02 — Etapa 6: nova mecânica, o Painel
+
+**O que mudou:** a mecânica foi trocada no `CLAUDE.md`, a pedido do Saulo, a partir de uma imagem de um programa de TV. Agora os jogadores escolhem letras em um painel, com roleta no competitivo e 3 níveis, incluindo frases.
+
+**Decisões:**
+
+- Só a mecânica vem do formato clássico. Nome e visual são nossos, porque o `CLAUDE.md` proíbe parecer com marcas conhecidas.
+- A roleta não tem fatia punitiva, para manter a regra de que ninguém perde de forma punitiva.
+- A roleta fica só no competitivo: no cooperativo não há pontos para ela sortear.
+- Resolver é sempre escolher entre 3 opções escritas. Montar com peças fica para depois.
