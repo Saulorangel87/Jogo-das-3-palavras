@@ -1,0 +1,28 @@
+.teclado {
+  display: grid;
+  grid-gap: 0.35rem;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  width: 100%;
+  max-width: 34rem;
+}
+
+@media (min-width: 700px) {
+  .teclado {
+    grid-template-columns: repeat(9, minmax(0, 1fr));
+  }
+}
+
+.teclado-letra {
+  min-height: 2.5rem;
+  padding: 0;
+  font-size: 1.25rem;
+}
+
+.teclado-certa:disabled {
+  border-color: var(--acerto);
+  color: var(--acerto);
+}
+
+.teclado-errada:disabled {
+  text-decoration: line-through;
+}

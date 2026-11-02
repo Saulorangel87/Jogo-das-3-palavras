@@ -7,7 +7,7 @@
   align-items: center;
   justify-content: space-between;
   width: 100%;
-  max-width: 50rem;
+  max-width: 56rem;
   color: var(--texto-suave);
   font-size: 0.95rem;
   text-align: left;
@@ -15,9 +15,9 @@
 
 .jogo-sair {
   flex: none;
-  min-height: 2.4rem;
+  min-height: 2.2rem;
   margin-left: 1rem;
-  padding: 0.2rem 1rem;
+  padding: 0.1rem 1rem;
 }
 
 .jogo-placar {
@@ -25,15 +25,15 @@
   flex-wrap: wrap;
   justify-content: center;
   list-style: none;
-  margin: 0.6rem 0 0;
+  margin: 0.4rem 0;
   padding: 0;
 }
 
 .jogo-jogador {
   display: flex;
   align-items: center;
-  margin: 0.2rem;
-  padding: 0.2rem 0.7rem 0.2rem 0.2rem;
+  margin: 0.15rem;
+  padding: 0.1rem 0.7rem 0.1rem 0.1rem;
   border: 0.2rem solid transparent;
   border-radius: 2rem;
   background: var(--painel);
@@ -49,80 +49,119 @@
 }
 
 .jogo-equipe {
-  margin-top: 0.4rem;
+  margin-bottom: 0.4rem;
   font-size: 0.9rem;
+}
+
+.jogo-dica {
+  min-height: 1.6rem;
+  margin-top: 0.4rem;
+  font-size: 1rem;
 }
 
 .jogo-emoji {
-  margin-top: 0.6rem;
-  font-size: 4rem;
-  line-height: 1.2;
+  font-size: 2.6rem;
+  line-height: 1.1;
 }
 
-.jogo-silabas {
-  display: flex;
-  justify-content: center;
-  margin-top: 0.5rem;
+.jogo-mensagens {
+  margin-top: 0.3rem;
 }
 
-.jogo-silaba {
-  min-width: 4.5rem;
-  margin: 0 0.3rem;
-  padding: 0.3rem 0.5rem;
-  border: 0.15rem dashed var(--texto-suave);
-  border-radius: 0.6rem;
-  color: var(--texto-suave);
-  font-size: 2rem;
-  font-weight: 800;
-}
-
-.jogo-silaba-aberta {
-  border: 0.15rem solid var(--destaque);
-  color: var(--destaque);
-}
-
-.jogo-mensagem,
-.jogo-acerto {
-  margin-top: 0.8rem;
-  font-size: 1.1rem;
+.jogo-jogada {
+  font-size: 1.05rem;
   font-weight: 700;
 }
 
-.jogo-mensagem-erro {
+.jogo-jogada-boa {
+  color: var(--acerto);
+}
+
+.jogo-jogada-ruim {
   color: var(--erro);
 }
 
+.jogo-instrucao {
+  font-size: 1.05rem;
+  font-weight: 700;
+}
+
 .jogo-acerto {
+  margin-top: 0.8rem;
   color: var(--acerto);
   font-size: 1.3rem;
+  font-weight: 700;
 }
 
-.jogo-valor {
-  margin-top: 0.2rem;
-  color: var(--texto-suave);
-  font-size: 0.9rem;
+.jogo-proximo {
+  margin-top: 1rem;
+  font-size: 1.2rem;
 }
 
-.jogo-opcoes {
-  margin-top: 0.8rem;
+.jogo-acoes {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  margin-top: 0.6rem;
+}
+
+.jogo-comandos {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 1.2rem 0.6rem;
+}
+
+.jogo-botoes {
+  display: flex;
+  flex-direction: column;
+  margin-left: 0.8rem;
+}
+
+.jogo-girar {
+  min-width: 7rem;
+  margin-bottom: 0.6rem;
+  font-size: 1.15rem;
+}
+
+.jogo-resolver-botao {
+  min-width: 7rem;
+}
+
+.jogo-resolver {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  margin-top: 0.5rem;
+}
+
+.jogo-resolver-titulo {
+  font-size: 1.2rem;
+  margin-bottom: 0.6rem;
+}
+
+.jogo-resolver-opcoes {
+  grid-gap: 0.6rem;
+  max-width: 34rem;
 }
 
 .jogo-opcao {
-  padding: 0.6rem 0.2rem;
-  font-size: 1.5rem;
+  min-height: 2.4rem;
+  padding: 0.3rem 0.4rem;
+  font-size: 1.25rem;
 }
 
 .jogo-opcao-riscada {
   text-decoration: line-through;
 }
 
-.jogo-revelar {
-  margin-top: 1rem;
-}
-
-.jogo-proxima {
-  margin-top: 1rem;
-  font-size: 1.2rem;
+.rodape-curto {
+  min-height: 2.2rem;
+  margin-top: 0.6rem;
+  padding: 0.1rem 1.2rem;
 }
 
 .jogo-modal {
@@ -164,11 +203,7 @@
     margin-left: 0.4rem;
   }
 
-  .jogo-emoji {
-    font-size: 3rem;
-  }
-
-  .jogo-opcao {
-    font-size: 1.25rem;
+  .jogo-comandos {
+    margin: 0 0 0.5rem;
   }
 }

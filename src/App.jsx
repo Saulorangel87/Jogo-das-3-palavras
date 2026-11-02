@@ -8,8 +8,6 @@ import Inicio from './telas/Inicio.jsx';
 import Jogo from './telas/Jogo.jsx';
 import Resultado from './telas/Resultado.jsx';
 
-const NIVEL = 'iniciante';
-
 export default function App() {
   const [tela, setTela] = useState('inicio');
   const [partida, setPartida] = useState(null);
@@ -20,9 +18,9 @@ export default function App() {
 
   async function iniciar(config) {
     try {
-      const temas = await carregarPalavras(NIVEL);
+      const temas = await carregarPalavras(config.nivel);
       ultimaConfig.current = config;
-      setPartida(criarPartida({ ...config, rodada: montarRodada(temas) }));
+      setPartida(criarPartida({ ...config, rodada: montarRodada(temas, config.nivel) }));
       setTela('jogo');
     } catch {
       setAviso('Não foi possível carregar as palavras. Tente de novo.');

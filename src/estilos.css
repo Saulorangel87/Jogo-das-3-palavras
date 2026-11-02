@@ -1,6 +1,7 @@
 :root {
   --fundo: #14213d;
   --painel: #1f3160;
+  --casa-fechada: #3d5291;
   --texto: #fdf6e3;
   --texto-suave: #c9d3ea;
   --destaque: #ffd23f;
@@ -95,6 +96,16 @@ p {
 
 .grade-3 {
   grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.grade-3-larga {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+@media (min-width: 700px) {
+  .grade-3-larga {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
 }
 
 @media (min-width: 700px) {

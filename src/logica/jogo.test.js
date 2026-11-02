@@ -113,15 +113,15 @@ describe('letras no competitivo', () => {
 });
 
 describe('resolver', () => {
-  it('certo paga 5 por casa fechada, com multiplicador', () => {
+  it('certo paga 20 por casa fechada, com multiplicador', () => {
     const e = resolver(partida(), 'COCO');
     expect(e.fase).toBe(FASES.RESOLVIDO);
-    expect(e.ganho).toBe(20);
-    expect(pontos(e)).toEqual([20, 0]);
+    expect(e.ganho).toBe(80);
+    expect(pontos(e)).toEqual([80, 0]);
 
     const segundo = resolver(proximo(e), 'PATO');
-    expect(segundo.ganho).toBe(5 * 4 * 2);
-    expect(pontos(segundo)).toEqual([20, 40]);
+    expect(segundo.ganho).toBe(20 * 4 * 2);
+    expect(pontos(segundo)).toEqual([80, 160]);
   });
 
   it('errado risca a opção, passa a vez e perde o giro', () => {
@@ -203,7 +203,7 @@ describe('próximo painel e fim', () => {
     e = proximo(resolver(e, 'PATO'));
     e = proximo(resolver(e, 'GALO'));
     expect(e.fase).toBe(FASES.FIM);
-    expect(pontos(e)).toEqual([20 + 60, 40]);
+    expect(pontos(e)).toEqual([80 + 240, 160]);
     expect(calcularResultado(e).vencedores.map((j) => j.id)).toEqual(['j0']);
   });
 

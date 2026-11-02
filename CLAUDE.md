@@ -53,7 +53,7 @@ Inspirada no formato clássico de descobrir letras em um painel. Só a mecânica
 - Na sua vez, o jogador **gira a roleta** e escolhe uma letra, ou tenta **resolver**.
 - Letra certa: ganha `valor da roleta × casas abertas × multiplicador do painel` e continua jogando.
 - Letra errada: a vez passa.
-- Resolver certo: ganha 5 pontos por casa ainda fechada × multiplicador do painel, recompensando quem descobre cedo.
+- Resolver certo: ganha 20 pontos por casa ainda fechada × multiplicador do painel, recompensando quem descobre cedo.
 - Resolver errado: a opção fica riscada e a vez passa. Um giro ainda não usado se perde.
 - Vence quem tiver mais pontos após os 3 painéis. Empate é permitido.
 

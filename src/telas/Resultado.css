@@ -36,3 +36,11 @@
   max-width: 28rem;
   margin-top: 1.5rem;
 }
+
+/* As 9 estrelas precisam caber em uma linha no celular. */
+@media (max-width: 600px) {
+  .resultado-estrelas {
+    font-size: 1.4rem;
+    letter-spacing: 0;
+  }
+}

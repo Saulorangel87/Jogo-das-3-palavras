@@ -17,7 +17,8 @@ export const JOGADAS = {
 };
 
 export const FATIAS_ROLETA = [10, 25, 5, 30, 15, 50, 20, 40];
-const PONTOS_POR_CASA_FECHADA = 5;
+// Perto da média da roleta (24), mas sem o risco de errar a letra e perder a vez.
+const PONTOS_POR_CASA_FECHADA = 20;
 
 export function criarPartida({ modo, nivel, jogadores, rodada }) {
   return {

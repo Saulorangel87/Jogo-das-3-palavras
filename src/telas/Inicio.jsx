@@ -8,7 +8,7 @@ export default function Inicio({ aoJogar, aviso }) {
   return (
     <main className="tela">
       <h1 className="inicio-logo">3 Palavras</h1>
-      <p className="inicio-frase">Descubra as palavras escondidas!</p>
+      <p className="inicio-frase">Gire a roleta e descubra as palavras!</p>
       {aviso && <p className="inicio-aviso" role="alert">{aviso}</p>}
       <button className="botao inicio-botao" onClick={aoJogar}>Jogar</button>
     </main>

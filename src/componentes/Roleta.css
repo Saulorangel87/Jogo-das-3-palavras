@@ -1,0 +1,13 @@
+.roleta {
+  display: block;
+  flex: none;
+  width: 9rem;
+  height: 9rem;
+}
+
+@media (max-width: 600px) {
+  .roleta {
+    width: 7rem;
+    height: 7rem;
+  }
+}

@@ -85,3 +85,27 @@ Registro de cada etapa: o que mudou e por quê. A entrada mais recente fica no f
 - `src/data/palavras.json`: 3 níveis, com palavras e frases escritas para o jogo.
 
 **Por quê:** a regra continua separada da interface. A ação `GIRAR` recebe o sorteio de fora, para o servidor do modo online poder decidir o resultado.
+
+## 2026-11-02 — Etapa 8: telas do Painel
+
+**O que mudou:**
+
+- Componentes novos: `Painel`, `Teclado` e `Roleta` (SVG, sem biblioteca).
+- A tela de Jogo foi refeita, e a Configuração ganhou a escolha de nível.
+- O bônus de resolver subiu de 5 para 20 pontos por casa fechada.
+
+**Por quê do bônus:** jogando, uma letra rendeu 150 pontos, e resolver pagava quase nada. Com 20 por casa, perto da média da roleta (24), resolver cedo passa a valer a pena.
+
+**Verificado no Chrome:**
+
+- 42 testes passando e build de produção gerado.
+- Só com teclado, em tela grande: configuração, giro (o ponteiro parou no valor sorteado), letra certa com acento (A abriu o Ã) e abertura do resolver.
+- Cooperativo completo até 9 estrelas, com a vez passando a cada jogada, por cliques em um quadro de 360x640.
+- Largura sem estouro em 360x640. O competitivo com 4 jogadores no avançado rola 156px até o teclado.
+
+**Ainda não verificado:** competitivo completo até o resultado na tela, animação da roleta em TV ou navegador antigo, e toque em celular de verdade.
+
+**Para observar no teste com crianças:**
+
+- No competitivo, quem acerta continua jogando, então um adulto pode emendar várias letras.
+- Valores da roleta e multiplicador podem gerar placares altos demais.

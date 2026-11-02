@@ -1,46 +1,104 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Avatar from '../componentes/Avatar.jsx';
 import Estrelas from '../componentes/Estrelas.jsx';
+import Painel from '../componentes/Painel.jsx';
+import Roleta, { proximoAngulo } from '../componentes/Roleta.jsx';
+import Teclado from '../componentes/Teclado.jsx';
 import {
   ACOES,
   FASES,
+  JOGADAS,
   MODOS,
-  palavraAtual,
-  podeRevelar,
-  valorAtual,
+  indiceDaFatia,
+  multiplicadorAtual,
+  painelAtual,
+  podeEscolherLetra,
+  podeGirar,
 } from '../logica/jogo.js';
 import { useFoco, useVoltar } from '../navegacao/useNavegacao.js';
 import './Jogo.css';
 
-function Mensagem({ estado, nomeDaVez }) {
-  if (estado.ultimoErro) {
-    return <>Não é {estado.ultimoErro}. Agora é a vez de {nomeDaVez}.</>;
+const DURACAO_GIRO = 2600;
+
+function textoDaJogada(jogada, competitivo) {
+  if (!jogada) return null;
+  if (jogada.tipo === JOGADAS.LETRA_ERRADA) return `Não tem a letra ${jogada.letra}.`;
+  if (jogada.tipo === JOGADAS.CHUTE_ERRADO) return `Não é ${jogada.opcao}.`;
+  const casas = jogada.quantidade === 1 ? '1 letra' : `${jogada.quantidade} letras`;
+  const pontos = competitivo ? ` +${jogada.pontos} pontos!` : '';
+  return `Tem ${casas} ${jogada.letra}!${pontos}`;
+}
+
+function textoDaInstrucao(estado, nome, girando) {
+  if (girando) return `${nome} está girando a roleta...`;
+  if (estado.modo === MODOS.COOPERATIVO) return `${nome}, escolha uma letra ou resolva.`;
+  if (estado.valorRoleta !== null) {
+    return `${nome}, vale ${estado.valorRoleta} por letra. Escolha uma letra.`;
   }
-  if (estado.revelouNestaVez) return <>{nomeDaVez}, agora escolha a palavra.</>;
-  return <>Vez de {nomeDaVez}</>;
+  return `${nome}, gire a roleta ou resolva.`;
 }
 
 export default function Jogo({ estado, despachar, aoSair }) {
-  const [saindo, setSaindo] = useState(false);
+  // Estado só de interface: a regra continua toda em src/logica/.
+  const [aberto, setAberto] = useState(null); // null, 'resolver' ou 'sair'
+  const [girando, setGirando] = useState(false);
+  const [angulo, setAngulo] = useState(0);
+
   const competitivo = estado.modo === MODOS.COMPETITIVO;
-  const palavra = palavraAtual(estado);
-  const resolvida = estado.fase === FASES.RESOLVIDA;
+  const painel = painelAtual(estado);
+  const resolvido = estado.fase === FASES.RESOLVIDO;
   const jogadorDaVez = estado.jogadores[estado.vez];
-  const totalPalavras = estado.palavras.length;
-  const ultima = estado.indicePalavra === totalPalavras - 1;
+  const totalPaineis = estado.paineis.length;
+  const ultimo = estado.indicePainel === totalPaineis - 1;
+  const podeLetra = podeEscolherLetra(estado) && !girando;
+  const opcoesDisponiveis = painel.opcoes.filter((o) => !estado.descartadas.includes(o));
+
+  useEffect(() => {
+    if (!girando) return undefined;
+    const temporizador = setTimeout(() => setGirando(false), DURACAO_GIRO);
+    return () => clearTimeout(temporizador);
+  }, [girando]);
 
   useFoco(
-    `${estado.indicePalavra}-${estado.fase}-${estado.vez}-${estado.revelados}-${saindo}`,
+    [
+      estado.indicePainel,
+      estado.fase,
+      estado.vez,
+      estado.valorRoleta,
+      estado.letrasUsadas.length,
+      estado.descartadas.length,
+      girando,
+      aberto,
+    ].join('-'),
   );
-  useVoltar(() => setSaindo(!saindo));
+  useVoltar(() => setAberto(aberto ? null : 'sair'));
 
-  const primeiraOpcao = palavra.opcoes.find((o) => !estado.descartadas.includes(o));
+  function girar() {
+    const sorteio = Math.random();
+    setAngulo(proximoAngulo(angulo, indiceDaFatia(sorteio)));
+    setGirando(true);
+    despachar({ tipo: ACOES.GIRAR, sorteio });
+  }
+
+  function resolver(opcao) {
+    setAberto(null);
+    despachar({ tipo: ACOES.RESOLVER, opcao });
+  }
+
+  const jogada = textoDaJogada(estado.ultimaJogada, competitivo);
+  const jogadaRuim =
+    estado.ultimaJogada && estado.ultimaJogada.tipo !== JOGADAS.LETRA_CERTA;
 
   return (
     <main className="tela jogo">
       <header className="jogo-topo">
-        <span>{estado.tema} · Palavra {estado.indicePalavra + 1} de {totalPalavras}</span>
-        <button className="botao botao-secundario jogo-sair" onClick={() => setSaindo(true)}>Sair</button>
+        <span>
+          {estado.tema} · Painel {estado.indicePainel + 1} de {totalPaineis}
+          {competitivo && ` · pontos ×${multiplicadorAtual(estado)}`}
+        </span>
+        <button className="botao botao-secundario jogo-sair" disabled={girando} onClick={() => setAberto('sair')}>
+          Sair
+        </button>
       </header>
 
       <ul className="jogo-placar">
@@ -52,69 +110,110 @@ export default function Jogo({ estado, despachar, aoSair }) {
           </li>
         ))}
       </ul>
-      {!competitivo && <p className="jogo-equipe">Estrelas da equipe: {estado.estrelas} de {totalPalavras * 3}</p>}
+      {!competitivo && (
+        <p className="jogo-equipe">Estrelas da equipe: {estado.estrelas} de {totalPaineis * 3}</p>
+      )}
 
-      <div className="jogo-emoji" role="img" aria-label="Dica">{palavra.emoji}</div>
+      <Painel texto={painel.texto} letrasUsadas={estado.letrasUsadas} aberto={resolvido} />
 
-      <div className="jogo-silabas">
-        {palavra.silabas.map((silaba, i) => {
-          const visivel = resolvida || i < estado.revelados;
-          return (
-            <span key={i} className={visivel ? 'jogo-silaba jogo-silaba-aberta' : 'jogo-silaba'}>
-              {visivel ? silaba : '?'}
-            </span>
-          );
-        })}
-      </div>
+      <p className="jogo-dica">
+        {painel.emoji && <span className="jogo-emoji" role="img" aria-label="Dica">{painel.emoji}</span>}
+        {painel.dica && <span>Dica: {painel.dica}</span>}
+      </p>
 
-      {resolvida ? (
+      {resolvido && (
         <>
           <p className="jogo-acerto" role="status">
-            {competitivo ? `${jogadorDaVez.nome} acertou! +${estado.ganho} pontos` : 'Vocês acertaram! '}
+            {competitivo
+              ? `${jogadorDaVez.nome} resolveu! +${estado.ganho} pontos`
+              : 'Vocês resolveram! '}
             {!competitivo && <Estrelas quantidade={estado.ganho} />}
           </p>
-          <button className="botao jogo-proxima" onClick={() => despachar({ tipo: ACOES.PROXIMA_PALAVRA })}>
-            {ultima ? 'Ver resultado' : 'Próxima palavra'}
+          <button
+            className="botao jogo-proximo"
+            data-foco-inicial
+            onClick={() => despachar({ tipo: ACOES.PROXIMO_PAINEL })}
+          >
+            {ultimo ? 'Ver resultado' : 'Próximo painel'}
           </button>
         </>
-      ) : (
-        <>
-          <p className={estado.ultimoErro ? 'jogo-mensagem jogo-mensagem-erro' : 'jogo-mensagem'} role="status">
-            <Mensagem estado={estado} nomeDaVez={jogadorDaVez.nome} />
-          </p>
-          <p className="jogo-valor">
-            Vale agora: {competitivo ? `${valorAtual(estado)} pontos` : <Estrelas quantidade={valorAtual(estado)} />}
-          </p>
-          <div className="grade grade-3 jogo-opcoes">
-            {palavra.opcoes.map((opcao) => {
-              const descartada = estado.descartadas.includes(opcao);
+      )}
+
+      {!resolvido && aberto === 'resolver' && (
+        <div className="jogo-resolver" data-modal>
+          <h2 className="jogo-resolver-titulo">Qual é a resposta?</h2>
+          <div className="grade jogo-resolver-opcoes">
+            {painel.opcoes.map((opcao) => {
+              const riscada = estado.descartadas.includes(opcao);
               return (
                 <button
                   key={opcao}
-                  className={descartada ? 'botao jogo-opcao jogo-opcao-riscada' : 'botao jogo-opcao'}
-                  disabled={descartada}
-                  data-foco-inicial={opcao === primeiraOpcao ? '' : undefined}
-                  onClick={() => despachar({ tipo: ACOES.ARRISCAR, opcao })}
+                  className={riscada ? 'botao jogo-opcao jogo-opcao-riscada' : 'botao jogo-opcao'}
+                  disabled={riscada}
+                  data-foco-inicial={opcao === opcoesDisponiveis[0] ? '' : undefined}
+                  onClick={() => resolver(opcao)}
                 >
                   {opcao}
                 </button>
               );
             })}
           </div>
-          {podeRevelar(estado) && (
-            <button className="botao botao-secundario jogo-revelar" onClick={() => despachar({ tipo: ACOES.REVELAR })}>
-              Revelar uma sílaba
-            </button>
-          )}
+          <button className="botao botao-secundario rodape-curto" onClick={() => setAberto(null)}>
+            Voltar
+          </button>
+        </div>
+      )}
+
+      {!resolvido && aberto !== 'resolver' && (
+        <>
+          <div role="status" className="jogo-mensagens">
+            {jogada && !girando && (
+              <p className={jogadaRuim ? 'jogo-jogada jogo-jogada-ruim' : 'jogo-jogada jogo-jogada-boa'}>{jogada}</p>
+            )}
+            <p className="jogo-instrucao">{textoDaInstrucao(estado, jogadorDaVez.nome, girando)}</p>
+          </div>
+
+          <div className="jogo-acoes">
+            <div className="jogo-comandos">
+              {competitivo && <Roleta angulo={angulo} duracao={DURACAO_GIRO} />}
+              <div className="jogo-botoes">
+                {competitivo && (
+                  <button
+                    className="botao jogo-girar"
+                    disabled={!podeGirar(estado) || girando}
+                    data-foco-inicial={podeGirar(estado) ? '' : undefined}
+                    onClick={girar}
+                  >
+                    Girar
+                  </button>
+                )}
+                <button
+                  className="botao botao-secundario jogo-resolver-botao"
+                  disabled={girando}
+                  onClick={() => setAberto('resolver')}
+                >
+                  Resolver
+                </button>
+              </div>
+            </div>
+            <Teclado
+              letras={painel.letras}
+              usadas={estado.letrasUsadas}
+              texto={painel.texto}
+              habilitado={podeLetra}
+              focoInicial={podeLetra}
+              aoEscolher={(letra) => despachar({ tipo: ACOES.ESCOLHER_LETRA, letra })}
+            />
+          </div>
         </>
       )}
 
-      {saindo && (
+      {aberto === 'sair' && (
         <div className="jogo-modal" data-modal role="dialog" aria-modal="true" aria-labelledby="titulo-sair">
           <div className="jogo-modal-caixa">
             <h2 id="titulo-sair">Sair da partida?</h2>
             <div className="grade grade-2 jogo-modal-botoes">
-              <button className="botao" data-foco-inicial onClick={() => setSaindo(false)}>Continuar</button>
+              <button className="botao" data-foco-inicial onClick={() => setAberto(null)}>Continuar</button>
               <button className="botao botao-secundario" onClick={aoSair}>Sair</button>
             </div>
           </div>

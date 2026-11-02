@@ -1,0 +1,42 @@
+.painel {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  width: 100%;
+  max-width: 56rem;
+  padding: 0.5rem;
+  border-radius: 1rem;
+  background: var(--painel);
+}
+
+.painel-palavra {
+  display: flex;
+  margin: 0.2rem 0.6rem;
+}
+
+.painel-casa {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  /* Em vw para as 12 letras da maior palavra caberem em 360px. */
+  width: 6.2vw;
+  max-width: 2.6rem;
+  height: 8.4vw;
+  max-height: 3.2rem;
+  margin: 0 0.1rem;
+  border-radius: 0.3rem;
+  background: var(--casa-fechada);
+  font-weight: 800;
+  font-size: 1.7rem;
+}
+
+.painel-casa-aberta {
+  background: var(--botao);
+  color: var(--botao-texto);
+}
+
+@media (max-width: 600px) {
+  .painel-casa {
+    font-size: 1.15rem;
+  }
+}
