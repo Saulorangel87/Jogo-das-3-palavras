@@ -41,3 +41,25 @@ Registro de cada etapa: o que mudou e por quê. A entrada mais recente fica no f
 **O que mudou:** `src/navegacao/` move o foco pelas setas conforme a posição dos botões na tela, trata as teclas Voltar (Escape, Backspace, Tizen e webOS) e recupera o foco quando um botão some.
 
 **Por quê:** toda a interação precisa funcionar só com setas + Enter. Segurar o OK também não avança várias telas de uma vez.
+
+## 2026-11-02 — Etapa 5: telas da V1
+
+**O que mudou:** telas de Início, Configuração, Jogo e Resultado, com personagens provisórios (círculo com a inicial).
+
+**Decisões de interface:**
+
+- As 3 opções ficam sempre visíveis, sem um botão "Arriscar" antes. É um passo a menos no controle remoto, e a leitura das opções continua sendo o exercício.
+- A configuração é feita em passos: modo, número de jogadores e personagem de cada um. O nome do jogador é o nome do personagem, então não há campo de texto.
+- Voltar durante a partida pergunta antes de sair, para uma criança não perder o jogo sem querer.
+
+**Verificado:**
+
+- 25 testes passando e build de produção com pacote legado gerado.
+- Só com teclado em 1920x1080: configuração completa, revelar, errar e o aviso de saída.
+- Com cliques: partida competitiva completa até o resultado.
+- Em 360x640: sem estouro de largura, e o jogo com 4 jogadores cabe na tela. A seleção de personagem rola 30px.
+- Pontuação final do cooperativo: só nos testes de regras, não na tela de resultado.
+
+**Ainda não verificado:** navegador antigo ou TV real, e toque em celular de verdade.
+
+**Próximo passo do roteiro:** teste com crianças reais.

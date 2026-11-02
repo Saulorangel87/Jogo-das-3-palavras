@@ -1,0 +1,19 @@
+.inicio-logo {
+  color: var(--destaque);
+  font-size: 4rem;
+}
+
+.inicio-frase {
+  font-size: 1.3rem;
+  margin: 1rem 0 2rem;
+}
+
+.inicio-aviso {
+  color: var(--erro);
+  margin-bottom: 1rem;
+}
+
+.inicio-botao {
+  min-width: 12rem;
+  font-size: 1.5rem;
+}

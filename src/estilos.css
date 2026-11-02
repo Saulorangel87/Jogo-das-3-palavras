@@ -1,0 +1,108 @@
+:root {
+  --fundo: #14213d;
+  --painel: #1f3160;
+  --texto: #fdf6e3;
+  --texto-suave: #c9d3ea;
+  --destaque: #ffd23f;
+  --botao: #fdf6e3;
+  --botao-texto: #14213d;
+  --acerto: #95d5b2;
+  --erro: #ffb4a2;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  /* Cresce com a tela: legível no celular e a 3 metros da TV. */
+  font-size: calc(10px + 0.4vw + 1.3vh);
+}
+
+body {
+  margin: 0;
+  background: var(--fundo);
+  color: var(--texto);
+  font-family: 'Trebuchet MS', Verdana, 'Segoe UI', Roboto, sans-serif;
+  overflow-x: hidden;
+}
+
+.tela {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  /* Margem de segurança da TV. */
+  padding: 5vh 5vw;
+  text-align: center;
+}
+
+h1,
+h2,
+p {
+  margin: 0;
+}
+
+.titulo {
+  font-size: 2.2rem;
+  margin-bottom: 1.2rem;
+}
+
+.botao {
+  min-height: 3rem;
+  padding: 0.6rem 1.4rem;
+  border: 0.2rem solid transparent;
+  border-radius: 0.8rem;
+  background: var(--botao);
+  color: var(--botao-texto);
+  cursor: pointer;
+  font: inherit;
+  font-weight: 700;
+  touch-action: manipulation;
+  transition: transform 0.1s;
+}
+
+.botao:focus {
+  border-color: var(--fundo);
+  outline: 0.35rem solid var(--destaque);
+  outline-offset: 0.1rem;
+  transform: scale(1.06);
+}
+
+.botao:disabled {
+  background: transparent;
+  border-color: #5a6a93;
+  color: #9aa7c7;
+  cursor: default;
+}
+
+.botao-secundario {
+  background: var(--painel);
+  color: var(--texto);
+}
+
+.grade {
+  display: grid;
+  grid-gap: 1rem;
+  width: 100%;
+  max-width: 44rem;
+}
+
+.grade-2 {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.grade-3 {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+@media (min-width: 700px) {
+  .grade-4-larga {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+
+.rodape {
+  margin-top: 1.5rem;
+}

@@ -1,0 +1,54 @@
+.config-opcao {
+  font-size: 1.4rem;
+  padding: 1.2rem 0.6rem;
+}
+
+.config-opcao small {
+  display: block;
+  font-size: 0.65em;
+  font-weight: 400;
+  margin-top: 0.4rem;
+}
+
+.config-numero {
+  font-size: 2.4rem;
+  padding: 1rem;
+}
+
+.config-personagem {
+  padding: 0.7rem 0.3rem;
+}
+
+.config-personagem .avatar {
+  display: block;
+  margin: 0 auto 0.4rem;
+}
+
+.config-personagem > span:last-child {
+  display: block;
+  font-size: 0.9rem;
+}
+
+/* No celular o avatar fica ao lado do nome para as 8 opções caberem. */
+@media (max-width: 600px) {
+  .config-opcao {
+    font-size: 1.1rem;
+    padding: 1rem 0.3rem;
+  }
+
+  .config-personagem {
+    display: flex;
+    align-items: center;
+    padding: 0.4rem;
+    text-align: left;
+  }
+
+  .config-personagem .avatar {
+    margin: 0 0.4rem 0 0;
+    font-size: 0.8rem;
+  }
+
+  .config-personagem > span:last-child {
+    font-size: 0.8rem;
+  }
+}
