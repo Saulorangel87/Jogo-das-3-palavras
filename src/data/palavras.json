@@ -1,0 +1,32 @@
+{
+  "iniciante": [
+    {
+      "tema": "Fazenda",
+      "palavras": [
+        { "palavra": "PATO", "silabas": ["PA", "TO"], "emoji": "🦆" },
+        { "palavra": "VACA", "silabas": ["VA", "CA"], "emoji": "🐄" },
+        { "palavra": "GALO", "silabas": ["GA", "LO"], "emoji": "🐓" },
+        { "palavra": "BODE", "silabas": ["BO", "DE"], "emoji": "🐐" },
+        { "palavra": "GATO", "silabas": ["GA", "TO"], "emoji": "🐈" }
+      ]
+    },
+    {
+      "tema": "Comida",
+      "palavras": [
+        { "palavra": "BOLO", "silabas": ["BO", "LO"], "emoji": "🎂" },
+        { "palavra": "SUCO", "silabas": ["SU", "CO"], "emoji": "🧃" },
+        { "palavra": "UVA", "silabas": ["U", "VA"], "emoji": "🍇" },
+        { "palavra": "PERA", "silabas": ["PE", "RA"], "emoji": "🍐" },
+        { "palavra": "COCO", "silabas": ["CO", "CO"], "emoji": "🥥" }
+      ]
+    },
+    {
+      "tema": "Brinquedos",
+      "palavras": [
+        { "palavra": "BOLA", "silabas": ["BO", "LA"], "emoji": "⚽" },
+        { "palavra": "DADO", "silabas": ["DA", "DO"], "emoji": "🎲" },
+        { "palavra": "PIPA", "silabas": ["PI", "PA"], "emoji": "🪁" }
+      ]
+    }
+  ]
+}
