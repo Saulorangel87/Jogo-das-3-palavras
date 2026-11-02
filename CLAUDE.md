@@ -37,9 +37,11 @@ O jogo começa 100% local, mas **vai ganhar multijogador online e ranking**. Por
 
 - Cada rodada tem **3 palavras escondidas** do mesmo **tema** (ex.: Fazenda).
 - As palavras são resolvidas **uma por vez**.
-- Na sua vez, o jogador escolhe **uma** ação:
-  1. **Revelar** o próximo pedaço da palavra (sílaba no iniciante, letra nos outros níveis). Revelar encerra a vez.
-  2. **Arriscar** a palavra inteira.
+- Na sua vez, o jogador pode:
+  1. **Revelar** o próximo pedaço da palavra (sílaba no iniciante, letra nos outros níveis). No máximo **1 revelação por vez**. Revelar **não** encerra a vez: em seguida o jogador precisa arriscar.
+  2. **Arriscar** a palavra inteira (com ou sem revelar antes).
+- A vez só passa quando o jogador erra o chute. Quem acerta resolve a palavra, e a próxima palavra começa com o jogador seguinte a ele.
+- **Penalidades:** cada pedaço revelado e cada chute errado contam igualmente na pontuação e nas estrelas. Sem isso, chutar até acertar seria sempre a melhor jogada e revelar nunca compensaria.
 - **Ninguém é eliminado e ninguém "perde" de forma punitiva.** Se a palavra for totalmente revelada, o jogador da vez ainda precisa escolher a opção certa (sempre dá para terminar).
 
 ### Modos de jogo (escolhidos no início da partida)
@@ -47,14 +49,14 @@ O jogo começa 100% local, mas **vai ganhar multijogador online e ranking**. Por
 **Competitivo**
 - 2 a 4 jogadores em turnos, na mesma tela.
 - Palavras 1, 2 e 3 valem 10, 20 e 30 pontos (a última sempre pode virar o jogo).
-- Cada pedaço já revelado desconta 30% do valor da palavra (mínimo de 30% do valor).
-- Errou o chute: a opção errada fica descartada (riscada) e a vez passa.
+- Cada penalidade (pedaço revelado ou chute errado) desconta 30% do valor da palavra (mínimo de 30% do valor).
+- Errou o chute: a opção errada fica descartada (riscada), a palavra perde valor e a vez passa.
 - Vence quem tiver mais pontos após as 3 palavras. Empate é permitido.
 
 **Cooperativo**
 - 2 a 4 jogadores na mesma equipe, revezando a vez (todos participam).
-- Cada palavra vale até 3 estrelas: 3 se acertada sem revelar nada, 2 com 1 pedaço revelado, 1 com 2 ou mais.
-- Errou o chute: sem penalidade, a opção errada fica descartada e a vez passa.
+- Cada palavra vale até 3 estrelas: 3 sem nenhuma penalidade, 2 com 1 penalidade, 1 com 2 ou mais (penalidade = pedaço revelado ou chute errado).
+- Errou o chute: a opção errada fica descartada, a palavra perde uma estrela (mínimo de 1) e a vez passa.
 - Tela final mostra o total de estrelas da equipe (máximo 9).
 
 ### Níveis
