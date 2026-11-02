@@ -85,16 +85,14 @@ Importante (iniciante): as opções do "Resolver" são **só texto**, sem imagem
 - Interface para "3 metros de distância": fontes grandes, alto contraste, margem de segurança de ~5% nas bordas.
 - Layout funciona de 360px (celular) até 1920x1080 (TV).
 
-## Personagens (versões futuras)
+## Personagens
 
-Elenco original ligado ao tema leitura/escrita. Cada jogador escolhe um.
-Na V1, usar **placeholders**: círculo colorido com a inicial e o nome.
+Elenco original ligado ao tema leitura/escrita. Cada jogador escolhe um, e o nome do personagem é o nome do jogador.
 
 - Lalá Lápis (xilofone) · Bóris Borracha (tuba) · Capitão Til (sanfona) · Galinha Cedilha (clarinete)
 - Tito Tatu (fagote) · Vó Vírgula (piano) · Zuca Zebra (bateria) · Sapo Soletra (kazoo/sintetizador)
 
-Futuro: SVG original com 4 expressões (normal, pensando, comemorando, quase), animação via CSS.
-Cada personagem fica em seu próprio componente/arquivo, para trocar a arte depois sem mexer no jogo.
+Cada personagem é um SVG em seu próprio arquivo em `src/personagens/`, para trocar a arte sem mexer no jogo. O `Rosto.jsx` compartilhado faz as 4 expressões: **normal**, **pensando** (é a vez dele), **comemorando** (acertou) e **quase** (errou). A animação é só CSS. Os instrumentos entram com o áudio.
 
 ## Áudio (versões futuras)
 
@@ -105,7 +103,7 @@ Cada personagem fica em seu próprio componente/arquivo, para trocar a arte depo
 ## Escopo atual
 
 1. Projeto Vite + React (JS) com `@vitejs/plugin-legacy`.
-2. Telas: Início → Configuração da partida (modo, nível, nº de jogadores 2–4, personagem placeholder de cada um) → Jogo → Resultado.
+2. Telas: Início → Configuração da partida (modo, nível, nº de jogadores 2–4, personagem de cada um) → Jogo → Resultado.
 3. Níveis **Iniciante, Intermediário e Avançado**.
 4. Modos **Competitivo e Cooperativo** funcionando.
 5. Banco de painéis em `src/data/palavras.json`, com o formato abaixo. A partida sorteia um tema e 3 painéis dele.
@@ -159,9 +157,9 @@ As opções erradas do "Resolver" (só no iniciante) vêm de outros itens do mes
 
 ## Roteiro
 
-1. **V1:** Painel com roleta, 3 níveis, 2–4 jogadores locais, competitivo + cooperativo, placeholders, navegação por controle, lógica pura em `src/logica/`.
+1. **V1:** Painel com roleta, 3 níveis, 2–4 jogadores locais, competitivo + cooperativo, navegação por controle, lógica pura em `src/logica/`.
 2. Teste com crianças reais e ajuste de regras e pontuação.
-3. Personagens SVG e tela de seleção.
+3. Personagens SVG e tela de seleção. **(feito)**
 4. Áudio (jingles + trilha de tema).
 5. Deploy em 3palavras.devsaulo.com.br, PWA, teste na TV real.
 6. **Online:** backend Node + Socket.IO, salas privadas com código.

@@ -1,0 +1,40 @@
+.personagem {
+  display: block;
+  flex: none;
+  width: 2.2em;
+  height: 2.2em;
+}
+
+.personagem-pensando {
+  animation: personagem-balanco 1.6s ease-in-out infinite;
+}
+
+.personagem-comemorando {
+  animation: personagem-pulo 0.6s ease-in-out 3;
+}
+
+.personagem-quase {
+  animation: personagem-tremor 0.4s ease-in-out 2;
+}
+
+@keyframes personagem-balanco {
+  0%, 100% { transform: rotate(-5deg); }
+  50% { transform: rotate(5deg); }
+}
+
+@keyframes personagem-pulo {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-18%); }
+}
+
+@keyframes personagem-tremor {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-6%); }
+  75% { transform: translateX(6%); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .personagem {
+    animation: none;
+  }
+}

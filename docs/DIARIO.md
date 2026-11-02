@@ -139,3 +139,9 @@ Registro de cada etapa: o que mudou e por quê. A entrada mais recente fica no f
 - Em 1745x730 o preenchimento cabe sem rolar. Em 360x640 a largura cabe e a tela rola até 796px.
 
 **Ainda não verificado:** preencher frases longas com o controle remoto real, que pode ficar cansativo.
+
+## 2026-11-02 — Etapa 11: arte dos personagens
+
+**O que mudou:** os 8 personagens agora são SVGs originais em `src/personagens/`, cada um em seu arquivo, com 4 expressões feitas por um `Rosto.jsx` compartilhado.
+
+**Por quê:** é o passo 3 do roteiro. Sem bibliotecas nem imagens externas, o peso do jogo quase não muda, e o desenho funciona em navegador antigo. O nome de cada um virou parte do desenho: a Vó Vírgula tem forma de vírgula, o Capitão Til tem bigode em forma de til e a Galinha Cedilha tem a cauda da cedilha.
