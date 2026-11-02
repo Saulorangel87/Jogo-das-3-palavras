@@ -1,5 +1,11 @@
 import { describe, expect, it } from 'vitest';
-import { contarCasasFechadas, contarOcorrencias, normalizarLetra } from './texto.js';
+import {
+  contarCasasFechadas,
+  contarOcorrencias,
+  mesmaResposta,
+  montarResposta,
+  normalizarLetra,
+} from './texto.js';
 
 describe('texto', () => {
   it('trata acentos e cedilha como a letra base', () => {
@@ -10,6 +16,16 @@ describe('texto', () => {
     expect(contarOcorrencias('PÃO COM MANTEIGA', 'A')).toBe(3);
     expect(contarOcorrencias('LIÇÃO DE CASA', 'C')).toBe(2);
     expect(contarOcorrencias('PATO', 'Z')).toBe(0);
+  });
+
+  it('compara respostas ignorando acentos', () => {
+    expect(mesmaResposta('LIÇÃO DE CASA', 'LICAO DE CASA')).toBe(true);
+    expect(mesmaResposta('LIÇÃO DE CASA', 'LICAO DE COSA')).toBe(false);
+  });
+
+  it('monta a resposta com as letras digitadas nas casas fechadas', () => {
+    expect(montarResposta('PÃO COM MEL', ['A', 'M'], ['P', 'O', 'C', 'O', 'E', 'L'])).toBe('PÃO COM MEL');
+    expect(montarResposta('PATO', ['A'], ['G', 'L', 'O'])).toBe('GALO');
   });
 
   it('conta casas fechadas', () => {

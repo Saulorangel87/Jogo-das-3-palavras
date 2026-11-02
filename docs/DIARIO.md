@@ -117,3 +117,25 @@ Registro de cada etapa: o que mudou e por quê. A entrada mais recente fica no f
 **Por quê:** o Saulo viu a parte de baixo cortada. Havia duas causas: a janela do Chrome tinha sido redimensionada no teste para um tamanho maior que a tela dele, e o jogo realmente passava da altura em 1366x768 e 1280x720. Em 1920x1080, o teclado descia para outra linha.
 
 **Verificado no Chrome, medindo em quadros de cada tamanho:** sem rolagem em 1920x1080, 1745x730, 1366x768 e 1280x720, no início do painel, após uma jogada e no resolver. O cooperativo foi medido só em 1745x730. Em 360x640 o jogo continua rolando até 181px, e o foco acompanha.
+
+## 2026-11-02 — Etapa 10: resolver sem opções nos níveis maiores
+
+**O que mudou:** no intermediário e no avançado, resolver agora é preencher as casas fechadas pelo teclado de botões. O iniciante continua com 3 opções escritas.
+
+**Por quê:** o Saulo testou e achou a resposta óbvia demais com as opções na tela. Montar com peças, como previsto antes, teria o mesmo problema, porque as peças mostrariam as letras que faltam.
+
+**Detalhes:**
+
+- Letras já usadas ficam desligadas no teclado, porque não podem estar nas casas fechadas.
+- Acentos entram sozinhos: digitar C e A resolve LIÇÃO.
+- A tecla Voltar apaga a última letra e, sem letras digitadas, fecha o resolver.
+- Ao completar as casas, o foco vai para Confirmar.
+
+**Verificado no Chrome:**
+
+- 47 testes passando e build gerado.
+- Só com teclado: abrir o resolver, digitar, apagar, confirmar uma resposta errada (a vez passou).
+- Por cliques: resposta certa, 3 frases com acento até 9 estrelas e iniciante ainda com 3 opções.
+- Em 1745x730 o preenchimento cabe sem rolar. Em 360x640 a largura cabe e a tela rola até 796px.
+
+**Ainda não verificado:** preencher frases longas com o controle remoto real, que pode ficar cansativo.

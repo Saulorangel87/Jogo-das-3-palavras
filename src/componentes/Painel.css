@@ -35,6 +35,15 @@
   color: var(--botao-texto);
 }
 
+.painel-casa-digitada {
+  background: var(--destaque);
+  color: var(--botao-texto);
+}
+
+.painel-casa-proxima {
+  box-shadow: inset 0 0 0 0.15rem var(--destaque);
+}
+
 @media (max-width: 600px) {
   .painel-casa {
     font-size: 1.15rem;

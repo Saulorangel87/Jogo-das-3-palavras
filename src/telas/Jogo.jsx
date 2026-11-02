@@ -15,6 +15,7 @@ import {
   podeEscolherLetra,
   podeGirar,
 } from '../logica/jogo.js';
+import { contarCasasFechadas, montarResposta } from '../logica/texto.js';
 import { useFoco, useVoltar } from '../navegacao/useNavegacao.js';
 import './Jogo.css';
 
@@ -23,7 +24,7 @@ const DURACAO_GIRO = 2600;
 function textoDaJogada(jogada, competitivo) {
   if (!jogada) return null;
   if (jogada.tipo === JOGADAS.LETRA_ERRADA) return `Não tem a letra ${jogada.letra}.`;
-  if (jogada.tipo === JOGADAS.CHUTE_ERRADO) return `Não é ${jogada.opcao}.`;
+  if (jogada.tipo === JOGADAS.CHUTE_ERRADO) return `Não é ${jogada.resposta}.`;
   const casas = jogada.quantidade === 1 ? '1 letra' : `${jogada.quantidade} letras`;
   const pontos = competitivo ? ` +${jogada.pontos} pontos!` : '';
   return `Tem ${casas} ${jogada.letra}!${pontos}`;
@@ -43,6 +44,7 @@ export default function Jogo({ estado, despachar, aoSair }) {
   const [aberto, setAberto] = useState(null); // null, 'resolver' ou 'sair'
   const [girando, setGirando] = useState(false);
   const [angulo, setAngulo] = useState(0);
+  const [digitadas, setDigitadas] = useState([]);
 
   const competitivo = estado.modo === MODOS.COMPETITIVO;
   const painel = painelAtual(estado);
@@ -51,7 +53,13 @@ export default function Jogo({ estado, despachar, aoSair }) {
   const totalPaineis = estado.paineis.length;
   const ultimo = estado.indicePainel === totalPaineis - 1;
   const podeLetra = podeEscolherLetra(estado) && !girando;
-  const opcoesDisponiveis = painel.opcoes.filter((o) => !estado.descartadas.includes(o));
+  const comOpcoes = Boolean(painel.opcoes);
+  const opcoesDisponiveis = comOpcoes
+    ? painel.opcoes.filter((o) => !estado.descartadas.includes(o))
+    : [];
+  const preenchendo = aberto === 'resolver' && !comOpcoes && !resolvido;
+  const totalFechadas = contarCasasFechadas(painel.texto, estado.letrasUsadas);
+  const completo = digitadas.length === totalFechadas;
 
   useEffect(() => {
     if (!girando) return undefined;
@@ -71,7 +79,15 @@ export default function Jogo({ estado, despachar, aoSair }) {
       aberto,
     ].join('-'),
   );
-  useVoltar(() => setAberto(aberto ? null : 'sair'));
+  useVoltar(() => {
+    if (preenchendo && digitadas.length > 0) setDigitadas(digitadas.slice(0, -1));
+    else fecharOuPerguntar();
+  });
+
+  function fecharOuPerguntar() {
+    setDigitadas([]);
+    setAberto(aberto ? null : 'sair');
+  }
 
   function girar() {
     const sorteio = Math.random();
@@ -80,9 +96,10 @@ export default function Jogo({ estado, despachar, aoSair }) {
     despachar({ tipo: ACOES.GIRAR, sorteio });
   }
 
-  function resolver(opcao) {
+  function resolver(resposta) {
     setAberto(null);
-    despachar({ tipo: ACOES.RESOLVER, opcao });
+    setDigitadas([]);
+    despachar({ tipo: ACOES.RESOLVER, resposta });
   }
 
   const jogada = textoDaJogada(estado.ultimaJogada, competitivo);
@@ -96,7 +113,14 @@ export default function Jogo({ estado, despachar, aoSair }) {
           {estado.tema} · Painel {estado.indicePainel + 1} de {totalPaineis}
           {competitivo && ` · pontos ×${multiplicadorAtual(estado)}`}
         </span>
-        <button className="botao botao-secundario jogo-sair" disabled={girando} onClick={() => setAberto('sair')}>
+        <button
+          className="botao botao-secundario jogo-sair"
+          disabled={girando}
+          onClick={() => {
+            setDigitadas([]);
+            setAberto('sair');
+          }}
+        >
           Sair
         </button>
       </header>
@@ -114,7 +138,12 @@ export default function Jogo({ estado, despachar, aoSair }) {
         <p className="jogo-equipe">Estrelas da equipe: {estado.estrelas} de {totalPaineis * 3}</p>
       )}
 
-      <Painel texto={painel.texto} letrasUsadas={estado.letrasUsadas} aberto={resolvido} />
+      <Painel
+        texto={painel.texto}
+        letrasUsadas={estado.letrasUsadas}
+        aberto={resolvido}
+        digitadas={preenchendo ? digitadas : null}
+      />
 
       <p className="jogo-dica">
         {painel.emoji && <span className="jogo-emoji" role="img" aria-label="Dica">{painel.emoji}</span>}
@@ -139,7 +168,43 @@ export default function Jogo({ estado, despachar, aoSair }) {
         </>
       )}
 
-      {!resolvido && aberto === 'resolver' && (
+      {preenchendo && (
+        <div className="jogo-resolver" data-modal>
+          <h2 className="jogo-resolver-titulo">Complete as casas. Os acentos entram sozinhos.</h2>
+          <div className="jogo-acoes">
+            <div className="jogo-botoes jogo-botoes-preencher">
+              <button
+                className="botao jogo-confirmar"
+                disabled={!completo}
+                data-foco-inicial={completo ? '' : undefined}
+                onClick={() => resolver(montarResposta(painel.texto, estado.letrasUsadas, digitadas))}
+              >
+                Confirmar
+              </button>
+              <button
+                className="botao botao-secundario"
+                disabled={digitadas.length === 0}
+                onClick={() => setDigitadas(digitadas.slice(0, -1))}
+              >
+                Apagar
+              </button>
+              <button className="botao botao-secundario" onClick={fecharOuPerguntar}>
+                Voltar
+              </button>
+            </div>
+            <Teclado
+              letras={painel.letras}
+              usadas={estado.letrasUsadas}
+              texto={painel.texto}
+              habilitado={!completo}
+              focoInicial={!completo}
+              aoEscolher={(letra) => setDigitadas([...digitadas, letra])}
+            />
+          </div>
+        </div>
+      )}
+
+      {!resolvido && aberto === 'resolver' && comOpcoes && (
         <div className="jogo-resolver" data-modal>
           <h2 className="jogo-resolver-titulo">Qual é a resposta?</h2>
           <div className="grade jogo-resolver-opcoes">

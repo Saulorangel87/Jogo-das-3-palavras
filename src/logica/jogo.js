@@ -1,6 +1,11 @@
 // Regras do jogo em JavaScript puro: proximoEstado = aplicarAcao(estado, acao).
 // Sem React, window, document ou localStorage: será reutilizado no servidor.
-import { contarCasasFechadas, contarOcorrencias } from './texto.js';
+import {
+  contarCasasFechadas,
+  contarOcorrencias,
+  letrasDoTexto,
+  mesmaResposta,
+} from './texto.js';
 
 export const MODOS = { COMPETITIVO: 'competitivo', COOPERATIVO: 'cooperativo' };
 export const FASES = { JOGANDO: 'jogando', RESOLVIDO: 'resolvido', FIM: 'fim' };
@@ -152,27 +157,30 @@ function escolherLetra(estado, letra) {
   };
 }
 
-function resolver(estado, opcao) {
+function respostaValida(painel, estado, resposta) {
+  if (painel.opcoes) {
+    return painel.opcoes.includes(resposta) && !estado.descartadas.includes(resposta);
+  }
+  return letrasDoTexto(resposta).length === letrasDoTexto(painel.texto).length;
+}
+
+function resolver(estado, resposta) {
   const painel = painelAtual(estado);
-  if (
-    estado.fase !== FASES.JOGANDO ||
-    !painel.opcoes.includes(opcao) ||
-    estado.descartadas.includes(opcao)
-  ) {
+  if (estado.fase !== FASES.JOGANDO || !respostaValida(painel, estado, resposta)) {
     return estado;
   }
-  if (opcao === painel.texto) {
+  if (mesmaResposta(resposta, painel.texto)) {
     const fechadas = contarCasasFechadas(painel.texto, estado.letrasUsadas);
     const bonus = PONTOS_POR_CASA_FECHADA * fechadas * multiplicadorAtual(estado);
     return fecharPainel({ ...estado, ultimaJogada: null }, bonus);
   }
   return {
     ...estado,
-    descartadas: [...estado.descartadas, opcao],
+    descartadas: painel.opcoes ? [...estado.descartadas, resposta] : estado.descartadas,
     erros: estado.erros + 1,
     valorRoleta: null,
     vez: proximoJogador(estado),
-    ultimaJogada: { tipo: JOGADAS.CHUTE_ERRADO, opcao },
+    ultimaJogada: { tipo: JOGADAS.CHUTE_ERRADO, resposta },
   };
 }
 
@@ -203,7 +211,7 @@ export function aplicarAcao(estado, acao) {
     case ACOES.ESCOLHER_LETRA:
       return escolherLetra(estado, acao.letra);
     case ACOES.RESOLVER:
-      return resolver(estado, acao.opcao);
+      return resolver(estado, acao.resposta);
     case ACOES.PROXIMO_PAINEL:
       return avancarPainel(estado);
     default:

@@ -41,7 +41,7 @@ Inspirada no formato clássico de descobrir letras em um painel. Só a mecânica
 - Cada partida tem **3 painéis** do mesmo **tema**, resolvidos um por vez. O 1º vale ×1, o 2º ×2 e o 3º ×3 (o último sempre pode virar o jogo).
 - O painel mostra uma casa fechada para cada letra, com a dica ao lado.
 - Letras são escolhidas em um **teclado de botões**. A letra abre todas as casas onde aparece. Acentos e cedilha contam como a letra base: A abre Á e Ã; C abre Ç.
-- **Resolver** é escolher a resposta entre **3 opções escritas**, em qualquer momento da vez.
+- **Resolver** pode ser tentado em qualquer momento da vez. No iniciante, o jogador escolhe entre **3 opções escritas**. Nos outros níveis, **preenche as casas fechadas** pelo teclado de botões, sem opções na tela, para a resposta não ficar óbvia. Acentos entram sozinhos: basta a letra base.
 - Se a última letra abrir o painel inteiro, ele está resolvido por quem a escolheu.
 - O próximo painel começa com o jogador seguinte a quem resolveu.
 - **Ninguém é eliminado e ninguém perde pontos.** A roleta não tem fatia punitiva, e errar só passa a vez.
@@ -54,7 +54,7 @@ Inspirada no formato clássico de descobrir letras em um painel. Só a mecânica
 - Letra certa: ganha `valor da roleta × casas abertas × multiplicador do painel` e continua jogando.
 - Letra errada: a vez passa.
 - Resolver certo: ganha 20 pontos por casa ainda fechada × multiplicador do painel, recompensando quem descobre cedo.
-- Resolver errado: a opção fica riscada e a vez passa. Um giro ainda não usado se perde.
+- Resolver errado: a vez passa, e a opção fica riscada no iniciante. Um giro ainda não usado se perde.
 - Vence quem tiver mais pontos após os 3 painéis. Empate é permitido.
 
 **Cooperativo (sem roleta)**
@@ -71,9 +71,9 @@ A roleta fica fora do cooperativo porque lá não há pontos para ela sortear.
 | Painel | Palavra de 2 sílabas: PATO, BOLA | Palavra mais longa, com dígrafos: GALINHA | Frase curta, com acentos e ç: PÃO COM MANTEIGA |
 | Dica | Emoji | Emoji | Frase |
 | Teclado | Letras da palavra + 4 extras | Alfabeto completo | Alfabeto completo |
-| Resolver | 3 opções escritas | 3 opções escritas | 3 opções escritas |
+| Resolver | 3 opções escritas | Preencher as casas | Preencher as casas |
 
-Importante: as opções do "Resolver" são **só texto**, sem imagem. Ler as opções é o exercício de leitura.
+Importante (iniciante): as opções do "Resolver" são **só texto**, sem imagem. Ler as opções é o exercício de leitura.
 
 ## Smart TV (obrigatório desde a V1)
 
@@ -133,7 +133,7 @@ Cada personagem fica em seu próprio componente/arquivo, para trocar a arte depo
 
 Textos só com letras maiúsculas (com acentos) e espaços, e no máximo 12 letras por palavra, para caber no celular.
 
-As opções erradas do "Resolver" vêm de outros itens do mesmo nível, fora dos 3 painéis da partida, priorizando os que começam com a mesma letra, têm o mesmo tamanho ou são do mesmo tema.
+As opções erradas do "Resolver" (só no iniciante) vêm de outros itens do mesmo nível, fora dos 3 painéis da partida, priorizando os que começam com a mesma letra, têm o mesmo tamanho ou são do mesmo tema.
 
 ## Deploy (depois da V1)
 
@@ -166,4 +166,4 @@ As opções erradas do "Resolver" vêm de outros itens do mesmo nível, fora dos
 5. Deploy em 3palavras.devsaulo.com.br, PWA, teste na TV real.
 6. **Online:** backend Node + Socket.IO, salas privadas com código.
 7. **Ranking** entre amigos (SQLite), reaproveitando o mesmo backend.
-8. Mais conteúdo no banco de painéis e resolver montando com peças nos níveis maiores.
+8. Mais conteúdo no banco de painéis.

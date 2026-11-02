@@ -14,7 +14,14 @@ function gerador(semente) {
 const NIVEIS = ['iniciante', 'intermediario', 'avancado'];
 
 describe('montarRodada', () => {
-  it.each(NIVEIS)('%s: 3 painéis do mesmo tema, com 3 opções de fora da partida', (nivel) => {
+  it.each(['intermediario', 'avancado'])('%s: não tem opções de resposta', (nivel) => {
+    for (const p of montarRodada(banco[nivel], nivel, gerador(3)).paineis) {
+      expect(p.opcoes).toBeNull();
+    }
+  });
+
+  it('iniciante: 3 painéis do mesmo tema, com 3 opções de fora da partida', () => {
+    const nivel = 'iniciante';
     const temas = banco[nivel];
     for (let semente = 1; semente <= 200; semente++) {
       const rodada = montarRodada(temas, nivel, gerador(semente));

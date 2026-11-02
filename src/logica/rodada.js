@@ -55,10 +55,14 @@ export function montarRodada(temas, nivel, rng = Math.random) {
     paineis: sorteados.map((item) => ({
       ...item,
       letras: montarTeclado(item.texto, nivel, rng),
-      opcoes: embaralhar(
-        [item.texto, ...escolherErradas({ ...item, tema: tema.tema }, candidatos, rng)],
-        rng,
-      ),
+      // Só o iniciante tem opções: nos outros níveis elas deixariam a resposta óbvia.
+      opcoes:
+        nivel === 'iniciante'
+          ? embaralhar(
+              [item.texto, ...escolherErradas({ ...item, tema: tema.tema }, candidatos, rng)],
+              rng,
+            )
+          : null,
     })),
   };
 }

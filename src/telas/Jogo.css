@@ -143,6 +143,18 @@
   margin-bottom: 0.6rem;
 }
 
+.jogo-botoes-preencher {
+  flex: none;
+  margin: 0 1.2rem 0.6rem 0;
+}
+
+.jogo-botoes-preencher .botao {
+  min-width: 7rem;
+  min-height: 2.4rem;
+  margin-bottom: 0.4rem;
+  padding: 0.1rem 0.8rem;
+}
+
 .jogo-resolver-opcoes {
   grid-gap: 0.6rem;
   max-width: 34rem;

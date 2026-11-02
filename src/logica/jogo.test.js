@@ -32,7 +32,7 @@ function partida(modo = MODOS.COMPETITIVO, totalJogadores = 2) {
 // Sorteio que cai na fatia de valor 10 (a primeira).
 const girar = (e, sorteio = 0) => aplicarAcao(e, { tipo: ACOES.GIRAR, sorteio });
 const letra = (e, l) => aplicarAcao(e, { tipo: ACOES.ESCOLHER_LETRA, letra: l });
-const resolver = (e, opcao) => aplicarAcao(e, { tipo: ACOES.RESOLVER, opcao });
+const resolver = (e, resposta) => aplicarAcao(e, { tipo: ACOES.RESOLVER, resposta });
 const proximo = (e) => aplicarAcao(e, { tipo: ACOES.PROXIMO_PAINEL });
 const pontos = (e) => e.jogadores.map((j) => j.pontos);
 
@@ -144,6 +144,37 @@ describe('resolver', () => {
     expect(resolver(e, 'ERRADA')).toBe(e);
     expect(girar(e)).toBe(e);
     expect(letra(e, 'Z')).toBe(e);
+  });
+});
+
+describe('resolver preenchendo as casas (sem opções)', () => {
+  function partidaSemOpcoes(texto) {
+    return criarPartida({
+      modo: MODOS.COMPETITIVO,
+      nivel: 'avancado',
+      jogadores: [{ id: 'a' }, { id: 'b' }],
+      rodada: { tema: 'T', paineis: [{ texto, letras: ALFABETO, opcoes: null }] },
+    });
+  }
+
+  it('aceita a resposta sem acentos e paga as casas fechadas', () => {
+    const e = resolver(partidaSemOpcoes('PÃO COM MEL'), 'PAO COM MEL');
+    expect(e.fase).toBe(FASES.RESOLVIDO);
+    expect(e.ganho).toBe(20 * 9);
+  });
+
+  it('errar passa a vez, conta erro e não risca nada', () => {
+    const e = resolver(partidaSemOpcoes('PÃO COM MEL'), 'PAO COM SAL');
+    expect(e.fase).toBe(FASES.JOGANDO);
+    expect(e.vez).toBe(1);
+    expect(e.erros).toBe(1);
+    expect(e.descartadas).toEqual([]);
+    expect(e.ultimaJogada).toEqual({ tipo: JOGADAS.CHUTE_ERRADO, resposta: 'PAO COM SAL' });
+  });
+
+  it('ignora resposta incompleta', () => {
+    const e = partidaSemOpcoes('PÃO COM MEL');
+    expect(resolver(e, 'PAO COM')).toBe(e);
   });
 });
 
