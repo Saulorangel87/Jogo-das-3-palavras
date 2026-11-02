@@ -35,3 +35,9 @@ Registro de cada etapa: o que mudou e por quê. A entrada mais recente fica no f
 **Por quê:** as regras ficam separadas da interface para serem reaproveitadas no servidor do modo online.
 
 **Decisão:** as opções erradas nunca são outras palavras do trio da rodada. Assim, uma opção não entrega a resposta de outra palavra.
+
+## 2026-11-02 — Etapa 4: navegação por controle remoto
+
+**O que mudou:** `src/navegacao/` move o foco pelas setas conforme a posição dos botões na tela, trata as teclas Voltar (Escape, Backspace, Tizen e webOS) e recupera o foco quando um botão some.
+
+**Por quê:** toda a interação precisa funcionar só com setas + Enter. Segurar o OK também não avança várias telas de uma vez.
