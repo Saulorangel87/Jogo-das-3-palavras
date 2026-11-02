@@ -1,7 +1,7 @@
-import Avatar from '../componentes/Avatar.jsx';
 import Estrelas from '../componentes/Estrelas.jsx';
 import { MODOS, calcularResultado } from '../logica/jogo.js';
 import { useFoco, useVoltar } from '../navegacao/useNavegacao.js';
+import Personagem from '../personagens/Personagem.jsx';
 import './Resultado.css';
 
 function tituloCompetitivo(vencedores) {
@@ -24,7 +24,7 @@ export default function Resultado({ estado, aoJogarDeNovo, aoInicio }) {
           <ol className="resultado-lista">
             {resultado.ranking.map((j) => (
               <li key={j.id} className="resultado-item">
-                <Avatar personagem={j} />
+                <Personagem personagem={j} expressao={resultado.vencedores.includes(j) ? 'comemorando' : 'normal'} />
                 <span className="resultado-nome">{j.nome}</span>
                 <strong>{j.pontos} pontos</strong>
               </li>
@@ -34,6 +34,11 @@ export default function Resultado({ estado, aoJogarDeNovo, aoInicio }) {
       ) : (
         <>
           <h1 className="titulo">Vocês conseguiram!</h1>
+          <div className="resultado-equipe">
+            {estado.jogadores.map((j) => (
+              <Personagem key={j.id} personagem={j} expressao="comemorando" />
+            ))}
+          </div>
           <p className="resultado-estrelas">
             <Estrelas quantidade={resultado.estrelas} maximo={resultado.maximo} />
           </p>

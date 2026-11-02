@@ -145,3 +145,18 @@ Registro de cada etapa: o que mudou e por quê. A entrada mais recente fica no f
 **O que mudou:** os 8 personagens agora são SVGs originais em `src/personagens/`, cada um em seu arquivo, com 4 expressões feitas por um `Rosto.jsx` compartilhado.
 
 **Por quê:** é o passo 3 do roteiro. Sem bibliotecas nem imagens externas, o peso do jogo quase não muda, e o desenho funciona em navegador antigo. O nome de cada um virou parte do desenho: a Vó Vírgula tem forma de vírgula, o Capitão Til tem bigode em forma de til e a Galinha Cedilha tem a cauda da cedilha.
+
+## 2026-11-02 — Etapa 12: personagens no jogo
+
+**O que mudou:** os personagens substituem os círculos com a inicial na seleção, no placar e no resultado. Quem tem a vez fica pensando, quem acerta comemora e quem erra faz cara de "quase". Na seleção, o personagem em foco pula.
+
+**Por quê:** é a segunda parte do passo 3 do roteiro. A escolha da expressão só lê o estado do jogo, em `src/personagens/expressao.js`, e nenhuma regra foi para os componentes. A única mudança nas regras foi registrar quem fez a última jogada.
+
+**Verificado no Chrome:**
+
+- 53 testes passando e build gerado.
+- Só com teclado: seleção e início da partida com 3 jogadores.
+- Por cliques: partida completa com 4 jogadores nos dois modos até o resultado, incluindo o competitivo, que faltava.
+- Sem rolagem em 1920x1080, 1745x730 e 1280x720. Em 360x640 a largura cabe, e a seleção e o jogo rolam pouco.
+
+**Ainda não verificado:** animações em TV ou navegador antigo.

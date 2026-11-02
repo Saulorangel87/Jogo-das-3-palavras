@@ -69,7 +69,7 @@ describe('letras no competitivo', () => {
     expect(pontos(e)).toEqual([20, 0]);
     expect(e.vez).toBe(0);
     expect(e.valorRoleta).toBeNull();
-    expect(e.ultimaJogada).toEqual({ tipo: JOGADAS.LETRA_CERTA, letra: 'C', quantidade: 2, pontos: 20 });
+    expect(e.ultimaJogada).toEqual({ tipo: JOGADAS.LETRA_CERTA, letra: 'C', quantidade: 2, pontos: 20, quem: 0 });
   });
 
   it('letra errada não tira pontos e passa a vez', () => {
@@ -169,7 +169,7 @@ describe('resolver preenchendo as casas (sem opções)', () => {
     expect(e.vez).toBe(1);
     expect(e.erros).toBe(1);
     expect(e.descartadas).toEqual([]);
-    expect(e.ultimaJogada).toEqual({ tipo: JOGADAS.CHUTE_ERRADO, resposta: 'PAO COM SAL' });
+    expect(e.ultimaJogada).toEqual({ tipo: JOGADAS.CHUTE_ERRADO, resposta: 'PAO COM SAL', quem: 0 });
   });
 
   it('ignora resposta incompleta', () => {

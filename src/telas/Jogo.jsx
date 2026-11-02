@@ -1,5 +1,4 @@
 import { useEffect, useState } from 'react';
-import Avatar from '../componentes/Avatar.jsx';
 import Estrelas from '../componentes/Estrelas.jsx';
 import Painel from '../componentes/Painel.jsx';
 import Roleta, { proximoAngulo } from '../componentes/Roleta.jsx';
@@ -17,6 +16,8 @@ import {
 } from '../logica/jogo.js';
 import { contarCasasFechadas, montarResposta } from '../logica/texto.js';
 import { useFoco, useVoltar } from '../navegacao/useNavegacao.js';
+import Personagem from '../personagens/Personagem.jsx';
+import { expressaoNoJogo } from '../personagens/expressao.js';
 import './Jogo.css';
 
 const DURACAO_GIRO = 2600;
@@ -128,7 +129,7 @@ export default function Jogo({ estado, despachar, aoSair }) {
       <ul className="jogo-placar">
         {estado.jogadores.map((j, i) => (
           <li key={j.id} className={i === estado.vez ? 'jogo-jogador jogo-jogador-vez' : 'jogo-jogador'}>
-            <Avatar personagem={j} />
+            <Personagem personagem={j} expressao={expressaoNoJogo(estado, i)} />
             <span className="jogo-nome">{j.nome}</span>
             {competitivo && <strong>{j.pontos}</strong>}
           </li>

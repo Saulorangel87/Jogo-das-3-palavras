@@ -40,6 +40,11 @@
   font-size: 0.8rem;
 }
 
+.jogo-jogador .personagem {
+  width: 2.5rem;
+  height: 2.5rem;
+}
+
 .jogo-jogador-vez {
   border-color: var(--destaque);
 }
