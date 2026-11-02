@@ -2,170 +2,213 @@ import { describe, expect, it } from 'vitest';
 import {
   ACOES,
   FASES,
+  FATIAS_ROLETA,
+  JOGADAS,
   MODOS,
   aplicarAcao,
   calcularEstrelas,
-  calcularPontos,
   calcularResultado,
   criarPartida,
-  podeRevelar,
-  valorAtual,
+  podeGirar,
 } from './jogo.js';
 
-const palavra = (nome) => ({
-  palavra: nome,
-  silabas: [nome.slice(0, 2), nome.slice(2)],
-  emoji: 'x',
-  opcoes: [nome, 'ERRA', 'FALA'],
+const ALFABETO = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
+
+const painel = (texto) => ({
+  texto,
+  letras: ALFABETO,
+  opcoes: [texto, 'ERRADA', 'OUTRA'],
 });
 
 function partida(modo = MODOS.COMPETITIVO, totalJogadores = 2) {
   return criarPartida({
     modo,
+    nivel: 'iniciante',
     jogadores: Array.from({ length: totalJogadores }, (_, i) => ({ id: `j${i}` })),
-    rodada: { tema: 'T', palavras: ['PATO', 'VACA', 'GALO'].map(palavra) },
+    rodada: { tema: 'T', paineis: ['COCO', 'PATO', 'GALO'].map(painel) },
   });
 }
 
-const revelar = (e) => aplicarAcao(e, { tipo: ACOES.REVELAR });
-const arriscar = (e, opcao) => aplicarAcao(e, { tipo: ACOES.ARRISCAR, opcao });
-const proxima = (e) => aplicarAcao(e, { tipo: ACOES.PROXIMA_PALAVRA });
+// Sorteio que cai na fatia de valor 10 (a primeira).
+const girar = (e, sorteio = 0) => aplicarAcao(e, { tipo: ACOES.GIRAR, sorteio });
+const letra = (e, l) => aplicarAcao(e, { tipo: ACOES.ESCOLHER_LETRA, letra: l });
+const resolver = (e, opcao) => aplicarAcao(e, { tipo: ACOES.RESOLVER, opcao });
+const proximo = (e) => aplicarAcao(e, { tipo: ACOES.PROXIMO_PAINEL });
+const pontos = (e) => e.jogadores.map((j) => j.pontos);
 
-describe('pontuação', () => {
-  it('desconta 30% por penalidade, com mínimo de 30%', () => {
-    expect([0, 1, 2, 3, 4].map((p) => calcularPontos(0, p))).toEqual([10, 7, 4, 3, 3]);
-    expect([0, 1, 2, 3, 4].map((p) => calcularPontos(1, p))).toEqual([20, 14, 8, 6, 6]);
-    expect([0, 1, 2, 3, 4].map((p) => calcularPontos(2, p))).toEqual([30, 21, 12, 9, 9]);
+describe('roleta', () => {
+  it('o sorteio define a fatia', () => {
+    expect(girar(partida(), 0).valorRoleta).toBe(FATIAS_ROLETA[0]);
+    expect(girar(partida(), 0.999).valorRoleta).toBe(FATIAS_ROLETA[FATIAS_ROLETA.length - 1]);
   });
 
-  it('dá 3, 2 ou 1 estrelas conforme as penalidades', () => {
-    expect([0, 1, 2, 3].map(calcularEstrelas)).toEqual([3, 2, 1, 1]);
-  });
-});
-
-describe('revelar', () => {
-  it('não encerra a vez e permite só 1 revelação por vez', () => {
-    const e = revelar(partida());
-    expect(e.vez).toBe(0);
-    expect(e.revelados).toBe(1);
-    expect(podeRevelar(e)).toBe(false);
-    expect(revelar(e)).toBe(e);
+  it('não gira de novo antes de usar o giro', () => {
+    const e = girar(partida());
+    expect(podeGirar(e)).toBe(false);
+    expect(girar(e, 0.5)).toBe(e);
   });
 
-  it('o próximo jogador pode revelar depois de um erro', () => {
-    const e = arriscar(revelar(partida()), 'ERRA');
-    expect(e.vez).toBe(1);
-    expect(podeRevelar(e)).toBe(true);
+  it('não tem fatia punitiva', () => {
+    expect(FATIAS_ROLETA.every((v) => v > 0)).toBe(true);
   });
 
-  it('não revela além do fim da palavra', () => {
-    let e = revelar(partida());
-    e = arriscar(e, 'ERRA');
-    e = revelar(e);
-    e = arriscar(e, 'FALA');
-    expect(e.revelados).toBe(2);
-    expect(podeRevelar(e)).toBe(false);
-    expect(revelar(e)).toBe(e);
+  it('não existe no cooperativo', () => {
+    const e = partida(MODOS.COOPERATIVO);
+    expect(girar(e)).toBe(e);
   });
 });
 
-describe('arriscar', () => {
-  it('errar descarta a opção, passa a vez e reduz o valor', () => {
-    const e = arriscar(partida(), 'ERRA');
-    expect(e.descartadas).toEqual(['ERRA']);
-    expect(e.vez).toBe(1);
-    expect(e.ultimoErro).toBe('ERRA');
-    expect(valorAtual(e)).toBe(7);
+describe('letras no competitivo', () => {
+  it('não aceita letra antes de girar', () => {
+    const e = partida();
+    expect(letra(e, 'C')).toBe(e);
   });
 
-  it('ignora opção já descartada ou inexistente', () => {
-    const e = arriscar(partida(), 'ERRA');
-    expect(arriscar(e, 'ERRA')).toBe(e);
-    expect(arriscar(e, 'NADA')).toBe(e);
-  });
-
-  it('a vez dá a volta entre os jogadores', () => {
-    let e = partida(MODOS.COMPETITIVO, 2);
-    e = arriscar(e, 'ERRA');
-    e = arriscar(e, 'FALA');
+  it('letra certa paga por casa aberta e mantém a vez', () => {
+    const e = letra(girar(partida()), 'C');
+    expect(pontos(e)).toEqual([20, 0]);
     expect(e.vez).toBe(0);
+    expect(e.valorRoleta).toBeNull();
+    expect(e.ultimaJogada).toEqual({ tipo: JOGADAS.LETRA_CERTA, letra: 'C', quantidade: 2, pontos: 20 });
   });
 
-  it('acertar dá os pontos a quem acertou', () => {
-    const e = arriscar(arriscar(partida(), 'ERRA'), 'PATO');
-    expect(e.fase).toBe(FASES.RESOLVIDA);
-    expect(e.ganho).toBe(7);
-    expect(e.jogadores.map((j) => j.pontos)).toEqual([0, 7]);
+  it('letra errada não tira pontos e passa a vez', () => {
+    let e = letra(girar(partida()), 'C');
+    e = letra(girar(e), 'Z');
+    expect(pontos(e)).toEqual([20, 0]);
+    expect(e.vez).toBe(1);
+    expect(e.ultimaJogada.tipo).toBe(JOGADAS.LETRA_ERRADA);
   });
 
-  it('revelar e acertar na mesma vez cobra 1 penalidade', () => {
-    const e = arriscar(revelar(partida()), 'PATO');
-    expect(e.jogadores[0].pontos).toBe(7);
+  it('ignora letra repetida ou fora do teclado', () => {
+    const e = girar(letra(girar(partida()), 'C'));
+    expect(letra(e, 'C')).toBe(e);
+    expect(letra(e, 'Ç')).toBe(e);
   });
 
-  it('não aceita ações depois de resolvida', () => {
-    const e = arriscar(partida(), 'PATO');
-    expect(arriscar(e, 'ERRA')).toBe(e);
-    expect(revelar(e)).toBe(e);
+  it('abrir a última letra resolve o painel', () => {
+    let e = letra(girar(partida()), 'C');
+    e = letra(girar(e), 'O');
+    expect(e.fase).toBe(FASES.RESOLVIDO);
+    expect(e.ganho).toBe(20);
+    expect(pontos(e)).toEqual([40, 0]);
+  });
+
+  it('a pontuação de letra usa o multiplicador do painel', () => {
+    let e = proximo(resolver(partida(), 'COCO'));
+    const quem = e.vez;
+    e = letra(girar(e), 'P');
+    expect(e.jogadores[quem].pontos).toBe(10 * 1 * 2);
+  });
+
+  it('acentos abrem junto: A conta o Ã', () => {
+    const e = criarPartida({
+      modo: MODOS.COMPETITIVO,
+      nivel: 'avancado',
+      jogadores: [{ id: 'a' }, { id: 'b' }],
+      rodada: { tema: 'T', paineis: [painel('PÃO DA MANHÃ')] },
+    });
+    expect(letra(girar(e), 'A').ultimaJogada.quantidade).toBe(4);
+  });
+});
+
+describe('resolver', () => {
+  it('certo paga 5 por casa fechada, com multiplicador', () => {
+    const e = resolver(partida(), 'COCO');
+    expect(e.fase).toBe(FASES.RESOLVIDO);
+    expect(e.ganho).toBe(20);
+    expect(pontos(e)).toEqual([20, 0]);
+
+    const segundo = resolver(proximo(e), 'PATO');
+    expect(segundo.ganho).toBe(5 * 4 * 2);
+    expect(pontos(segundo)).toEqual([20, 40]);
+  });
+
+  it('errado risca a opção, passa a vez e perde o giro', () => {
+    const e = resolver(girar(partida()), 'ERRADA');
+    expect(e.descartadas).toEqual(['ERRADA']);
+    expect(e.vez).toBe(1);
+    expect(e.valorRoleta).toBeNull();
+    expect(e.ultimaJogada.tipo).toBe(JOGADAS.CHUTE_ERRADO);
+    expect(pontos(e)).toEqual([0, 0]);
+  });
+
+  it('ignora opção riscada ou inexistente', () => {
+    const e = resolver(partida(), 'ERRADA');
+    expect(resolver(e, 'ERRADA')).toBe(e);
+    expect(resolver(e, 'NADA')).toBe(e);
+  });
+
+  it('não aceita jogadas com o painel já resolvido', () => {
+    const e = resolver(partida(), 'COCO');
+    expect(resolver(e, 'ERRADA')).toBe(e);
+    expect(girar(e)).toBe(e);
+    expect(letra(e, 'Z')).toBe(e);
   });
 });
 
 describe('cooperativo', () => {
-  it('chutar até acertar não garante mais 3 estrelas', () => {
-    let e = partida(MODOS.COOPERATIVO);
-    e = arriscar(e, 'ERRA');
-    e = arriscar(e, 'FALA');
-    e = arriscar(e, 'PATO');
-    expect(e.ganho).toBe(1);
-    expect(e.estrelas).toBe(1);
+  it('escolhe letra sem girar e passa a vez mesmo acertando', () => {
+    const e = letra(partida(MODOS.COOPERATIVO), 'C');
+    expect(e.vez).toBe(1);
+    expect(e.erros).toBe(0);
+    expect(pontos(e)).toEqual([0, 0]);
   });
 
-  it('soma estrelas da equipe sem dar pontos individuais', () => {
-    const e = arriscar(partida(MODOS.COOPERATIVO), 'PATO');
-    expect(e.estrelas).toBe(3);
-    expect(e.jogadores.every((j) => j.pontos === 0)).toBe(true);
+  it('estrelas dependem dos erros', () => {
+    expect([0, 1, 2, 3, 4, 5, 9].map(calcularEstrelas)).toEqual([3, 3, 3, 2, 2, 1, 1]);
+  });
+
+  it('letras e chutes errados contam como erro', () => {
+    let e = partida(MODOS.COOPERATIVO);
+    for (const l of ['Z', 'X', 'W']) e = letra(e, l);
+    e = resolver(e, 'ERRADA');
+    e = resolver(e, 'COCO');
+    expect(e.erros).toBe(4);
+    expect(e.ganho).toBe(2);
+    expect(e.estrelas).toBe(2);
+  });
+
+  it('chega ao máximo de 9 estrelas', () => {
+    let e = partida(MODOS.COOPERATIVO);
+    e = proximo(resolver(e, 'COCO'));
+    e = proximo(resolver(e, 'PATO'));
+    e = proximo(resolver(e, 'GALO'));
+    expect(calcularResultado(e)).toEqual({ estrelas: 9, maximo: 9 });
   });
 });
 
-describe('próxima palavra e fim', () => {
-  it('só avança depois de resolvida', () => {
+describe('próximo painel e fim', () => {
+  it('só avança depois de resolvido', () => {
     const e = partida();
-    expect(proxima(e)).toBe(e);
+    expect(proximo(e)).toBe(e);
   });
 
-  it('a próxima palavra começa com o jogador seguinte a quem acertou e zera a rodada', () => {
+  it('começa com o jogador seguinte a quem resolveu e limpa o painel', () => {
     let e = partida(MODOS.COMPETITIVO, 3);
-    e = arriscar(revelar(e), 'ERRA');
-    e = arriscar(e, 'PATO');
-    e = proxima(e);
-    expect(e.indicePalavra).toBe(1);
+    e = letra(girar(e), 'Z');
+    e = resolver(e, 'COCO');
+    e = proximo(e);
+    expect(e.indicePainel).toBe(1);
     expect(e.vez).toBe(2);
-    expect(e.revelados).toBe(0);
+    expect(e.letrasUsadas).toEqual([]);
     expect(e.descartadas).toEqual([]);
+    expect(e.erros).toBe(0);
     expect(e.fase).toBe(FASES.JOGANDO);
   });
 
-  it('termina após a terceira palavra, com o vencedor correto', () => {
+  it('termina após o terceiro painel, com o vencedor correto', () => {
     let e = partida();
-    e = proxima(arriscar(e, 'PATO'));
-    e = proxima(arriscar(e, 'VACA'));
-    e = proxima(arriscar(e, 'GALO'));
+    e = proximo(resolver(e, 'COCO'));
+    e = proximo(resolver(e, 'PATO'));
+    e = proximo(resolver(e, 'GALO'));
     expect(e.fase).toBe(FASES.FIM);
-    const r = calcularResultado(e);
-    expect(r.vencedores.map((j) => j.id)).toEqual(['j0']);
-    expect(e.jogadores.map((j) => j.pontos)).toEqual([40, 20]);
+    expect(pontos(e)).toEqual([20 + 60, 40]);
+    expect(calcularResultado(e).vencedores.map((j) => j.id)).toEqual(['j0']);
   });
 
   it('aceita empate', () => {
     const e = { ...partida(), jogadores: [{ id: 'a', pontos: 30 }, { id: 'b', pontos: 30 }] };
     expect(calcularResultado(e).vencedores).toHaveLength(2);
-  });
-
-  it('o cooperativo chega ao máximo de 9 estrelas', () => {
-    let e = partida(MODOS.COOPERATIVO);
-    e = proxima(arriscar(e, 'PATO'));
-    e = proxima(arriscar(e, 'VACA'));
-    e = proxima(arriscar(e, 'GALO'));
-    expect(calcularResultado(e)).toEqual({ estrelas: 9, maximo: 9 });
   });
 });

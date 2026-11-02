@@ -1,74 +1,77 @@
 // Regras do jogo em JavaScript puro: proximoEstado = aplicarAcao(estado, acao).
 // Sem React, window, document ou localStorage: será reutilizado no servidor.
+import { contarCasasFechadas, contarOcorrencias } from './texto.js';
 
 export const MODOS = { COMPETITIVO: 'competitivo', COOPERATIVO: 'cooperativo' };
-export const FASES = { JOGANDO: 'jogando', RESOLVIDA: 'resolvida', FIM: 'fim' };
+export const FASES = { JOGANDO: 'jogando', RESOLVIDO: 'resolvido', FIM: 'fim' };
 export const ACOES = {
-  REVELAR: 'REVELAR',
-  ARRISCAR: 'ARRISCAR',
-  PROXIMA_PALAVRA: 'PROXIMA_PALAVRA',
+  GIRAR: 'GIRAR',
+  ESCOLHER_LETRA: 'ESCOLHER_LETRA',
+  RESOLVER: 'RESOLVER',
+  PROXIMO_PAINEL: 'PROXIMO_PAINEL',
+};
+export const JOGADAS = {
+  LETRA_CERTA: 'letra-certa',
+  LETRA_ERRADA: 'letra-errada',
+  CHUTE_ERRADO: 'chute-errado',
 };
 
-const VALORES = [10, 20, 30];
-const DESCONTO_POR_PENALIDADE = 30;
-const PERCENTUAL_MINIMO = 30;
+export const FATIAS_ROLETA = [10, 25, 5, 30, 15, 50, 20, 40];
+const PONTOS_POR_CASA_FECHADA = 5;
 
-export function criarPartida({ modo, jogadores, rodada }) {
+export function criarPartida({ modo, nivel, jogadores, rodada }) {
   return {
     modo,
+    nivel,
     tema: rodada.tema,
-    palavras: rodada.palavras,
+    paineis: rodada.paineis,
     jogadores: jogadores.map((j) => ({ ...j, pontos: 0 })),
     estrelas: 0,
-    indicePalavra: 0,
+    indicePainel: 0,
     vez: 0,
-    revelados: 0,
+    letrasUsadas: [],
     descartadas: [],
-    revelouNestaVez: false,
+    erros: 0,
+    valorRoleta: null,
     fase: FASES.JOGANDO,
-    ultimoErro: null,
+    ultimaJogada: null,
     ganho: 0,
   };
 }
 
-export function calcularPontos(indicePalavra, penalidades) {
-  const percentual = Math.max(
-    PERCENTUAL_MINIMO,
-    100 - DESCONTO_POR_PENALIDADE * penalidades,
-  );
-  return Math.round((VALORES[indicePalavra] * percentual) / 100);
+export function painelAtual(estado) {
+  return estado.paineis[estado.indicePainel];
 }
 
-export function calcularEstrelas(penalidades) {
-  if (penalidades === 0) return 3;
-  return penalidades === 1 ? 2 : 1;
+export function multiplicadorAtual(estado) {
+  return estado.indicePainel + 1;
 }
 
-export function palavraAtual(estado) {
-  return estado.palavras[estado.indicePalavra];
+export function calcularEstrelas(erros) {
+  if (erros <= 2) return 3;
+  return erros <= 4 ? 2 : 1;
 }
 
-// Quanto a palavra vale agora: pontos no competitivo, estrelas no cooperativo.
-export function valorAtual(estado) {
-  const penalidades = estado.revelados + estado.descartadas.length;
-  return estado.modo === MODOS.COMPETITIVO
-    ? calcularPontos(estado.indicePalavra, penalidades)
-    : calcularEstrelas(penalidades);
+export function indiceDaFatia(sorteio) {
+  return Math.floor(sorteio * FATIAS_ROLETA.length);
 }
 
-export function podeRevelar(estado) {
+function ehCompetitivo(estado) {
+  return estado.modo === MODOS.COMPETITIVO;
+}
+
+export function podeGirar(estado) {
   return (
+    ehCompetitivo(estado) &&
     estado.fase === FASES.JOGANDO &&
-    !estado.revelouNestaVez &&
-    estado.revelados < palavraAtual(estado).silabas.length
+    estado.valorRoleta === null
   );
 }
 
-function podeArriscar(estado, opcao) {
+export function podeEscolherLetra(estado) {
   return (
     estado.fase === FASES.JOGANDO &&
-    palavraAtual(estado).opcoes.includes(opcao) &&
-    !estado.descartadas.includes(opcao)
+    (!ehCompetitivo(estado) || estado.valorRoleta !== null)
   );
 }
 
@@ -76,46 +79,117 @@ function proximoJogador(estado) {
   return (estado.vez + 1) % estado.jogadores.length;
 }
 
-function resolverPalavra(estado) {
-  const ganho = valorAtual(estado);
-  const competitivo = estado.modo === MODOS.COMPETITIVO;
+function somarPontos(estado, pontos) {
+  return estado.jogadores.map((j, i) =>
+    i === estado.vez ? { ...j, pontos: j.pontos + pontos } : j,
+  );
+}
+
+function fecharPainel(estado, ganhoCompetitivo) {
+  const ganho = ehCompetitivo(estado)
+    ? ganhoCompetitivo
+    : calcularEstrelas(estado.erros);
   return {
     ...estado,
-    fase: FASES.RESOLVIDA,
+    fase: FASES.RESOLVIDO,
     ganho,
-    ultimoErro: null,
-    estrelas: competitivo ? estado.estrelas : estado.estrelas + ganho,
-    jogadores: competitivo
-      ? estado.jogadores.map((j, i) =>
-          i === estado.vez ? { ...j, pontos: j.pontos + ganho } : j,
-        )
-      : estado.jogadores,
+    valorRoleta: null,
+    estrelas: ehCompetitivo(estado) ? estado.estrelas : estado.estrelas + ganho,
+    jogadores: ehCompetitivo(estado) ? somarPontos(estado, ganho) : estado.jogadores,
   };
 }
 
-function registrarErro(estado, opcao) {
+function girar(estado, sorteio) {
+  if (!podeGirar(estado)) return estado;
+  return {
+    ...estado,
+    valorRoleta: FATIAS_ROLETA[indiceDaFatia(sorteio)],
+    ultimaJogada: null,
+  };
+}
+
+function escolherLetra(estado, letra) {
+  const painel = painelAtual(estado);
+  if (
+    !podeEscolherLetra(estado) ||
+    !painel.letras.includes(letra) ||
+    estado.letrasUsadas.includes(letra)
+  ) {
+    return estado;
+  }
+
+  const letrasUsadas = [...estado.letrasUsadas, letra];
+  const quantidade = contarOcorrencias(painel.texto, letra);
+
+  if (quantidade === 0) {
+    return {
+      ...estado,
+      letrasUsadas,
+      erros: estado.erros + 1,
+      valorRoleta: null,
+      vez: proximoJogador(estado),
+      ultimaJogada: { tipo: JOGADAS.LETRA_ERRADA, letra },
+    };
+  }
+
+  const pontos = ehCompetitivo(estado)
+    ? estado.valorRoleta * quantidade * multiplicadorAtual(estado)
+    : 0;
+  const ultimaJogada = { tipo: JOGADAS.LETRA_CERTA, letra, quantidade, pontos };
+
+  if (contarCasasFechadas(painel.texto, letrasUsadas) === 0) {
+    return fecharPainel({ ...estado, letrasUsadas, ultimaJogada }, pontos);
+  }
+  return {
+    ...estado,
+    letrasUsadas,
+    valorRoleta: null,
+    ultimaJogada,
+    // No competitivo quem acerta continua; no cooperativo todos revezam.
+    vez: ehCompetitivo(estado) ? estado.vez : proximoJogador(estado),
+    jogadores: somarPontos(estado, pontos),
+  };
+}
+
+function resolver(estado, opcao) {
+  const painel = painelAtual(estado);
+  if (
+    estado.fase !== FASES.JOGANDO ||
+    !painel.opcoes.includes(opcao) ||
+    estado.descartadas.includes(opcao)
+  ) {
+    return estado;
+  }
+  if (opcao === painel.texto) {
+    const fechadas = contarCasasFechadas(painel.texto, estado.letrasUsadas);
+    const bonus = PONTOS_POR_CASA_FECHADA * fechadas * multiplicadorAtual(estado);
+    return fecharPainel({ ...estado, ultimaJogada: null }, bonus);
+  }
   return {
     ...estado,
     descartadas: [...estado.descartadas, opcao],
+    erros: estado.erros + 1,
+    valorRoleta: null,
     vez: proximoJogador(estado),
-    revelouNestaVez: false,
-    ultimoErro: opcao,
+    ultimaJogada: { tipo: JOGADAS.CHUTE_ERRADO, opcao },
   };
 }
 
-function avancarPalavra(estado) {
-  if (estado.indicePalavra === estado.palavras.length - 1) {
+function avancarPainel(estado) {
+  if (estado.fase !== FASES.RESOLVIDO) return estado;
+  if (estado.indicePainel === estado.paineis.length - 1) {
     return { ...estado, fase: FASES.FIM };
   }
   return {
     ...estado,
-    indicePalavra: estado.indicePalavra + 1,
+    indicePainel: estado.indicePainel + 1,
     vez: proximoJogador(estado),
-    revelados: 0,
+    letrasUsadas: [],
     descartadas: [],
-    revelouNestaVez: false,
+    erros: 0,
+    valorRoleta: null,
     fase: FASES.JOGANDO,
-    ultimoErro: null,
+    ultimaJogada: null,
     ganho: 0,
   };
 }
@@ -123,21 +197,14 @@ function avancarPalavra(estado) {
 // Ações inválidas devolvem o mesmo estado, sem lançar erro.
 export function aplicarAcao(estado, acao) {
   switch (acao.tipo) {
-    case ACOES.REVELAR:
-      if (!podeRevelar(estado)) return estado;
-      return {
-        ...estado,
-        revelados: estado.revelados + 1,
-        revelouNestaVez: true,
-        ultimoErro: null,
-      };
-    case ACOES.ARRISCAR:
-      if (!podeArriscar(estado, acao.opcao)) return estado;
-      return acao.opcao === palavraAtual(estado).palavra
-        ? resolverPalavra(estado)
-        : registrarErro(estado, acao.opcao);
-    case ACOES.PROXIMA_PALAVRA:
-      return estado.fase === FASES.RESOLVIDA ? avancarPalavra(estado) : estado;
+    case ACOES.GIRAR:
+      return girar(estado, acao.sorteio);
+    case ACOES.ESCOLHER_LETRA:
+      return escolherLetra(estado, acao.letra);
+    case ACOES.RESOLVER:
+      return resolver(estado, acao.opcao);
+    case ACOES.PROXIMO_PAINEL:
+      return avancarPainel(estado);
     default:
       return estado;
   }
@@ -145,7 +212,7 @@ export function aplicarAcao(estado, acao) {
 
 export function calcularResultado(estado) {
   if (estado.modo === MODOS.COOPERATIVO) {
-    return { estrelas: estado.estrelas, maximo: estado.palavras.length * 3 };
+    return { estrelas: estado.estrelas, maximo: estado.paineis.length * 3 };
   }
   const ranking = [...estado.jogadores].sort((a, b) => b.pontos - a.pontos);
   const maior = ranking[0].pontos;

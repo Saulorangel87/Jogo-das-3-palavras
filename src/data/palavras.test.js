@@ -1,22 +1,28 @@
 import { describe, expect, it } from 'vitest';
 import { carregarPalavras } from './palavras.js';
 
+const NIVEIS = ['iniciante', 'intermediario', 'avancado'];
+
 describe('carregarPalavras', () => {
   it('rejeita nível desconhecido', async () => {
     await expect(carregarPalavras('impossivel')).rejects.toThrow();
   });
 
-  it('todo tema tem ao menos 3 palavras', async () => {
-    for (const tema of await carregarPalavras('iniciante')) {
-      expect(tema.palavras.length).toBeGreaterThanOrEqual(3);
-    }
+  it.each(NIVEIS)('%s: temas com 3 itens ou mais, sem repetição', async (nivel) => {
+    const temas = await carregarPalavras(nivel);
+    const textos = temas.flatMap((t) => t.itens.map((i) => i.texto));
+    expect(new Set(textos).size).toBe(textos.length);
+    for (const tema of temas) expect(tema.itens.length).toBeGreaterThanOrEqual(3);
   });
 
-  it('as sílabas de cada palavra formam a palavra e há emoji', async () => {
-    for (const tema of await carregarPalavras('iniciante')) {
-      for (const p of tema.palavras) {
-        expect(p.silabas.join('')).toBe(p.palavra);
-        expect(p.emoji).toBeTruthy();
+  it.each(NIVEIS)('%s: textos válidos e com dica', async (nivel) => {
+    for (const tema of await carregarPalavras(nivel)) {
+      for (const item of tema.itens) {
+        expect(item.texto).toMatch(/^[A-ZÀ-Ý]+( [A-ZÀ-Ý]+)*$/);
+        for (const palavra of item.texto.split(' ')) {
+          expect(palavra.length).toBeLessThanOrEqual(12);
+        }
+        expect(item.emoji || item.dica).toBeTruthy();
       }
     }
   });

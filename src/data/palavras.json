@@ -2,30 +2,94 @@
   "iniciante": [
     {
       "tema": "Fazenda",
-      "palavras": [
-        { "palavra": "PATO", "silabas": ["PA", "TO"], "emoji": "🦆" },
-        { "palavra": "VACA", "silabas": ["VA", "CA"], "emoji": "🐄" },
-        { "palavra": "GALO", "silabas": ["GA", "LO"], "emoji": "🐓" },
-        { "palavra": "BODE", "silabas": ["BO", "DE"], "emoji": "🐐" },
-        { "palavra": "GATO", "silabas": ["GA", "TO"], "emoji": "🐈" }
+      "itens": [
+        { "texto": "PATO", "emoji": "🦆" },
+        { "texto": "VACA", "emoji": "🐄" },
+        { "texto": "GALO", "emoji": "🐓" },
+        { "texto": "BODE", "emoji": "🐐" },
+        { "texto": "GATO", "emoji": "🐈" }
       ]
     },
     {
       "tema": "Comida",
-      "palavras": [
-        { "palavra": "BOLO", "silabas": ["BO", "LO"], "emoji": "🎂" },
-        { "palavra": "SUCO", "silabas": ["SU", "CO"], "emoji": "🧃" },
-        { "palavra": "UVA", "silabas": ["U", "VA"], "emoji": "🍇" },
-        { "palavra": "PERA", "silabas": ["PE", "RA"], "emoji": "🍐" },
-        { "palavra": "COCO", "silabas": ["CO", "CO"], "emoji": "🥥" }
+      "itens": [
+        { "texto": "BOLO", "emoji": "🎂" },
+        { "texto": "SUCO", "emoji": "🧃" },
+        { "texto": "UVA", "emoji": "🍇" },
+        { "texto": "PERA", "emoji": "🍐" },
+        { "texto": "COCO", "emoji": "🥥" }
       ]
     },
     {
       "tema": "Brinquedos",
-      "palavras": [
-        { "palavra": "BOLA", "silabas": ["BO", "LA"], "emoji": "⚽" },
-        { "palavra": "DADO", "silabas": ["DA", "DO"], "emoji": "🎲" },
-        { "palavra": "PIPA", "silabas": ["PI", "PA"], "emoji": "🪁" }
+      "itens": [
+        { "texto": "BOLA", "emoji": "⚽" },
+        { "texto": "DADO", "emoji": "🎲" },
+        { "texto": "PIPA", "emoji": "🪁" }
+      ]
+    }
+  ],
+  "intermediario": [
+    {
+      "tema": "Frutas",
+      "itens": [
+        { "texto": "BANANA", "emoji": "🍌" },
+        { "texto": "LARANJA", "emoji": "🍊" },
+        { "texto": "MORANGO", "emoji": "🍓" },
+        { "texto": "ABACAXI", "emoji": "🍍" },
+        { "texto": "MELANCIA", "emoji": "🍉" }
+      ]
+    },
+    {
+      "tema": "Animais",
+      "itens": [
+        { "texto": "GALINHA", "emoji": "🐔" },
+        { "texto": "COELHO", "emoji": "🐇" },
+        { "texto": "CAVALO", "emoji": "🐎" },
+        { "texto": "ELEFANTE", "emoji": "🐘" },
+        { "texto": "MACACO", "emoji": "🐒" }
+      ]
+    },
+    {
+      "tema": "Transportes",
+      "itens": [
+        { "texto": "BICICLETA", "emoji": "🚲" },
+        { "texto": "FOGUETE", "emoji": "🚀" },
+        { "texto": "AVIÃO", "emoji": "✈️" },
+        { "texto": "CAMINHÃO", "emoji": "🚚" },
+        { "texto": "BARCO", "emoji": "⛵" }
+      ]
+    }
+  ],
+  "avancado": [
+    {
+      "tema": "Escola",
+      "itens": [
+        { "texto": "LIVRO NA MOCHILA", "dica": "Vai junto para a aula" },
+        { "texto": "CADERNO DE DESENHO", "dica": "Onde os rabiscos viram arte" },
+        { "texto": "RECREIO NO PÁTIO", "dica": "A hora favorita de brincar" },
+        { "texto": "LÁPIS DE COR", "dica": "Pinta sem precisar de tinta" },
+        { "texto": "LIÇÃO DE CASA", "dica": "Tarefa feita depois da aula" }
+      ]
+    },
+    {
+      "tema": "Natureza",
+      "itens": [
+        { "texto": "CHUVA NA JANELA", "dica": "Pingos batendo no vidro" },
+        { "texto": "VENTO NAS FOLHAS", "dica": "Faz as árvores balançarem" },
+        { "texto": "RIO CHEIO DE PEIXES", "dica": "Lugar bom para pescar" },
+        { "texto": "SOL DA MANHÃ", "dica": "A primeira luz do dia" },
+        { "texto": "NOITE DE LUA CHEIA", "dica": "O céu escuro fica claro" }
+      ]
+    },
+    {
+      "tema": "Cozinha",
+      "itens": [
+        { "texto": "BOLO DE CENOURA", "dica": "Doce feito com um legume" },
+        { "texto": "SUCO DE MARACUJÁ", "dica": "Bebida de fruta azedinha" },
+        { "texto": "PÃO COM MANTEIGA", "dica": "Café da manhã simples" },
+        { "texto": "ARROZ COM FEIJÃO", "dica": "A dupla do almoço brasileiro" },
+        { "texto": "SOPA QUENTINHA", "dica": "Boa para um dia de frio" }
       ]
     }
   ]

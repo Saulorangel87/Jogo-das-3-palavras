@@ -74,3 +74,14 @@ Registro de cada etapa: o que mudou e por quê. A entrada mais recente fica no f
 - A roleta não tem fatia punitiva, para manter a regra de que ninguém perde de forma punitiva.
 - A roleta fica só no competitivo: no cooperativo não há pontos para ela sortear.
 - Resolver é sempre escolher entre 3 opções escritas. Montar com peças fica para depois.
+
+## 2026-11-02 — Etapa 7: regras e banco de painéis
+
+**O que mudou:**
+
+- `src/logica/jogo.js`: roleta, letras, resolver, pontos e estrelas.
+- `src/logica/texto.js`: comparação de letras, em que acentos e cedilha contam como a letra base.
+- `src/logica/rodada.js`: sorteio dos 3 painéis, do teclado e das opções.
+- `src/data/palavras.json`: 3 níveis, com palavras e frases escritas para o jogo.
+
+**Por quê:** a regra continua separada da interface. A ação `GIRAR` recebe o sorteio de fora, para o servidor do modo online poder decidir o resultado.

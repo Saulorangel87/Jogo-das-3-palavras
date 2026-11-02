@@ -1,4 +1,12 @@
-// Sorteio da rodada. Puro: o gerador de aleatórios pode ser injetado nos testes.
+// Sorteio da partida. Puro: o gerador de aleatórios pode ser injetado nos testes.
+import { letrasDoTexto } from './texto.js';
+
+const ALFABETO = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
+// Letras extras do iniciante: evita K, W, Y e outras raras para quem está aprendendo.
+const LETRAS_COMUNS = 'ABCDEFGILMNOPRSTUV'.split('');
+const EXTRAS_INICIANTE = 4;
+const TOTAL_PAINEIS = 3;
+const ERRADAS_POR_PAINEL = 2;
 
 function embaralhar(lista, rng) {
   const copia = [...lista];
@@ -9,33 +17,48 @@ function embaralhar(lista, rng) {
   return copia;
 }
 
-function semelhanca(candidata, alvo) {
-  const mesmaSilaba = candidata.silabas[0] === alvo.silabas[0] ? 2 : 0;
-  const mesmoTamanho = candidata.palavra.length === alvo.palavra.length ? 1 : 0;
-  return mesmaSilaba + mesmoTamanho;
+function semelhanca(candidato, alvo) {
+  const mesmaLetra = candidato.texto[0] === alvo.texto[0] ? 2 : 0;
+  const mesmoTamanho = candidato.texto.length === alvo.texto.length ? 1 : 0;
+  const mesmoTema = candidato.tema === alvo.tema ? 1 : 0;
+  return mesmaLetra + mesmoTamanho + mesmoTema;
 }
 
-// Opções erradas vêm de fora do trio, para uma palavra não entregar outra da mesma rodada.
-function escolherErradas(alvo, candidatas, rng, quantidade) {
-  return embaralhar(candidatas, rng)
+// Opções erradas vêm de fora da partida, para um painel não entregar outro.
+function escolherErradas(alvo, candidatos, rng) {
+  return embaralhar(candidatos, rng)
     .sort((a, b) => semelhanca(b, alvo) - semelhanca(a, alvo))
-    .slice(0, quantidade)
-    .map((c) => c.palavra);
+    .slice(0, ERRADAS_POR_PAINEL)
+    .map((c) => c.texto);
 }
 
-export function montarRodada(temas, rng = Math.random) {
+function montarTeclado(texto, nivel, rng) {
+  if (nivel !== 'iniciante') return ALFABETO;
+  const certas = Array.from(new Set(letrasDoTexto(texto)));
+  const extras = embaralhar(
+    LETRAS_COMUNS.filter((l) => !certas.includes(l)),
+    rng,
+  ).slice(0, EXTRAS_INICIANTE);
+  return [...certas, ...extras].sort();
+}
+
+export function montarRodada(temas, nivel, rng = Math.random) {
   const tema = temas[Math.floor(rng() * temas.length)];
-  const trio = embaralhar(tema.palavras, rng).slice(0, 3);
-  const noTrio = new Set(trio.map((p) => p.palavra));
-  const candidatas = temas
-    .flatMap((t) => t.palavras)
-    .filter((p) => !noTrio.has(p.palavra));
+  const sorteados = embaralhar(tema.itens, rng).slice(0, TOTAL_PAINEIS);
+  const naPartida = new Set(sorteados.map((i) => i.texto));
+  const candidatos = temas
+    .flatMap((t) => t.itens.map((i) => ({ ...i, tema: t.tema })))
+    .filter((i) => !naPartida.has(i.texto));
 
   return {
     tema: tema.tema,
-    palavras: trio.map((p) => ({
-      ...p,
-      opcoes: embaralhar([p.palavra, ...escolherErradas(p, candidatas, rng, 2)], rng),
+    paineis: sorteados.map((item) => ({
+      ...item,
+      letras: montarTeclado(item.texto, nivel, rng),
+      opcoes: embaralhar(
+        [item.texto, ...escolherErradas({ ...item, tema: tema.tema }, candidatos, rng)],
+        rng,
+      ),
     })),
   };
 }
