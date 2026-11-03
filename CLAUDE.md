@@ -16,7 +16,7 @@ Domínio de produção: **3palavras.devsaulo.com.br**
 
 - React + Vite, **JavaScript** (sem TypeScript por enquanto).
 - CSS puro (CSS Modules ou um arquivo por componente). Sem framework de UI.
-- Sem backend. Dados em JSON dentro do projeto. Progresso/configurações em `localStorage` (sempre com try/catch).
+- O jogo local não usa backend; só o modo online usa o servidor em `servidor/`. Dados em JSON dentro do projeto. Progresso/configurações em `localStorage` (sempre com try/catch).
 - `@vitejs/plugin-legacy` para compatibilidade com navegadores de Smart TV (Chromium antigo em Tizen/webOS).
 - Áudio: Web Audio API direta, sem biblioteca.
 - PWA feito à mão, sem biblioteca: `src/pwa/` (o plugin do Vite gera `dist/sw.js` com a lista de arquivos do build).
@@ -161,9 +161,9 @@ As opções erradas do "Resolver" (só no iniciante) vêm de outros itens do mes
 - **PWA:** instalável e jogável sem internet depois da primeira visita (os 3 níveis ficam guardados). O service worker tenta a rede para a página e usa o cache para os arquivos com hash; uma versão nova aparece na visita seguinte, e o cache da versão anterior fica guardado para abas abertas. Arquivo novo fora de `public/` e `src/` precisa entrar no `Dockerfile`.
 - **Falta:** teste na TV real pelo domínio de produção.
 
-## Modo online (em construção)
+## Modo online (no ar desde 03/11/2026, versão 1.2.0)
 
-**Feito:** servidor em `servidor/` (Node + Socket.IO), telas em `src/telas/Online.jsx` e conexão em `src/online/`, carregadas só por quem joga online. **Falta:** publicar, teste com aparelhos reais; cooperativo; ranking (SQLite) continua para depois.
+**Feito:** servidor em `servidor/` (Node + Socket.IO), telas em `src/telas/Online.jsx` e conexão em `src/online/`, carregadas só por quem joga online. Partida completa testada em produção com duas abas do Chrome. **Falta:** teste com aparelhos reais em redes diferentes e tela bloqueada; cooperativo; ranking (SQLite) continua para depois.
 
 Decisões do Saulo: colegas em celular e PC; primeira versão só no competitivo; qualquer pessoa cria sala, sem conta; o convite é um link com o código da sala.
 
@@ -191,6 +191,6 @@ Decisões do Saulo: colegas em celular e PC; primeira versão só no competitivo
 3. Personagens SVG e tela de seleção. **(feito)**
 4. Áudio (jingles + trilha de tema). **(feito: efeitos, jingles, volumes e trilhas; falta o ouvido do Saulo)**
 5. Deploy em 3palavras.devsaulo.com.br e PWA **(feitos)**; falta o teste na TV real pelo domínio.
-6. **Online:** backend Node + Socket.IO, salas privadas com código.
+6. **Online:** backend Node + Socket.IO, salas privadas com código. **(no ar no competitivo; falta o teste com aparelhos reais e o cooperativo)**
 7. **Ranking** entre amigos (SQLite), reaproveitando o mesmo backend.
 8. Mais conteúdo no banco de painéis.

@@ -424,3 +424,16 @@ Registro de cada etapa: o que mudou e por quê. A entrada mais recente fica no f
 
 **Não verificado:** produção (WebSocket pelo Cloudflare), celulares de verdade em redes diferentes e tela bloqueada. A partida completa de 3 painéis pela tela só foi até o segundo painel; os 3 painéis completos estão cobertos nos testes do servidor.
 
+## 2026-11-03 — Etapa 30: modo online no ar (versão 1.2.0)
+
+Publicado na VPS com o segundo container. Nada mudou no Cloudflare.
+
+**Verificado em produção:**
+
+- **Pela rede:** o WebSocket responde `101` passando pelo Cloudflare. Conexão vinda de outro site recebe `403`. O container do servidor não tem porta publicada, roda sem root e com disco somente leitura.
+- **Em duas abas do Chrome:** partida inteira no iniciante, de 3 painéis: convite, personagem ocupado travado, vez de cada um, mesma roleta nas duas telas, multiplicadores ×1, ×2 e ×3, recarregar na própria vez e voltar à mesma vaga, e resultado igual nas duas abas (620 a 200, conferido na conta). Sem erro no console e sem dados de jogadores nos logs.
+
+**Ainda não verificado:** celulares de verdade em redes diferentes e com a tela bloqueada, e o som na TV depois do clique.
+
+**Próximo:** partida com aparelhos reais. Depois, cooperativo online e ranking.
+
