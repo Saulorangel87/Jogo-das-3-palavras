@@ -24,6 +24,9 @@ export const ACOES = {
   ESCOLHER_LETRA: 'ESCOLHER_LETRA',
   RESOLVER: 'RESOLVER',
   PROXIMO_PAINEL: 'PROXIMO_PAINEL',
+  // Só no online: o servidor decide quando alguém caiu ou saiu da partida.
+  PASSAR_VEZ: 'PASSAR_VEZ',
+  MARCAR_SAIDA: 'MARCAR_SAIDA',
 };
 export const JOGADAS = {
   LETRA_CERTA: 'letra-certa',
@@ -88,8 +91,14 @@ export function podeEscolherLetra(estado) {
   );
 }
 
+// Pula quem saiu da partida (online). No jogo local ninguém sai.
 function proximoJogador(estado) {
-  return (estado.vez + 1) % estado.jogadores.length;
+  const total = estado.jogadores.length;
+  for (let passo = 1; passo < total; passo++) {
+    const candidato = (estado.vez + passo) % total;
+    if (!estado.jogadores[candidato].saiu) return candidato;
+  }
+  return estado.vez;
 }
 
 function somarPontos(estado, pontos) {
@@ -216,6 +225,22 @@ function avancarPainel(estado) {
   };
 }
 
+// Passa a vez sem punição: não conta erro nem tira pontos.
+function passarVez(estado) {
+  if (estado.fase !== FASES.JOGANDO) return estado;
+  return { ...estado, valorRoleta: null, ultimaJogada: null, vez: proximoJogador(estado) };
+}
+
+// Quem saiu fica no placar, mas não joga mais. Sobrando uma pessoa só, a partida termina.
+function marcarSaida(estado, indice) {
+  const jogador = estado.jogadores[indice];
+  if (!jogador || jogador.saiu || estado.fase === FASES.FIM) return estado;
+  const jogadores = estado.jogadores.map((j, i) => (i === indice ? { ...j, saiu: true } : j));
+  const proximo = { ...estado, jogadores };
+  if (jogadores.filter((j) => !j.saiu).length <= 1) return { ...proximo, fase: FASES.FIM };
+  return indice === estado.vez ? passarVez(proximo) : proximo;
+}
+
 // Ações inválidas devolvem o mesmo estado, sem lançar erro.
 export function aplicarAcao(estado, acao) {
   switch (acao.tipo) {
@@ -227,6 +252,10 @@ export function aplicarAcao(estado, acao) {
       return resolver(estado, acao.resposta);
     case ACOES.PROXIMO_PAINEL:
       return avancarPainel(estado);
+    case ACOES.PASSAR_VEZ:
+      return passarVez(estado);
+    case ACOES.MARCAR_SAIDA:
+      return marcarSaida(estado, acao.indice);
     default:
       return estado;
   }

@@ -1,0 +1,13 @@
+{
+  "name": "3-palavras-servidor",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "engines": { "node": ">=22" },
+  "scripts": {
+    "start": "node principal.js"
+  },
+  "dependencies": {
+    "socket.io": "4.8.3"
+  }
+}

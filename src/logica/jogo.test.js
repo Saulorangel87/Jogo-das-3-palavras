@@ -243,3 +243,41 @@ describe('próximo painel e fim', () => {
     expect(calcularResultado(e).vencedores).toHaveLength(2);
   });
 });
+
+describe('saída e queda de jogador (online)', () => {
+  function partidaDe3() {
+    return criarPartida({
+      modo: MODOS.COMPETITIVO,
+      nivel: 'avancado',
+      jogadores: [{ id: 'a' }, { id: 'b' }, { id: 'c' }],
+      rodada: { tema: 'T', paineis: [{ texto: 'PATO', letras: ['P', 'A', 'T', 'O', 'X'], opcoes: null }] },
+    });
+  }
+
+  it('passar a vez não tira pontos nem conta erro e descarta o giro', () => {
+    let e = aplicarAcao(partidaDe3(), { tipo: ACOES.GIRAR, sorteio: 0 });
+    e = aplicarAcao(e, { tipo: ACOES.PASSAR_VEZ });
+    expect(e.vez).toBe(1);
+    expect(e.valorRoleta).toBeNull();
+    expect(e.erros).toBe(0);
+    expect(e.jogadores.map((j) => j.pontos)).toEqual([0, 0, 0]);
+  });
+
+  it('quem saiu é pulado na vez', () => {
+    let e = aplicarAcao(partidaDe3(), { tipo: ACOES.MARCAR_SAIDA, indice: 1 });
+    expect(e.vez).toBe(0);
+    e = aplicarAcao(e, { tipo: ACOES.PASSAR_VEZ });
+    expect(e.vez).toBe(2);
+  });
+
+  it('se quem saiu estava na vez, a vez passa', () => {
+    const e = aplicarAcao(partidaDe3(), { tipo: ACOES.MARCAR_SAIDA, indice: 0 });
+    expect(e.vez).toBe(1);
+  });
+
+  it('sobrando uma pessoa, a partida termina', () => {
+    let e = aplicarAcao(partidaDe3(), { tipo: ACOES.MARCAR_SAIDA, indice: 0 });
+    e = aplicarAcao(e, { tipo: ACOES.MARCAR_SAIDA, indice: 1 });
+    expect(e.fase).toBe(FASES.FIM);
+  });
+});

@@ -393,3 +393,18 @@ Registro de cada etapa: o que mudou e por quê. A entrada mais recente fica no f
 
 **Verificado:** 137 testes. No Chrome, com a imagem local: arquivos guardados com o tipo certo, `.svg` e `.ico` carregam. A cópia velha em si não foi simulada; a prova final é o Chrome do Saulo depois de publicar.
 
+## 2026-11-03 — Etapa 28: servidor do modo online
+
+**O que mudou:** primeiro passo do online, para a filha do Saulo jogar com as colegas. Ainda não há tela nem deploy: o jogo publicado não mudou.
+
+- **`servidor/`:** Node + Socket.IO. Salas com anfitrião, código e presença, reaproveitando `src/logica/`. Regras novas e puras: `PASSAR_VEZ` e `MARCAR_SAIDA`.
+- **Segurança:** o aparelho nunca recebe a resposta antes da hora; o servidor sorteia a roleta e confere a vez; só o site do jogo conecta; limites para adivinhar código, criar salas e mandar eventos; nada é gravado.
+- **Canal escondido fechado:** a resposta errada digitada casa a casa era repetida para todos, o que funcionaria como um chat livre entre crianças. Agora não é repassada.
+- **Espera de quem cai na vez:** 60 segundos, em vez dos 30 do plano, porque 30 parecia pouco para crianças pequenas.
+
+**Verificado:** 178 testes, incluindo clientes reais pela rede. Servidor real com o banco inteiro nos 3 níveis. Ao tirar de propósito a proteção que esconde a resposta, os testes falharam, como deviam.
+
+**Limitação conhecida:** quem fica conectado sem jogar não perde a vez, e a partida espera. Avaliar com as crianças.
+
+**Próximo:** telas de criar, entrar e aguardar.
+

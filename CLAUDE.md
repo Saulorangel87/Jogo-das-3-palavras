@@ -27,7 +27,7 @@ O jogo começa 100% local, mas **vai ganhar multijogador online e ranking**. Por
 
 - **Regras do jogo em JavaScript puro, sem React**, em `src/logica/`.
   - Formato: `proximoEstado = aplicarAcao(estado, acao)` (estilo reducer).
-  - Ações: `GIRAR`, `ESCOLHER_LETRA`, `RESOLVER`, `PROXIMO_PAINEL`.
+  - Ações: `GIRAR`, `ESCOLHER_LETRA`, `RESOLVER`, `PROXIMO_PAINEL`. Só o servidor online usa `PASSAR_VEZ` e `MARCAR_SAIDA`.
   - Aleatoriedade vem de fora: a ação `GIRAR` traz o `sorteio`, para o servidor poder decidir o resultado.
   - Sem `window`, `document`, `localStorage` ou imports de React nesse módulo.
   - Motivo: o mesmo módulo será reutilizado no servidor Node para as partidas online.
@@ -160,19 +160,24 @@ As opções erradas do "Resolver" (só no iniciante) vêm de outros itens do mes
 - **PWA:** instalável e jogável sem internet depois da primeira visita (os 3 níveis ficam guardados). O service worker tenta a rede para a página e usa o cache para os arquivos com hash; uma versão nova aparece na visita seguinte, e o cache da versão anterior fica guardado para abas abertas. Arquivo novo fora de `public/` e `src/` precisa entrar no `Dockerfile`.
 - **Falta:** teste na TV real pelo domínio de produção.
 
-## Backend futuro (online + ranking) — NÃO fazer na V1
+## Modo online (em construção)
 
-- **Node + Socket.IO** (reconexão automática e salas prontas), reutilizando `src/logica/`.
-- **Servidor é a autoridade**: guarda o estado da partida e as palavras; os clientes só enviam ações.
-- **SQLite** (volume Docker) para ranking e jogadores.
-- Mesmo domínio: `/api` e `/socket.io` roteados pelo Nginx Proxy Manager (com WebSocket habilitado).
-- Tratar desconexões com cuidado (Wi-Fi de criança cai, e o Cloudflare Tunnel já oscilou antes): jogador desconectado mantém a vaga por um tempo.
+**Feito:** servidor em `servidor/` (Node + Socket.IO), com testes. **Falta:** telas, partida no navegador, deploy e teste com aparelhos reais. Ranking (SQLite) continua para depois.
+
+Decisões do Saulo: colegas em celular e PC; primeira versão só no competitivo; qualquer pessoa cria sala, sem conta; o convite é um link com o código da sala.
+
+- **Servidor é a autoridade:** guarda o estado e as palavras, sorteia a roleta e confere de quem é a vez. O aparelho só pede jogadas. Regras em `src/logica/`, reaproveitadas; os números do online em `servidor/regrasOnline.js`.
+- **Nada é gravado:** salas só na memória, apagadas ao terminar, sem ninguém ou depois de 30 minutos paradas. Sem conta, sem log de endereços ou jogadas.
+- **A resposta nunca sai do servidor antes da hora:** `servidor/visao.js` troca as casas fechadas por `_` e esvazia os outros painéis. O cliente não recebe nenhum token alheio.
+- **Código da sala:** 4 consoantes e 2 números (`BRTK-42`); sem vogal não forma palavra. Tentativas erradas limitadas por endereço.
+- **Presença:** a conexão do Socket.IO confere o aparelho a cada 10 segundos. Estados só dentro da sala: `conectada`, `reconectando` (vaga guardada por 2 minutos, volta com token) e `saiu`. Quem cai na própria vez tem 60 segundos, depois a vez passa, sem perder pontos. Não existe lista de quem está online no site.
+- **Mesmo domínio:** `/socket.io` será roteado no Cloudflare Tunnel (WebSocket).
 
 ### Segurança das crianças (obrigatório no modo online)
 
-- **Só salas privadas com código** (ex.: `GATO-42`), compartilhado entre os pais. Nada de partida com desconhecidos.
+- **Só salas privadas com código** (ex.: `BRTK-42`), compartilhado entre os pais. Nada de partida com desconhecidos.
 - **Sem chat livre.** Só reações prontas (emojis, "Boa!", "Quase!").
-- **Só apelidos**, nunca nome completo, foto, idade ou escola.
+- **Só o nome do personagem**, nunca nome completo, foto, idade ou escola. Uma resposta errada digitada casa a casa não é repassada aos outros, porque seria um canal de texto livre.
 - Coletar o mínimo de dados. Dados de crianças exigem consentimento dos pais (LGPD, art. 14). Se houver conta, ela é do responsável.
 - Ranking por grupo de amigos/sala por padrão; ranking público só com apelidos e revisão.
 
