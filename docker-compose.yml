@@ -7,5 +7,16 @@ services:
     image: tres-palavras:latest
     container_name: tres-palavras
     restart: unless-stopped
+    # Site estático: o Nginx não precisa de root, de privilégios nem de gravar no disco.
+    user: "101:101"
+    read_only: true
+    tmpfs:
+      - /tmp:uid=101,gid=101,mode=0755
+      - /run:uid=101,gid=101,mode=0755
+      - /var/cache/nginx:uid=101,gid=101,mode=0755
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
     ports:
       - "100.67.151.30:8810:8080"

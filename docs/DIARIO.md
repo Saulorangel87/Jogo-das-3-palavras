@@ -349,3 +349,15 @@ Registro de cada etapa: o que mudou e por quê. A entrada mais recente fica no f
 
 **Não verificado:** service worker no navegador da TV. Se a TV não suportar ou falhar, o jogo continua online como antes.
 
+## 2026-11-03 — Etapa 25: auditoria de segurança e container endurecido (versão 1.1.1)
+
+**Sem vulnerabilidade conhecida:** `npm audit` zerado, nenhum segredo encontrado no histórico (busca por padrões em todas as branches, sem ferramenta dedicada), nenhum ponto de injeção no código (`innerHTML`, `eval`), sem chamadas externas. O jogo não tem backend nem coleta dados: só guarda preferências e histórico de palavras no aparelho.
+
+**Corrigido nesta etapa:** o container rodava como root; agora roda sem root, com disco somente leitura e sem capacidades. O `publicar.sh` usa `--pull`, porque antes a imagem base em cache nunca era atualizada. O servidor de teste aberto na rede local (porta 5180) foi parado.
+
+**Decisões pendentes do Saulo** (mudam configuração de conta):
+- GitHub: ligar alertas e atualizações do Dependabot; bloquear force-push e exclusão do `main`; restringir as Actions permitidas.
+- Cloudflare: uma regra da zona troca o CSP do Nginx por `upgrade-insecure-requests`, então o CSP do jogo não chega ao navegador. Risco baixo hoje, por não haver entrada de usuário nem backend, mas importa no modo online.
+
+**Testado:** atualização do PWA com duas versões reais: a página nova chega na visita seguinte, e o arquivo da versão antiga continua vindo do cache quando o servidor já responde 404.
+

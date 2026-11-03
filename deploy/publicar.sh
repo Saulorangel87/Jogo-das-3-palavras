@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 # Publica o jogo na VPS (ssh vps) sem precisar de push no GitHub:
-# envia os arquivos versionados no commit atual, reconstrói a imagem e recria o container.
+# envia os arquivos versionados no commit atual, reconstrói a imagem com as bases
+# (Node e Nginx) atualizadas, para receber correções de segurança, e recria o container.
 # Uso: bash deploy/publicar.sh
 set -euo pipefail
 
@@ -16,7 +17,7 @@ git archive --format=tar.gz -o "$pacote" HEAD
 
 ssh vps 'mkdir -p ~/apps/3palavras'
 scp -q "$pacote" vps:/tmp/3palavras.tar.gz
-ssh vps 'cd ~/apps/3palavras && tar xzf /tmp/3palavras.tar.gz && rm /tmp/3palavras.tar.gz && docker compose up -d --build'
+ssh vps 'cd ~/apps/3palavras && tar xzf /tmp/3palavras.tar.gz && rm /tmp/3palavras.tar.gz && docker compose build --pull && docker compose up -d'
 
 for i in 1 2 3 4 5 6; do
   # Confere também o tipo: um 200 em HTML no lugar do sw.js significaria arquivo faltando.
