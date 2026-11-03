@@ -10,7 +10,11 @@ var ESPERA_DA_REDE_MS = 3000;
 self.addEventListener('install', function (evento) {
   evento.waitUntil(
     caches.open(CACHE).then(function (cache) {
-      return cache.addAll(ARQUIVOS);
+      // cache: 'reload' vai direto ao servidor. Sem isso, pode guardar para sempre uma cópia
+      // velha que o navegador ainda tinha no cache dele.
+      return cache.addAll(ARQUIVOS.map(function (arquivo) {
+        return new Request(arquivo, { cache: 'reload' });
+      }));
     }).then(function () {
       return self.skipWaiting();
     })

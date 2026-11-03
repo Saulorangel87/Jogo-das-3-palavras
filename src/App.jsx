@@ -65,14 +65,19 @@ export default function App() {
     );
   }
   if (tela === 'jogo' && partida) {
-    return partida.fase === FASES.FIM ? (
-      <Resultado
-        estado={partida}
-        aoJogarDeNovo={() => iniciar(ultimaConfig.current)}
-        aoInicio={() => setTela('inicio')}
-      />
-    ) : (
-      <Jogo estado={partida} despachar={despachar} aoSair={() => setTela('inicio')} />
+    return (
+      <>
+        {partida.fase === FASES.FIM ? (
+          <Resultado
+            estado={partida}
+            aoJogarDeNovo={() => iniciar(ultimaConfig.current)}
+            aoInicio={() => setTela('inicio')}
+          />
+        ) : (
+          <Jogo estado={partida} despachar={despachar} aoSair={() => setTela('inicio')} />
+        )}
+        {diagnostico}
+      </>
     );
   }
   return (

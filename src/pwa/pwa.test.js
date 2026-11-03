@@ -16,6 +16,10 @@ describe('service worker gerado', () => {
     expect(v1).not.toBe(calcularVersao(['/a.js'], () => 'dois'));
   });
 
+  it('guarda os arquivos direto do servidor, sem a cópia do cache do navegador', () => {
+    expect(modelo).toContain("cache: 'reload'");
+  });
+
   it('o modelo vira um script válido, sem marcadores sobrando', () => {
     const codigo = montarServiceWorker(modelo, ['/index.html'], 'abc123');
     expect(codigo).not.toContain('__VERSAO__');

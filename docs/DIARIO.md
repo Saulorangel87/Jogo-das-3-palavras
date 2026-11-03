@@ -383,3 +383,13 @@ Registro de cada etapa: o que mudou e por quê. A entrada mais recente fica no f
 
 **Correção de registro:** o `InvalidStateError` do console não vinha do script de medição, como eu havia escrito: ele voltou a aparecer sem o script. A causa segue desconhecida; pode ser efeito de navegar durante o teste automatizado.
 
+## 2026-11-03 — Etapa 27: favicon e metadescrição (versão 1.1.3)
+
+**Favicon, bug da etapa 24:** o Saulo notou o site sem ícone. No Chrome dele, o service worker tinha guardado `/favicon.svg` como `text/html`: ao instalar, pegou a cópia velha do cache do navegador, do tempo em que o Nginx devolvia a página do jogo para arquivos inexistentes. Agora ele guarda os arquivos direto do servidor (`cache: 'reload'`). Também entrou um `favicon.ico` de verdade, para navegadores sem suporte a SVG.
+
+**SEO:** metadescrição, apontada pelo Lighthouse do Saulo.
+
+**Diagnóstico:** `?diag` agora aparece também no jogo e no resultado.
+
+**Verificado:** 137 testes. No Chrome, com a imagem local: arquivos guardados com o tipo certo, `.svg` e `.ico` carregam. A cópia velha em si não foi simulada; a prova final é o Chrome do Saulo depois de publicar.
+
