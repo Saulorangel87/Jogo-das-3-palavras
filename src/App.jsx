@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { iniciarAudio } from './audio/motor.js';
+import { useMusica } from './audio/useMusica.js';
 import { lerHistorico, salvarHistorico } from './data/historico.js';
 import { carregarPalavras } from './data/palavras.js';
 import { FASES, aplicarAcao, criarPartida } from './logica/jogo.js';
@@ -17,6 +18,7 @@ export default function App() {
   const ultimaConfig = useRef(null);
 
   useSetas();
+  useMusica(tela, partida && partida.tema, partida && partida.fase === FASES.FIM);
 
   // Os navegadores só liberam o som depois do primeiro toque, clique ou tecla do jogador.
   useEffect(() => {

@@ -270,3 +270,17 @@ Registro de cada etapa: o que mudou e por quê. A entrada mais recente fica no f
 **Possíveis melhorias, se incomodar:** as animações que mais custam são o brilho do quadro (`box-shadow`) e a troca de cor das casas (`background`), que repintam a tela. Dá para trocá-las por `opacity` e `transform`, que a TV desenha com a placa de vídeo. O teste foi no modo de desenvolvimento; o build final tende a rodar mais leve.
 
 **Ainda não verificado:** TV mais antiga (webOS 4 ou anterior), Samsung (Tizen), o build legado e o controle de seta comum (o teste foi com o controle da TV).
+
+## 2026-11-03 — Etapa 19: música de fundo e volume da música
+
+**O que mudou:** o jogo agora tem trilha em loop, com volume próprio no painel de som (fecha o passo 4 do roteiro).
+
+- **Seis trilhas originais** em `src/audio/musica.js`, escritas como dados (escala, progressão de acordes, melodia, baixo, arpejo e bateria, 8 compassos de 4/4, de 17 a 26 segundos cada): `abertura`, `alegre`, `calma`, `aventura`, `misterio` e `festa`. Tocam com os mesmos instrumentos dos personagens (xilofone na melodia, piano no arpejo, tuba no baixo, bateria leve).
+- **Qual toca:** início e configuração usam a `abertura`. No jogo, o **tema** da partida escolhe a faixa: temas de clima óbvio (Festa, Fantasia, Praia...) têm a sua, e os outros são distribuídos pelo nome, sempre na mesma faixa. No resultado a música para, para o som de fim aparecer. Não existe uma trilha feita para cada um dos cerca de 90 temas.
+- **Motor:** agenda os compassos com antecedência de 1,5 s (o relógio do áudio é preciso, o do navegador não), troca de faixa com fade, não reinicia se a mesma faixa for pedida e pausa quando a aba fica escondida. A música pedida antes do primeiro toque começa quando o som é liberado.
+- **Painel de som:** duas linhas, "Efeitos" e "Música", cada uma com − e +. O silenciar vale para as duas. Cabe em 360x640 e a navegação por setas passa de uma linha à outra.
+- **Mixagem:** medi as trilhas e elas tinham a mesma força dos efeitos, o que seria alto demais para fundo. Com o volume no máximo, a música fica na metade dos efeitos.
+
+**Verificado:** 116 testes e build. As seis trilhas foram renderizadas fora do tempo real: sem valores inválidos, picos de 0,26 a 0,37 e sem trechos mudos (exceto 1 segundo na `misterio`, que é esparsa de propósito). No Chrome: antes do toque não há som, depois do primeiro clique o áudio roda, a faixa muda com a tela (abertura, depois a do tema, depois abertura de novo), e o painel de som muda o volume da música sem mexer nos efeitos.
+
+**Não verificado:** como a música soa. O Claude não ouve, então melodia, andamento, cansaço do loop e volume dependem do ouvido do Saulo. Se alguma faixa irritar, é só trocar os dados ou o mapa de temas. Também falta ver se a TV aguenta a música junto com as animações (já havia um pouco de travamento).

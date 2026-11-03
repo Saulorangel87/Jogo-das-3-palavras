@@ -100,12 +100,13 @@ Cada personagem é um SVG em seu próprio arquivo em `src/personagens/`, para tr
 Tudo gerado por código com a **Web Audio API direta, sem biblioteca** (decisão: mais leve e mais seguro em TV antiga, e basta para efeitos e jingles curtos). Nenhum arquivo de áudio. Código em `src/audio/`.
 
 - **Feito:**
-  - Efeitos: giro da roleta (tiques que desaceleram junto com a animação), letra certa, letra errada, resolver errado, painel resolvido e fim da partida.
+  - Efeitos: giro da roleta (tiques que desaceleram junto com a animação), letra certa, letra errada, resolver errado, comemoração do painel resolvido (onda de notas e estouro de confete, sincronizada com a animação) e fim da partida.
   - Um jingle original por personagem, no timbre do seu instrumento. Toca ao escolher o personagem e, no competitivo, quando ele resolve um painel.
-  - Painel de som (botão "Som"): volume de 0 a 100% em passos de 10%, com som de exemplo, e botão para silenciar. Funciona por setas + Enter.
+  - Painel de som (botão "Som"): volumes de **efeitos** e de **música**, cada um de 0 a 100% em passos de 10%, e botão para silenciar tudo. Funciona por setas + Enter.
+  - Trilhas em loop, originais, escritas como dados em `src/audio/musica.js` (8 compassos cada): `abertura` (início e configuração) e cinco faixas de jogo (`alegre`, `calma`, `aventura`, `misterio`, `festa`). O tema da partida escolhe a faixa: temas de clima óbvio têm a sua, os outros são distribuídos pelo nome, sempre na mesma. No resultado a música para. Com o volume no máximo, a música fica na metade da força dos efeitos.
   - As preferências ficam em `localStorage`, com try/catch.
 - **O som só liga depois do primeiro toque, clique ou tecla do jogador**, porque os navegadores bloqueiam antes disso.
-- **Falta:** trilha em loop por tema e o controle de volume da **música**. O volume de hoje controla os efeitos, e o motor já tem um barramento separado para a música.
+- **Falta:** ouvir e ajustar as trilhas com ouvido humano (o Claude não ouve) e trocar faixas que cansarem.
 - Regra de arquitetura: as regras do jogo não sabem que existe som. Os efeitos saem de um hook que só observa a mudança de estado (`useEfeitosDoJogo`).
 
 ## Escopo atual
@@ -116,7 +117,7 @@ Tudo gerado por código com a **Web Audio API direta, sem biblioteca** (decisão
 4. Modos **Competitivo e Cooperativo** funcionando.
 5. Banco de painéis em `src/data/iniciante.json`, `intermediario.json` e `avancado.json` (mais de 1000 itens por nível, carregados só quando o nível é escolhido), com o formato abaixo. A partida sorteia um tema e 3 painéis dele.
 6. Navegação completa por setas + Enter, mouse e toque.
-7. Áudio por código (efeitos e jingles, sem trilha ainda), sem PWA, sem backend.
+7. Áudio por código (efeitos, jingles e trilhas), sem PWA, sem backend.
 
 ### Formato do banco de painéis
 
@@ -170,7 +171,7 @@ As opções erradas do "Resolver" (só no iniciante) vêm de outros itens do mes
 1. **V1:** Painel com roleta, 3 níveis, 2–4 jogadores locais, competitivo + cooperativo, navegação por controle, lógica pura em `src/logica/`.
 2. Teste com crianças reais e ajuste de regras e pontuação.
 3. Personagens SVG e tela de seleção. **(feito)**
-4. Áudio (jingles + trilha de tema). **(efeitos, jingles e volume feitos; falta a trilha por tema)**
+4. Áudio (jingles + trilha de tema). **(feito: efeitos, jingles, volumes e trilhas; falta o ouvido do Saulo)**
 5. Deploy em 3palavras.devsaulo.com.br, PWA, teste na TV real.
 6. **Online:** backend Node + Socket.IO, salas privadas com código.
 7. **Ranking** entre amigos (SQLite), reaproveitando o mesmo backend.
