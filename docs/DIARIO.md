@@ -447,5 +447,7 @@ Publicado na VPS com o segundo container. Nada mudou no Cloudflare.
 
 **Verificado (local):** em duas abas do Chrome, toque duplo ignorado, palavra na tela do outro depois do clique de quem resolveu, os dois cliques, saída no último painel com 400 a 160 e resultado explicando.
 
+**Verificado em produção:** em três abas do Chrome, saída de uma pessoa com a partida continuando (aviso na tela de jogo), mais de 30 segundos sem avançar com um clique só, "Só falta você clicar!", os dois cliques, e saída no meio do painel 2: quem ficou venceu com 0 a 140, e o resultado explica.
+
 **Não verificado:** a proteção contra toque duplo no jogo local (é o mesmo botão, mas só foi testada online) e celular real.
 
