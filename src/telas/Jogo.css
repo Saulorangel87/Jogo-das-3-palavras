@@ -13,10 +13,15 @@
   text-align: left;
 }
 
+.jogo-topo-botoes {
+  display: flex;
+  flex: none;
+}
+
 .jogo-sair {
   flex: none;
   min-height: 2.2rem;
-  margin-left: 1rem;
+  margin-left: 0.6rem;
   padding: 0.1rem 1rem;
 }
 
@@ -38,6 +43,11 @@
   border-radius: 2rem;
   background: var(--painel);
   font-size: 0.8rem;
+}
+
+.jogo-jogador .personagem {
+  width: 2.5rem;
+  height: 2.5rem;
 }
 
 .jogo-jogador-vez {
@@ -207,6 +217,16 @@
 
 /* No celular só o avatar fica no placar: o nome da vez já aparece na mensagem. */
 @media (max-width: 600px) {
+  .jogo-topo {
+    font-size: 0.8rem;
+  }
+
+  .jogo-topo-botoes .botao {
+    margin-left: 0.4rem;
+    padding: 0.1rem 0.6rem;
+    font-size: 0.8rem;
+  }
+
   .jogo-nome {
     display: none;
   }

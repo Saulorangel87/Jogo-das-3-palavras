@@ -139,3 +139,52 @@ Registro de cada etapa: o que mudou e por quê. A entrada mais recente fica no f
 - Em 1745x730 o preenchimento cabe sem rolar. Em 360x640 a largura cabe e a tela rola até 796px.
 
 **Ainda não verificado:** preencher frases longas com o controle remoto real, que pode ficar cansativo.
+
+## 2026-11-02 — Etapa 11: arte dos personagens
+
+**O que mudou:** os 8 personagens agora são SVGs originais em `src/personagens/`, cada um em seu arquivo, com 4 expressões feitas por um `Rosto.jsx` compartilhado.
+
+**Por quê:** é o passo 3 do roteiro. Sem bibliotecas nem imagens externas, o peso do jogo quase não muda, e o desenho funciona em navegador antigo. O nome de cada um virou parte do desenho: a Vó Vírgula tem forma de vírgula, o Capitão Til tem bigode em forma de til e a Galinha Cedilha tem a cauda da cedilha.
+
+## 2026-11-02 — Etapa 12: personagens no jogo
+
+**O que mudou:** os personagens substituem os círculos com a inicial na seleção, no placar e no resultado. Quem tem a vez fica pensando, quem acerta comemora e quem erra faz cara de "quase". Na seleção, o personagem em foco pula.
+
+**Por quê:** é a segunda parte do passo 3 do roteiro. A escolha da expressão só lê o estado do jogo, em `src/personagens/expressao.js`, e nenhuma regra foi para os componentes. A única mudança nas regras foi registrar quem fez a última jogada.
+
+**Verificado no Chrome:**
+
+- 53 testes passando e build gerado.
+- Só com teclado: seleção e início da partida com 3 jogadores.
+- Por cliques: partida completa com 4 jogadores nos dois modos até o resultado, incluindo o competitivo, que faltava.
+- Sem rolagem em 1920x1080, 1745x730 e 1280x720. Em 360x640 a largura cabe, e a seleção e o jogo rolam pouco.
+
+**Ainda não verificado:** animações em TV ou navegador antigo.
+
+## 2026-11-03 — Etapa 13: áudio (efeitos, jingles e volume)
+
+**O que mudou:** novo módulo `src/audio/`, feito só com a Web Audio API, sem biblioteca.
+
+- **Efeitos:** giro da roleta, letra certa e errada, resolver errado, painel resolvido e fim da partida.
+- **Jingles:** um por personagem, no timbre do seu instrumento (xilofone, tuba, sanfona, clarinete, fagote, piano, bateria e kazoo). O da Vó Vírgula tem uma pausa no meio.
+- **Painel de som:** botão "Som" com volume de 0 a 100% e opção de silenciar, a pedido do Saulo. Mudar o volume toca um som de exemplo.
+- **Preferências:** ficam salvas em `localStorage`.
+
+**Decisões:**
+
+- Web Audio direto, sem Tone.js: o `CLAUDE.md` pede para evitar dependências sem necessidade, e para efeitos e jingles ele basta.
+- O som só liga no primeiro toque do jogador, por exigência dos navegadores.
+- No competitivo, quem resolve ouve o jingle do próprio personagem. No cooperativo, toca uma fanfarra da equipe.
+- Por enquanto há um único volume, que controla os efeitos. O da música entra junto com a trilha.
+
+**Defeito encontrado e corrigido no teste:** a navegação por setas da etapa 4 escolhia o botão mais próximo em linha reta e podia descer em vez de ir para o lado, quando um botão ficava quase em cima de outro. No painel de som, a seta esquerda no "+" ia para "Fechar". Agora quem está alinhado na mesma linha ou coluna vence.
+
+**Verificado no Chrome:**
+
+- 76 testes passando e build gerado.
+- Os 14 sons foram renderizados fora do tempo real: nenhum silencioso, nenhum valor inválido e nenhum estouro (pico máximo 0,52, o limite é 1).
+- O áudio fica inativo até o primeiro toque e passa a funcionar com um Enter.
+- Uma partida competitiva tocou cada som esperado. Abrir o resolver ficou em silêncio, e o mudo zerou todos os sons.
+- Só com teclado: abrir o painel, subir e descer o volume, silenciar e fechar com Voltar. Também dentro da partida, onde Voltar fecha só o painel de som. O painel cabe em 360x640.
+
+**Não verificado:** como os sons realmente **soam**. Não consigo ouvir, então o equilíbrio de volume entre os sons e a qualidade dos timbres dependem do ouvido do Saulo. Também falta testar em TV ou navegador antigo.

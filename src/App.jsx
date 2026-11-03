@@ -1,4 +1,5 @@
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
+import { iniciarAudio } from './audio/motor.js';
 import { carregarPalavras } from './data/palavras.js';
 import { FASES, aplicarAcao, criarPartida } from './logica/jogo.js';
 import { montarRodada } from './logica/rodada.js';
@@ -15,6 +16,16 @@ export default function App() {
   const ultimaConfig = useRef(null);
 
   useSetas();
+
+  // Os navegadores só liberam o som depois do primeiro toque, clique ou tecla do jogador.
+  useEffect(() => {
+    const EVENTOS = ['click', 'keydown', 'touchstart'];
+    function liberar() {
+      if (iniciarAudio()) EVENTOS.forEach((e) => window.removeEventListener(e, liberar, true));
+    }
+    EVENTOS.forEach((e) => window.addEventListener(e, liberar, true));
+    return () => EVENTOS.forEach((e) => window.removeEventListener(e, liberar, true));
+  }, []);
 
   async function iniciar(config) {
     try {

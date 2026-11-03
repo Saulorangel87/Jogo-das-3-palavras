@@ -1,8 +1,9 @@
 import { useState } from 'react';
-import Avatar from '../componentes/Avatar.jsx';
 import { PERSONAGENS } from '../data/personagens.js';
 import { MODOS } from '../logica/jogo.js';
 import { useFoco, useVoltar } from '../navegacao/useNavegacao.js';
+import { tocarJingle } from '../audio/motor.js';
+import Personagem from '../personagens/Personagem.jsx';
 import './Configuracao.css';
 
 const NUMEROS = [2, 3, 4];
@@ -27,6 +28,7 @@ export default function Configuracao({ aoIniciar, aoVoltar }) {
   }
 
   function escolher(personagem) {
+    tocarJingle(personagem.id);
     const novos = [...escolhidos, personagem];
     if (novos.length === total) aoIniciar({ modo, nivel, jogadores: novos });
     else setEscolhidos(novos);
@@ -91,7 +93,7 @@ export default function Configuracao({ aoIniciar, aoVoltar }) {
                 disabled={escolhidos.includes(p)}
                 onClick={() => escolher(p)}
               >
-                <Avatar personagem={p} />
+                <Personagem personagem={p} />
                 <span>{p.nome}</span>
               </button>
             ))}

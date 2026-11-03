@@ -134,14 +134,20 @@ function escolherLetra(estado, letra) {
       erros: estado.erros + 1,
       valorRoleta: null,
       vez: proximoJogador(estado),
-      ultimaJogada: { tipo: JOGADAS.LETRA_ERRADA, letra },
+      ultimaJogada: { tipo: JOGADAS.LETRA_ERRADA, letra, quem: estado.vez },
     };
   }
 
   const pontos = ehCompetitivo(estado)
     ? estado.valorRoleta * quantidade * multiplicadorAtual(estado)
     : 0;
-  const ultimaJogada = { tipo: JOGADAS.LETRA_CERTA, letra, quantidade, pontos };
+  const ultimaJogada = {
+    tipo: JOGADAS.LETRA_CERTA,
+    letra,
+    quantidade,
+    pontos,
+    quem: estado.vez,
+  };
 
   if (contarCasasFechadas(painel.texto, letrasUsadas) === 0) {
     return fecharPainel({ ...estado, letrasUsadas, ultimaJogada }, pontos);
@@ -180,7 +186,7 @@ function resolver(estado, resposta) {
     erros: estado.erros + 1,
     valorRoleta: null,
     vez: proximoJogador(estado),
-    ultimaJogada: { tipo: JOGADAS.CHUTE_ERRADO, resposta },
+    ultimaJogada: { tipo: JOGADAS.CHUTE_ERRADO, resposta, quem: estado.vez },
   };
 }
 
