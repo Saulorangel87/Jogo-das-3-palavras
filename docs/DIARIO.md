@@ -361,3 +361,5 @@ Registro de cada etapa: o que mudou e por quê. A entrada mais recente fica no f
 
 **Testado:** atualização do PWA com duas versões reais: a página nova chega na visita seguinte, e o arquivo da versão antiga continua vindo do cache quando o servidor já responde 404.
 
+**Atualização:** o Saulo aprovou os itens do GitHub. Dependabot (alertas e correções) ligado, `main` protegido contra force-push e exclusão pela regra "Proteger main", sem exigir PR, e Actions desligadas até haver um workflow. Os itens do Cloudflare continuam pendentes.
+
