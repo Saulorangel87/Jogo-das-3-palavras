@@ -327,3 +327,11 @@ Registro de cada etapa: o que mudou e por quê. A entrada mais recente fica no f
 
 **Pendente:** PWA (offline) e teste na TV real pelo domínio de produção. A branch `palavras` continua sem push (o deploy usa o commit local).
 
+## 2026-11-03 — Etapa 23: README e release 1.0.0
+
+**O que mudou:** o projeto ganhou `README.md` (como jogar, níveis, TV, como rodar, organização do código e publicação), a versão subiu para **1.0.0** e o release foi publicado no GitHub.
+
+- **Git:** o `main` remoto já tinha o merge do PR #1; mesclei esse merge no `main` local (o conteúdo ficou idêntico ao da `palavras`), enviei `main` e `palavras` e criei a tag `v1.0.0` em `main`. Não sobrou commit nem push pendente em nenhuma branch.
+- **Release:** https://github.com/Saulorangel87/Jogo-das-3-palavras/releases/tag/v1.0.0, com notas em português.
+- **Regra daqui para frente:** a cada deploy, atualizar documentos e release (registrado no CLAUDE.md).
+
