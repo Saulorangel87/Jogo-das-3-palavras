@@ -473,3 +473,7 @@ O Saulo viu a tela sair com o clique de um lado só. Reproduzido em produção: 
 
 **Som na TV, ainda sem causa:** o Saulo notou que o som para ao entrar no online na TV. Em Chromium, medindo as notas criadas em produção, a música segue em todas as telas do online e na partida, com o áudio em `running`. Nada no código do online para a música. Não foi feita correção às cegas: falta o `?diag` na TV para ver o estado do áudio.
 
+
+**Verificado em produção (versão 1.2.3):** com dois clientes reais pela rede, sem navegador: com o outro caído, um clique não seguiu e o jogo seguiu sozinho no fim da contagem; quem caiu voltou pela mesma vaga; com os dois conectados, um clique não seguiu e o segundo seguiu na hora; quem saiu perdeu. A tela não foi conferida em produção nesta versão, porque ela não mudou além do nome de quem falta clicar.
+
+**Som na TV:** o Saulo entrou no online pelo botão e pelo link, e o som parou nos dois casos. Então o link recarregando a página não explica tudo. Ele vai testar mais na TV.
