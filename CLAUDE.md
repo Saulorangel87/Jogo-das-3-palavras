@@ -146,11 +146,15 @@ Regras do banco (conferidas em `src/data/palavras.test.js`): mínimo de 1000 ite
 
 As opções erradas do "Resolver" (só no iniciante) vêm de outros itens do mesmo nível, fora dos 3 painéis da partida, priorizando os que começam com a mesma letra, têm o mesmo tamanho ou são do mesmo tema.
 
-## Deploy (depois da V1)
+## Deploy (feito em 03/11/2026)
 
-- Build estático do Vite servido por container **Nginx** na VM Oracle.
-- Exposto via Nginx Proxy Manager + Cloudflare em `3palavras.devsaulo.com.br`.
-- Na VM, comandos Docker exigem `sudo`.
+- **No ar:** https://3palavras.devsaulo.com.br, na VPS Oracle (`ssh vps`, pasta `~/apps/3palavras`).
+- **Como roda:** `Dockerfile` em duas etapas (Node gera o build do Vite, Nginx serve os arquivos) e `docker-compose.yml` com o container `tres-palavras`. A porta é `100.67.151.30:8810` (só no IP do Tailscale da VPS). Nginx em `deploy/nginx/default.conf` (cache longo para `/assets/`, `index.html` sempre revalidado, cabeçalhos de segurança, gzip).
+- **Rota pública:** Cloudflare Tunnel "Server Oracle" (rota gerenciada no painel Zero Trust/Rede > Túneis, sem Nginx Proxy Manager), `3palavras.devsaulo.com.br` -> `http://100.67.151.30:8810`. O CNAME no DNS foi criado pelo próprio painel.
+- **Publicar uma versão nova:** commitar e rodar `bash deploy/publicar.sh`. Ele envia o commit atual (`git archive`, sem precisar de push), reconstrói a imagem na VPS e confere o endereço público.
+- Os comandos Docker na VPS rodam sem `sudo` para o usuário `ubuntu`.
+- O Cloudflare sobrescreve alguns cabeçalhos (por exemplo, o CSP chega só como `upgrade-insecure-requests`); isso não atrapalha o jogo.
+- **Falta:** PWA (offline) e teste na TV real pelo domínio de produção.
 
 ## Backend futuro (online + ranking) — NÃO fazer na V1
 
@@ -174,7 +178,7 @@ As opções erradas do "Resolver" (só no iniciante) vêm de outros itens do mes
 2. Teste com crianças reais e ajuste de regras e pontuação.
 3. Personagens SVG e tela de seleção. **(feito)**
 4. Áudio (jingles + trilha de tema). **(feito: efeitos, jingles, volumes e trilhas; falta o ouvido do Saulo)**
-5. Deploy em 3palavras.devsaulo.com.br, PWA, teste na TV real.
+5. Deploy em 3palavras.devsaulo.com.br **(feito)**; faltam PWA e teste na TV real pelo domínio.
 6. **Online:** backend Node + Socket.IO, salas privadas com código.
 7. **Ranking** entre amigos (SQLite), reaproveitando o mesmo backend.
 8. Mais conteúdo no banco de painéis.

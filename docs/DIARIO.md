@@ -314,3 +314,16 @@ Registro de cada etapa: o que mudou e por quê. A entrada mais recente fica no f
 
 **Pendente:** o ouvido do Saulo nas trilhas e a próxima etapa, o deploy.
 
+## 2026-11-03 — Etapa 22: deploy em 3palavras.devsaulo.com.br
+
+**O que mudou:** o jogo está no ar na VPS Oracle, com HTTPS pelo Cloudflare.
+
+- **Container:** `Dockerfile` (build do Vite em Node, depois Nginx) e `docker-compose.yml`, container `tres-palavras` em `100.67.151.30:8810`. A configuração do Nginx está em `deploy/nginx/default.conf`.
+- **Cloudflare:** a VPS já usava o Cloudflare Tunnel "Server Oracle" (não o Nginx Proxy Manager, que o roteiro citava). Adicionei a rota `3palavras.devsaulo.com.br` -> `http://100.67.151.30:8810` no painel, e o CNAME no DNS foi criado junto.
+- **Segurança:** o CSP precisou liberar `data:` em `script-src`, porque o plugin legado do Vite injeta scripts de detecção de recursos; sem isso o navegador caía sempre na versão legada. Depois do ajuste, o console ficou limpo.
+- **Extras:** favicon em SVG (antes o navegador recebia a página do jogo no lugar do ícone) e o script `deploy/publicar.sh`, que publica o commit atual sem precisar de push.
+
+**Verificado:** imagem testada localmente (cabeçalhos, cache, fallback), site público respondendo 200 em HTTPS com gzip, e uma partida aberta no endereço de produção sem erros no console. O container ficou `healthy`, usando cerca de 4 MB.
+
+**Pendente:** PWA (offline) e teste na TV real pelo domínio de produção. A branch `palavras` continua sem push (o deploy usa o commit local).
+
