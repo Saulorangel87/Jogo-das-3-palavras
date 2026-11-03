@@ -26,6 +26,10 @@ Há 8 personagens originais (Lalá Lápis, Bóris Borracha, Capitão Til, Galinh
 - Layout de 360 px (celular) até 1920×1080 (TV).
 - Build legado (`@vitejs/plugin-legacy`) para navegadores de TV antigos (Chromium 57 ou mais novo). Testado numa LG webOS 2024.
 
+## Instalar e jogar sem internet
+
+O jogo é um PWA: pode ser instalado pelo menu do navegador e, depois da primeira visita, funciona sem internet nos 3 níveis. O progresso fica só no aparelho.
+
 ## Rodando localmente
 
 Precisa de Node.js 22 ou mais novo.
@@ -45,6 +49,7 @@ Para abrir na TV pela rede local: `npx vite --host --port 5180` e acesse `http:/
 - `src/componentes/`, `src/telas/` — React só desenha o estado e dispara ações.
 - `src/data/` — banco de painéis em JSON, um arquivo por nível (mais de 1000 itens cada), carregado só quando o nível é escolhido por `carregarPalavras(nivel)`. As regras do banco são conferidas em `palavras.test.js`.
 - `src/audio/` — tudo sintetizado por código com a Web Audio API, sem arquivos de áudio nem bibliotecas: efeitos, jingles dos personagens e música adaptativa.
+- `src/pwa/` — service worker feito à mão e plugin do Vite que gera a lista de arquivos, sem biblioteca.
 - `src/personagens/` — um SVG por personagem. `src/fundos/` — papéis de parede em SVG por tela.
 - `docs/DIARIO.md` — diário das etapas. `CLAUDE.md` — regras e decisões do projeto.
 
@@ -59,11 +64,10 @@ git commit ...                # a árvore precisa estar limpa
 bash deploy/publicar.sh       # envia o commit, reconstrói a imagem e confere o endereço público
 ```
 
-Arquivos: `Dockerfile`, `docker-compose.yml` e `deploy/nginx/default.conf`.
+Arquivos: `Dockerfile`, `docker-compose.yml` e `deploy/nginx/`.
 
 ## Próximos passos
 
-- PWA (jogar offline).
 - Multijogador online com salas privadas por código (Node + Socket.IO), reaproveitando `src/logica/`, e ranking entre amigos.
 - Segurança das crianças no online: sem chat livre, só apelidos e reações prontas, dados mínimos (LGPD, art. 14).
 - Mais conteúdo no banco de painéis.

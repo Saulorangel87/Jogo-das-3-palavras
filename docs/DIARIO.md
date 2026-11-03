@@ -335,3 +335,17 @@ Registro de cada etapa: o que mudou e por quê. A entrada mais recente fica no f
 - **Release:** https://github.com/Saulorangel87/Jogo-das-3-palavras/releases/tag/v1.0.0, com notas em português.
 - **Regra daqui para frente:** a cada deploy, atualizar documentos e release (registrado no CLAUDE.md).
 
+## 2026-11-03 — Etapa 24: PWA, instalar e jogar sem internet (versão 1.1.0)
+
+**O que mudou:**
+
+- **Service worker feito à mão**, sem biblioteca (`src/pwa/`). Um plugin do Vite gera `dist/sw.js` no fim do build, com a lista de arquivos e uma versão calculada pelo conteúdo. Os 3 níveis ficam guardados na primeira visita.
+- **Atualização:** a página tenta a rede por até 3 s, para pegar versão nova, e sem rede usa a guardada. Os arquivos com hash vêm do cache. Uma versão nova vale na visita seguinte, e o cache anterior é mantido, para uma aba aberta conseguir carregar um nível da versão dela.
+- **Instalação:** manifesto e ícones em `public/`.
+- **Falha corrigida:** o `Dockerfile` não copiava `public/`, e o Nginx devolvia a página do jogo para qualquer arquivo inexistente. Por isso o favicon da etapa 22 nunca chegou à produção: o teste viu 200 e não olhou o tipo. Agora arquivo inexistente é 404, e `deploy/publicar.sh` confere também o tipo do `sw.js`.
+- **Nginx:** cabeçalhos de segurança em `deploy/nginx/seguranca.inc`, incluído em cada `location`.
+
+**Verificado:** 133 testes e build. No navegador, com o servidor parado de verdade: a página recarregou e abriu uma partida no nível avançado, que ainda não tinha sido carregado, sem erros no console.
+
+**Não verificado:** service worker no navegador da TV. Se a TV não suportar ou falhar, o jogo continua online como antes.
+

@@ -19,8 +19,10 @@ scp -q "$pacote" vps:/tmp/3palavras.tar.gz
 ssh vps 'cd ~/apps/3palavras && tar xzf /tmp/3palavras.tar.gz && rm /tmp/3palavras.tar.gz && docker compose up -d --build'
 
 for i in 1 2 3 4 5 6; do
-  codigo="$(curl -s -o /dev/null -w '%{http_code}' https://3palavras.devsaulo.com.br/ || true)"
-  [ "$codigo" = "200" ] && { echo "No ar: https://3palavras.devsaulo.com.br/ ($(git rev-parse --short HEAD))"; exit 0; }
+  # Confere também o tipo: um 200 em HTML no lugar do sw.js significaria arquivo faltando.
+  codigo="$(curl -s -o /dev/null -w '%{http_code} %{content_type}' https://3palavras.devsaulo.com.br/sw.js || true)"
+  case "$codigo" in "200 application/javascript"*) certo=1 ;; *) certo=0 ;; esac
+  [ "$certo" = "1" ] && { echo "No ar: https://3palavras.devsaulo.com.br/ ($(git rev-parse --short HEAD))"; exit 0; }
   sleep 5
 done
 echo "Container subiu, mas o endereço público respondeu $codigo." >&2

@@ -19,7 +19,7 @@ Domínio de produção: **3palavras.devsaulo.com.br**
 - Sem backend. Dados em JSON dentro do projeto. Progresso/configurações em `localStorage` (sempre com try/catch).
 - `@vitejs/plugin-legacy` para compatibilidade com navegadores de Smart TV (Chromium antigo em Tizen/webOS).
 - Áudio: Web Audio API direta, sem biblioteca.
-- PWA (offline) fica para uma versão posterior.
+- PWA feito à mão, sem biblioteca: `src/pwa/` (o plugin do Vite gera `dist/sw.js` com a lista de arquivos do build).
 
 ## Arquitetura (preparada para online e ranking)
 
@@ -119,7 +119,7 @@ Tudo gerado por código com a **Web Audio API direta, sem biblioteca** (decisão
 4. Modos **Competitivo e Cooperativo** funcionando.
 5. Banco de painéis em `src/data/iniciante.json`, `intermediario.json` e `avancado.json` (mais de 1000 itens por nível, carregados só quando o nível é escolhido), com o formato abaixo. A partida sorteia um tema e 3 painéis dele.
 6. Navegação completa por setas + Enter, mouse e toque.
-7. Áudio por código (efeitos, jingles e trilhas), sem PWA, sem backend.
+7. Áudio por código (efeitos, jingles e trilhas) e PWA, sem backend.
 
 ### Formato do banco de painéis
 
@@ -152,10 +152,11 @@ As opções erradas do "Resolver" (só no iniciante) vêm de outros itens do mes
 - **Como roda:** `Dockerfile` em duas etapas (Node gera o build do Vite, Nginx serve os arquivos) e `docker-compose.yml` com o container `tres-palavras`. A porta é `100.67.151.30:8810` (só no IP do Tailscale da VPS). Nginx em `deploy/nginx/default.conf` (cache longo para `/assets/`, `index.html` sempre revalidado, cabeçalhos de segurança, gzip).
 - **Rota pública:** Cloudflare Tunnel "Server Oracle" (rota gerenciada no painel Zero Trust/Rede > Túneis, sem Nginx Proxy Manager), `3palavras.devsaulo.com.br` -> `http://100.67.151.30:8810`. O CNAME no DNS foi criado pelo próprio painel.
 - **Publicar uma versão nova:** commitar e rodar `bash deploy/publicar.sh`. Ele envia o commit atual (`git archive`, sem precisar de push), reconstrói a imagem na VPS e confere o endereço público.
-- **Versão e release:** a versão fica em `package.json` (hoje 1.0.0). A cada deploy: atualizar documentos (README, diário, CLAUDE.md), subir a versão (`npm version <x.y.z> --no-git-tag-version`), commitar, enviar `main` ao GitHub, criar a tag `vX.Y.Z` e o release (`gh release create`). O release 1.0.0 foi publicado em 03/11/2026.
+- **Versão e release:** a versão fica em `package.json` (hoje 1.1.0). A cada deploy: atualizar documentos (README, diário, CLAUDE.md), subir a versão (`npm version <x.y.z> --no-git-tag-version`), commitar, enviar `main` ao GitHub, criar a tag `vX.Y.Z` e o release (`gh release create`). O release 1.0.0 foi publicado em 03/11/2026.
 - Os comandos Docker na VPS rodam sem `sudo` para o usuário `ubuntu`.
 - O Cloudflare sobrescreve alguns cabeçalhos (por exemplo, o CSP chega só como `upgrade-insecure-requests`); isso não atrapalha o jogo.
-- **Falta:** PWA (offline) e teste na TV real pelo domínio de produção.
+- **PWA:** instalável e jogável sem internet depois da primeira visita (os 3 níveis ficam guardados). O service worker tenta a rede para a página e usa o cache para os arquivos com hash; uma versão nova aparece na visita seguinte, e o cache da versão anterior fica guardado para abas abertas. Arquivo novo fora de `public/` e `src/` precisa entrar no `Dockerfile`.
+- **Falta:** teste na TV real pelo domínio de produção.
 
 ## Backend futuro (online + ranking) — NÃO fazer na V1
 
@@ -179,7 +180,7 @@ As opções erradas do "Resolver" (só no iniciante) vêm de outros itens do mes
 2. Teste com crianças reais e ajuste de regras e pontuação.
 3. Personagens SVG e tela de seleção. **(feito)**
 4. Áudio (jingles + trilha de tema). **(feito: efeitos, jingles, volumes e trilhas; falta o ouvido do Saulo)**
-5. Deploy em 3palavras.devsaulo.com.br **(feito)**; faltam PWA e teste na TV real pelo domínio.
+5. Deploy em 3palavras.devsaulo.com.br e PWA **(feitos)**; falta o teste na TV real pelo domínio.
 6. **Online:** backend Node + Socket.IO, salas privadas com código.
 7. **Ranking** entre amigos (SQLite), reaproveitando o mesmo backend.
 8. Mais conteúdo no banco de painéis.
