@@ -2,6 +2,7 @@ import { useState } from 'react';
 import BotaoSom from '../audio/BotaoSom.jsx';
 import PainelSom from '../audio/PainelSom.jsx';
 import { useFoco, useVoltar } from '../navegacao/useNavegacao.js';
+import Fundo from '../fundos/Fundo.jsx';
 import './Inicio.css';
 
 export default function Inicio({ aoJogar, aviso }) {
@@ -12,6 +13,7 @@ export default function Inicio({ aoJogar, aviso }) {
 
   return (
     <main className="tela">
+      <Fundo tipo="inicio" />
       <h1 className="inicio-logo">3 Palavras</h1>
       <p className="inicio-frase">Gire a roleta e descubra as palavras!</p>
       {aviso && <p className="inicio-aviso" role="alert">{aviso}</p>}

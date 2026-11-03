@@ -4,6 +4,7 @@ import { MODOS } from '../logica/jogo.js';
 import { useFoco, useVoltar } from '../navegacao/useNavegacao.js';
 import { tocarJingle } from '../audio/motor.js';
 import Personagem from '../personagens/Personagem.jsx';
+import Fundo from '../fundos/Fundo.jsx';
 import './Configuracao.css';
 
 const NUMEROS = [2, 3, 4];
@@ -39,6 +40,7 @@ export default function Configuracao({ aoIniciar, aoVoltar }) {
 
   return (
     <main className="tela">
+      <Fundo tipo="configuracao" />
       {!modo && (
         <>
           <h1 className="titulo">Como vocês querem jogar?</h1>

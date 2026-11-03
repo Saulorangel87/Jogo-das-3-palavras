@@ -22,6 +22,7 @@ import { tocarEfeito } from '../audio/motor.js';
 import { useEfeitosDoJogo } from '../audio/useEfeitosDoJogo.js';
 import Personagem from '../personagens/Personagem.jsx';
 import { expressaoNoJogo } from '../personagens/expressao.js';
+import Fundo from '../fundos/Fundo.jsx';
 import './Jogo.css';
 
 const DURACAO_GIRO = 2600;
@@ -118,6 +119,7 @@ export default function Jogo({ estado, despachar, aoSair }) {
 
   return (
     <main className="tela jogo">
+      <Fundo tipo="jogo" variante={estado.modo} />
       <header className="jogo-topo">
         <span>
           {estado.tema} · Painel {estado.indicePainel + 1} de {totalPaineis}

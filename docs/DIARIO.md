@@ -219,3 +219,18 @@ Registro de cada etapa: o que mudou e por quê. A entrada mais recente fica no f
 - Quando o nível esgota, o histórico recomeça sozinho. Sobras de 1 ou 2 itens num tema só voltam depois desse reinício.
 
 **Verificado:** 89 testes, incluindo 100 partidas seguidas em cada nível do banco real sem nenhuma palavra repetida.
+
+## 2026-11-03 — Etapa 16: papéis de parede
+
+**O que mudou:** cada tela ganhou um papel de parede próprio, desenhado em SVG por código (`src/fundos/Fundo.jsx`). Nenhuma imagem externa, filtro ou animação, para rodar em TV antiga.
+
+- **Início:** céu noturno com estrelas, peças de letra espalhadas, pilha de livros, colinas e um lápis. A área do título fica livre de peças.
+- **Configuração:** folha de caderno, com pautas, margem vermelha, espirais, régua, borracha e lápis.
+- **Jogo:** versão calma, para não atrapalhar a leitura, com trama discreta de peças e um brilho no alto: amarelo no competitivo e verde no cooperativo.
+- **Resultado:** festa, com bandeirinhas, confete e raios de luz. O miolo da tela, onde fica o texto, tem menos confete.
+
+**Decisões:** as peças usam sorteio com semente fixa, então o desenho é sempre o mesmo. Ficam perto do centro mais apagadas. O `Fundo` é `position: fixed` atrás de tudo, sem foco nem toque, e cobre a tela de 360x640 até 1920x1080 (`slice`).
+
+**Verificado no Chrome:** início, configuração, jogo e resultado (este por uma página de prévia descartada), e o texto continua legível. 89 testes e build passam.
+
+**Não verificado:** como o SVG se comporta na TV real e no celular de verdade.

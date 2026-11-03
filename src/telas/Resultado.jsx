@@ -4,6 +4,7 @@ import { MODOS, calcularResultado } from '../logica/jogo.js';
 import { useFoco, useVoltar } from '../navegacao/useNavegacao.js';
 import { tocarEfeito } from '../audio/motor.js';
 import Personagem from '../personagens/Personagem.jsx';
+import Fundo from '../fundos/Fundo.jsx';
 import './Resultado.css';
 
 function tituloCompetitivo(vencedores) {
@@ -24,6 +25,7 @@ export default function Resultado({ estado, aoJogarDeNovo, aoInicio }) {
 
   return (
     <main className="tela">
+      <Fundo tipo="resultado" />
       {competitivo ? (
         <>
           <h1 className="titulo">{tituloCompetitivo(resultado.vencedores)}</h1>
