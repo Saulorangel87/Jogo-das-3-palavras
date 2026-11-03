@@ -36,7 +36,10 @@ function aplicarConfig() {
   cadeia.musica.gain.value = config.musica * MIXAGEM_DA_MUSICA;
 }
 
-// Chamar dentro de um gesto do jogador (clique, toque ou tecla). Devolve false se não houver áudio.
+// Chamar a cada gesto do jogador (clique, toque ou tecla). Devolve false se não houver áudio.
+// Nem todo gesto libera o som: em TV, uma seta do controle pode não contar para o navegador.
+// Por isso se tenta de novo a cada gesto até o áudio rodar. Um gesto também prova que a tela
+// está visível, então aqui não se consulta document.hidden, que pode mentir em TV.
 export function iniciarAudio() {
   if (!contexto) {
     contexto = criarContexto();
@@ -46,7 +49,10 @@ export function iniciarAudio() {
     vigiarAba();
     sincronizarMusica();
   }
-  if (contexto.state === 'suspended' && contexto.resume && !abaEscondida()) contexto.resume();
+  if (contexto.state !== 'running' && contexto.resume) {
+    const retomada = contexto.resume();
+    if (retomada && retomada.catch) retomada.catch(() => {});
+  }
   return true;
 }
 

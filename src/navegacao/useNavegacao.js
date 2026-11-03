@@ -55,6 +55,8 @@ export function useSetas() {
       moverFoco(direcao);
     }
     window.addEventListener('keydown', aoPressionar);
+    // Em TV, a página pode abrir sem o teclado: as teclas ficam com o navegador até ela ser ativada.
+    window.focus();
     return () => window.removeEventListener('keydown', aoPressionar);
   }, []);
 }

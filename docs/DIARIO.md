@@ -365,7 +365,21 @@ Registro de cada etapa: o que mudou e por quê. A entrada mais recente fica no f
 
 **Atualização (Cloudflare):** os três itens aplicados, valendo só para o jogo. O host entrou na lista de exclusão da regra "Cabeçalho de segurança", e a CSP do Nginx passou a chegar ao navegador. A nova regra "3 Palavras - sem Web Analytics" desliga a medição só aqui, porque o Web Analytics vale para a zona inteira. A nova regra "3 Palavras - revalidar sw e manifesto" cobre só esses dois arquivos.
 
-**Verificado:** cabeçalhos dos outros 13 endereços comparados antes e depois, todos iguais. `devsaulo` e `cddcampos` continuam com o script de medição. O jogo abre uma partida com a CSP ativa, sem o script no HTML, com console limpo depois de baixar a página de novo. O `InvalidStateError` da auditoria sumiu junto com o script.
+**Verificado:** cabeçalhos dos outros 13 endereços comparados antes e depois, todos iguais. `devsaulo` e `cddcampos` continuam com o script de medição. O jogo abre uma partida com a CSP ativa, sem o script no HTML, com console limpo depois de baixar a página de novo.
 
 **Observação:** um navegador que já visitou o site pode reaproveitar a cópia antiga da página, com o script, até a próxima publicação (o ETag é o mesmo). Nesse caso, a CSP bloqueia o script.
+
+## 2026-11-03 — Etapa 26: som e menu na TV (versão 1.1.2)
+
+**Relato do Saulo na LG:** sem som, e no menu inicial o seletor não vai para "Som"; nos menus seguintes funciona.
+
+**Som, bug encontrado no código:** o jogo tentava liberar o áudio só no primeiro gesto e depois parava de escutar. Se esse gesto não contasse para o navegador, como pode acontecer com uma seta do controle, o áudio ficava travado até recarregar a página. A etapa 19 também passou a depender de `document.hidden`. Agora tenta a cada gesto, sem consultar `document.hidden`. Isso é a causa provável, ainda não confirmada na TV.
+
+**Menu, não reproduzido:** em 1920x1080 com teclas de verdade, o foco vai de Jogar para Som e volta. A hipótese é que a página abre na TV sem receber o teclado, que só chega a ela depois do primeiro clique. Isso explicaria os menus seguintes funcionarem, mas não está confirmado. Acrescentei `window.focus()` ao abrir.
+
+**Diagnóstico:** `?diag` no endereço mostra na própria TV o que o jogo recebe, para separar bug de comportamento da TV.
+
+**Verificado:** 136 testes e build. **Não verificado:** nada disso numa TV real ainda.
+
+**Correção de registro:** o `InvalidStateError` do console não vinha do script de medição, como eu havia escrito: ele voltou a aparecer sem o script. A causa segue desconhecida; pode ser efeito de navegar durante o teste automatizado.
 

@@ -6,10 +6,14 @@ import { carregarPalavras } from './data/palavras.js';
 import { FASES, aplicarAcao, criarPartida } from './logica/jogo.js';
 import { montarRodada, registrarRodada } from './logica/rodada.js';
 import { useSetas } from './navegacao/useNavegacao.js';
+import Diagnostico from './componentes/Diagnostico.jsx';
 import Configuracao from './telas/Configuracao.jsx';
 import Inicio from './telas/Inicio.jsx';
 import Jogo from './telas/Jogo.jsx';
 import Resultado from './telas/Resultado.jsx';
+
+const EVENTOS_DE_GESTO = ['click', 'keydown', 'keyup', 'mousedown', 'pointerup', 'touchstart', 'touchend'];
+const COM_DIAGNOSTICO = /[?&]diag\b/.test(window.location.search);
 
 export default function App() {
   const [tela, setTela] = useState('inicio');
@@ -20,14 +24,15 @@ export default function App() {
   useSetas();
   useMusica(tela, partida);
 
-  // Os navegadores só liberam o som depois do primeiro toque, clique ou tecla do jogador.
+  // Os navegadores só liberam o som depois de um gesto do jogador. Os ouvintes ficam ligados o
+  // tempo todo: nem todo gesto libera (seta do controle da TV, por exemplo), e o áudio pode ser
+  // suspenso de novo ao voltar de outra tela da TV. Repetir é barato quando já está tocando.
   useEffect(() => {
-    const EVENTOS = ['click', 'keydown', 'touchstart'];
-    function liberar() {
-      if (iniciarAudio()) EVENTOS.forEach((e) => window.removeEventListener(e, liberar, true));
-    }
-    EVENTOS.forEach((e) => window.addEventListener(e, liberar, true));
-    return () => EVENTOS.forEach((e) => window.removeEventListener(e, liberar, true));
+    const liberar = () => {
+      iniciarAudio();
+    };
+    EVENTOS_DE_GESTO.forEach((e) => window.addEventListener(e, liberar, true));
+    return () => EVENTOS_DE_GESTO.forEach((e) => window.removeEventListener(e, liberar, true));
   }, []);
 
   async function iniciar(config) {
@@ -49,8 +54,15 @@ export default function App() {
     setPartida((estado) => aplicarAcao(estado, acao));
   }
 
+  const diagnostico = COM_DIAGNOSTICO ? <Diagnostico /> : null;
+
   if (tela === 'config') {
-    return <Configuracao aoIniciar={iniciar} aoVoltar={() => setTela('inicio')} />;
+    return (
+      <>
+        <Configuracao aoIniciar={iniciar} aoVoltar={() => setTela('inicio')} />
+        {diagnostico}
+      </>
+    );
   }
   if (tela === 'jogo' && partida) {
     return partida.fase === FASES.FIM ? (
@@ -64,12 +76,15 @@ export default function App() {
     );
   }
   return (
-    <Inicio
-      aviso={aviso}
-      aoJogar={() => {
-        setAviso(null);
-        setTela('config');
-      }}
-    />
+    <>
+      <Inicio
+        aviso={aviso}
+        aoJogar={() => {
+          setAviso(null);
+          setTela('config');
+        }}
+      />
+      {diagnostico}
+    </>
   );
 }

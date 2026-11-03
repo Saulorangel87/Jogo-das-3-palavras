@@ -1,0 +1,26 @@
+.diagnostico {
+  position: fixed;
+  top: 5vh;
+  left: 5vw;
+  z-index: 100;
+  margin: 0;
+  padding: 0.6rem 0.9rem;
+  max-width: 32rem;
+  border: 0.15rem solid var(--destaque);
+  border-radius: 0.5rem;
+  background: var(--fundo);
+  color: var(--texto);
+  font-size: 0.8rem;
+  text-align: left;
+  pointer-events: none;
+}
+
+.diagnostico dt,
+.diagnostico dd {
+  display: inline;
+  margin: 0;
+}
+
+.diagnostico dt {
+  font-weight: 700;
+}
