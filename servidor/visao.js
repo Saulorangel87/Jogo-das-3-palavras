@@ -51,6 +51,10 @@ export function visaoDaSala(sala, voceId, agora) {
       sala.vezOfflineDesde === null ? null : Math.max(0, sala.vezOfflineDesde + sala.limites.vezMs - agora),
     giro: sala.giro,
     prontos: sala.prontos,
+    esperaProximoMs:
+      sala.partida && sala.partida.fase === FASES.RESOLVIDO && sala.resolvidoDesde !== null
+        ? Math.max(0, sala.resolvidoDesde + sala.limites.proximoMs - agora)
+        : null,
     partida: sala.partida ? visaoDaPartida(sala.partida) : null,
   };
 }

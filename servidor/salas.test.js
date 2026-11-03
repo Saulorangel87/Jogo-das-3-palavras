@@ -24,7 +24,7 @@ const T = 1000;
 let g;
 
 beforeEach(() => {
-  g = criarGerenciador({ carregarPalavras: async () => PALAVRAS, limites: { vagaMs: 120, vezMs: 60 } });
+  g = criarGerenciador({ carregarPalavras: async () => PALAVRAS, limites: { vagaMs: 120, vezMs: 60, proximoMs: 30 } });
 });
 
 function salaCom2(nivel = 'avancado') {
@@ -297,12 +297,41 @@ describe('seguir para o próximo painel', () => {
     expect(s.sala.prontos).toEqual(['boris']);
   });
 
-  it('o tempo nunca passa de painel: sem o clique dos dois, a palavra fica na tela', async () => {
+  it('sem nenhum clique, segue quando o prazo acaba, nem antes', async () => {
     const s = await resolvida();
-    jogar(s, s.tokenA, { tipo: ACOES.PROXIMO_PAINEL });
-    g.verificarPrazos(T + 100000);
+    expect(visaoDaSala(s.sala, 'boris', T + 10).esperaProximoMs).toBe(20);
+    g.verificarPrazos(T + 29);
     expect(s.sala.partida.fase).toBe(FASES.RESOLVIDO);
-    expect(s.sala.partida.indicePainel).toBe(0);
+    expect(g.verificarPrazos(T + 30).mudaram).toContain(s.sala);
+    expect(s.sala.partida.indicePainel).toBe(1);
+    expect(visaoDaSala(s.sala, 'boris', T + 31).esperaProximoMs).toBeNull();
+  });
+
+  it('com um clique só, o prazo continua o mesmo', async () => {
+    const s = await resolvida();
+    jogar(s, s.tokenA, { tipo: ACOES.PROXIMO_PAINEL }, T + 20);
+    expect(visaoDaSala(s.sala, 'boris', T + 20).esperaProximoMs).toBe(10);
+    g.verificarPrazos(T + 30);
+    expect(s.sala.partida.indicePainel).toBe(1);
+  });
+
+  it('o prazo do painel seguinte recomeça do zero', async () => {
+    const s = await resolvida();
+    g.verificarPrazos(T + 30);
+    expect(s.sala.resolvidoDesde).toBeNull();
+    g.verificarPrazos(T + 1000);
+    expect(s.sala.partida.indicePainel).toBe(1);
+    expect(s.sala.partida.fase).toBe(FASES.JOGANDO);
+  });
+
+  it('no último painel, o prazo leva ao resultado', async () => {
+    const s = await partida();
+    resolverESeguir(s);
+    resolverESeguir(s);
+    const { paineis, indicePainel, vez } = s.sala.partida;
+    jogar(s, vez === 0 ? s.tokenA : s.tokenB, { tipo: ACOES.RESOLVER, resposta: paineis[indicePainel].texto });
+    g.verificarPrazos(T + 30);
+    expect(s.sala.fase).toBe(FASES_DA_SALA.FIM);
   });
 
   it('no último painel, o resultado também espera todos', async () => {

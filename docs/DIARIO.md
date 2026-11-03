@@ -457,3 +457,8 @@ Publicado na VPS com o segundo container. Nada mudou no Cloudflare.
 O Saulo notou que "Jogar online" e "Som" ficavam camuflados no celular. Em tela estreita, eles caem em cima da onda azul do fundo, que tem quase a mesma cor do botão. No notebook a onda fica longe. Os dois ganharam uma borda clara, só na tela inicial.
 
 **Verificado:** em 390 x 700, no navegador. **Não verificado:** celular real.
+
+## 2026-11-03 — Etapa 33: contagem de 15 segundos para seguir de painel
+
+Pedido do Saulo, para ninguém travar a partida sem clicar. A contagem começa quando a palavra é resolvida e aparece para todos. Se todos clicarem, segue na hora. Se alguém não clicar, ou ninguém clicar, segue sozinho ao fim dos 15 segundos, inclusive no último painel. Isso substitui o "sem prazo" da etapa 31 e resolve a limitação anotada lá. O prazo fica em `servidor/regrasOnline.js`.
+

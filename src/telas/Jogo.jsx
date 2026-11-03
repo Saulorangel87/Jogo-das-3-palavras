@@ -92,6 +92,7 @@ export default function Jogo({ estado, despachar, aoSair, online = null }) {
     ? online.jogadores.filter((j) => j.conexao === 'conectada' && !prontos.includes(j.id)).map((j) => j.nome)
     : [];
   const segundosDaVez = useSegundosRestantes(online ? online.esperaNaVezMs : null);
+  const segundosParaSeguir = useSegundosRestantes(online && resolvido ? online.esperaProximoMs : null);
   const quemSaiu = online ? estado.jogadores.filter((j) => j.saiu).map((j) => j.nome) : [];
   const podeLetra = podeEscolherLetra(estado) && !girando && minhaVez;
   const comOpcoes = Boolean(painel.opcoes);
@@ -263,8 +264,11 @@ export default function Jogo({ estado, despachar, aoSair, online = null }) {
               {ultimo ? 'Ver resultado' : 'Próximo painel'}
             </button>
           )}
-          {!jaSegui && prontos.length > 0 && faltamSeguir.length === 1 && (
-            <p className="jogo-instrucao jogo-falta-voce">Só falta você clicar!</p>
+          {segundosParaSeguir !== null && (
+            <p className={jaSegui ? 'jogo-instrucao' : 'jogo-instrucao jogo-falta-voce'}>
+              {!jaSegui && prontos.length > 0 && faltamSeguir.length === 1 && 'Só falta você clicar! '}
+              O jogo segue sozinho em {segundosParaSeguir} s.
+            </p>
           )}
         </>
       )}

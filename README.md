@@ -27,7 +27,7 @@ Feito pensando nas crianças: sem conta, sem chat, sem nome digitado (o nome é 
 
 Se alguém perde a conexão, a vaga fica guardada por 2 minutos. Na própria vez, a pessoa tem 60 segundos para voltar, e depois a vez passa, sem perder pontos. Quem sai da partida não vence, e o resultado avisa quem saiu.
 
-Quando alguém acha a palavra, ela fica na tela até todas as pessoas clicarem para seguir.
+Quando alguém acha a palavra, ela fica na tela até todas as pessoas clicarem para seguir, ou por no máximo 15 segundos.
 
 ## Smart TV e acessibilidade
 
