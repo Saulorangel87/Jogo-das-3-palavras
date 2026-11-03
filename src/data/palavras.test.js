@@ -65,12 +65,12 @@ describe('carregarPalavras', () => {
     }
   });
 
-  it('iniciante: uma palavra só, de 2 a 10 letras', async () => {
+  it('iniciante: uma palavra só, de 2 a 8 letras', async () => {
     for (const tema of await carregarPalavras('iniciante')) {
       for (const item of tema.itens) {
         expect(item.texto).not.toContain(' ');
         expect(item.texto.length).toBeGreaterThanOrEqual(2);
-        expect(item.texto.length).toBeLessThanOrEqual(10);
+        expect(item.texto.length).toBeLessThanOrEqual(8);
       }
     }
   });

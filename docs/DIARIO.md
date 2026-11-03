@@ -299,3 +299,18 @@ Registro de cada etapa: o que mudou e por quê. A entrada mais recente fica no f
 **Verificado:** 125 testes (andamento, camadas, reinício, volta do loop, situação do jogo → música) e build. As faixas foram renderizadas fora do tempo real numa partida simulada: sem valores inválidos, pico máximo 0,48 e volume estável (a força sobe de 0,045 para 0,068 com as camadas). No Chrome, jogando: o andamento foi de 122 para 130, 136 e 142 bpm conforme as letras abriram, e caiu no painel seguinte.
 
 **Não verificado:** como a música soa. O Claude não ouve, e a versão anterior já tinha sido reprovada pelo ouvido do Saulo. Se ainda não agradar, o que ajuda é saber o que incomoda: o timbre, a melodia, a velocidade, o volume ou o jeito de acelerar.
+
+## 2026-11-03 — Etapa 21: revisão do iniciante e regras num arquivo só
+
+**Por quê:** o teste real (crianças e TV) já tinha passado e o Saulo pediu a revisão final do nível para os pequenos e o ajuste que deixa a pontuação fácil de mudar.
+
+**O que mudou:**
+
+- **Iniciante mais leve para 5 a 7 anos:** palavras de no máximo **8 letras** (antes 10). As 62 palavras maiores foram para o intermediário (as que já existiam lá só saíram do iniciante), e 6 itens pouco adequados foram retirados (ladrão, cadeia, zumbi, bagaço, foguetão, amarelinha). Mais de 120 dicas escritas viraram frases curtas e concretas (por exemplo, "Protetor da mata", "Dá leite e tem chifres"). Entraram 11 palavras novas para manter o mínimo: o iniciante tem 1008 itens e o intermediário 1097.
+- **Intermediário:** recebeu as palavras movidas dentro dos temas que já tinha, sem criar temas pequenos.
+- **Regras num lugar só:** `src/logica/regras.js` guarda fatias da roleta, pontos por casa fechada, multiplicadores dos painéis e faixas de estrelas. A lógica continua pura e o servidor online poderá reutilizar o arquivo. Mudar a pontuação agora é editar um arquivo.
+
+**Verificado:** 128 testes (o teste do iniciante agora exige 2 a 8 letras; novo teste de consistência das regras) e build.
+
+**Pendente:** o ouvido do Saulo nas trilhas e a próxima etapa, o deploy.
+

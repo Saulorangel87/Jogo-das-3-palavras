@@ -142,7 +142,12 @@
       {"texto": "SALMÃO", "dica": "Peixe de carne rosada"},
       {"texto": "TILÁPIA", "dica": "Peixe de viveiro"},
       {"texto": "TRAÍRA", "dica": "Peixe de rio de dentes"},
-      {"texto": "TUCUNARÉ", "dica": "Peixe amazônico de pintas"}
+      {"texto": "TUCUNARÉ", "dica": "Peixe amazônico de pintas"},
+      {"texto": "ESCORPIÃO", "emoji": "🦂"},
+      {"texto": "TARTARUGA", "dica": "Bicho de casco que anda devagar"},
+      {"texto": "SALAMANDRA", "dica": "Parente do sapo, de cauda"},
+      {"texto": "DINOSSAURO", "dica": "Bicho gigante que viveu há milhões de anos"},
+      {"texto": "CHIMPANZÉ", "dica": "Macaco inteligente"}
     ]
   },
   {
@@ -214,7 +219,13 @@
       {"texto": "GARÇOM", "dica": "Serve as mesas"},
       {"texto": "TAPECEIRO", "dica": "Trabalha com estofados"},
       {"texto": "JARDINEIRO", "dica": "Cuida das flores"},
-      {"texto": "GUARDA", "dica": "Vigia o lugar"}
+      {"texto": "GUARDA", "dica": "Vigia o lugar"},
+      {"texto": "DANÇARINO", "dica": "Faz passos no ritmo da música"},
+      {"texto": "ENFERMEIRA", "dica": "Ajuda o médico"},
+      {"texto": "GUERREIRO", "dica": "Luta com espada"},
+      {"texto": "SAPATEIRO", "dica": "Conserta calçados"},
+      {"texto": "COSTUREIRA", "dica": "Faz roupas"},
+      {"texto": "FAXINEIRA", "dica": "Limpa a casa"}
     ]
   },
   {
@@ -263,7 +274,8 @@
       {"texto": "POCILGA", "dica": "Casa dos porcos"},
       {"texto": "ESTÁBULO", "dica": "Casa dos cavalos"},
       {"texto": "CURRAL", "dica": "Cerca onde fica o gado"},
-      {"texto": "APIÁRIO", "dica": "Lugar onde se criam abelhas"}
+      {"texto": "APIÁRIO", "dica": "Lugar onde se criam abelhas"},
+      {"texto": "TELEVISÃO", "emoji": "📺"}
     ]
   },
   {
@@ -303,7 +315,8 @@
       {"texto": "HORMÔNIO", "dica": "Substância que o corpo faz"},
       {"texto": "ESTATURA", "dica": "Altura da pessoa"},
       {"texto": "POSTURA", "dica": "Jeito de ficar em pé"},
-      {"texto": "REFLEXO", "dica": "Movimento sem pensar"}
+      {"texto": "REFLEXO", "dica": "Movimento sem pensar"},
+      {"texto": "TORNOZELO", "dica": "Liga a perna ao pé"}
     ]
   },
   {
@@ -348,7 +361,8 @@
       {"texto": "RECREAÇÃO", "dica": "Brincadeira da escola"},
       {"texto": "FORMATURA", "dica": "Festa de fim de curso"},
       {"texto": "VESTIBULAR", "dica": "Prova para a faculdade"},
-      {"texto": "FACULDADE", "dica": "Escola de ensino superior"}
+      {"texto": "FACULDADE", "dica": "Escola de ensino superior"},
+      {"texto": "APONTADOR", "dica": "Faz ponta no lápis"}
     ]
   },
   {
@@ -387,7 +401,9 @@
       {"texto": "PÓDIO", "dica": "Lugar dos três primeiros"},
       {"texto": "TORCEDOR", "dica": "Quem apoia o time"},
       {"texto": "CHUTEIRA", "dica": "Calçado do jogador"},
-      {"texto": "CANELEIRA", "dica": "Protege a perna do jogador"}
+      {"texto": "CANELEIRA", "dica": "Protege a perna do jogador"},
+      {"texto": "GINÁSTICA", "dica": "Exercícios do corpo"},
+      {"texto": "PATINAÇÃO", "dica": "Deslizar sobre rodas"}
     ]
   },
   {
@@ -552,7 +568,8 @@
       {"texto": "POLAR", "dica": "Clima gelado"},
       {"texto": "EQUATORIAL", "dica": "Clima da linha do Equador"},
       {"texto": "SEMIÁRIDO", "dica": "Clima seco do sertão"},
-      {"texto": "TEMPERADO", "dica": "Clima de estações bem definidas"}
+      {"texto": "TEMPERADO", "dica": "Clima de estações bem definidas"},
+      {"texto": "PRIMAVERA", "dica": "Estação das flores"}
     ]
   },
   {
@@ -592,7 +609,8 @@
       {"texto": "LUNAR", "dica": "Da lua"},
       {"texto": "SOLAR", "dica": "Do sol"},
       {"texto": "TERRESTRE", "dica": "Da Terra"},
-      {"texto": "PLANETÁRIO", "dica": "Lugar de ver o céu em cúpula"}
+      {"texto": "PLANETÁRIO", "dica": "Lugar de ver o céu em cúpula"},
+      {"texto": "ALIENÍGENA", "emoji": "👽"}
     ]
   },
   {
@@ -646,7 +664,11 @@
       {"texto": "CARICATURA", "dica": "Desenho exagerado"},
       {"texto": "GALERIA", "dica": "Lugar de expor arte"},
       {"texto": "EXPOSIÇÃO", "dica": "Mostra de obras"},
-      {"texto": "MUSEU", "dica": "Lugar de guardar objetos históricos"}
+      {"texto": "MUSEU", "dica": "Lugar de guardar objetos históricos"},
+      {"texto": "TRIÂNGULO", "dica": "Instrumento de ferro em forma de três lados"},
+      {"texto": "MICROFONE", "emoji": "🎤"},
+      {"texto": "MARIONETE", "dica": "Boneco de fios"},
+      {"texto": "PIPOQUEIRO", "dica": "Vende pipoca"}
     ]
   },
   {
@@ -709,7 +731,9 @@
       {"texto": "DESTINO", "dica": "Lugar aonde se vai"},
       {"texto": "AVENTURA", "dica": "Viagem cheia de emoções"},
       {"texto": "ACAMPAMENTO", "dica": "Lugar de dormir em barracas"},
-      {"texto": "TRILHA", "dica": "Caminho no mato"}
+      {"texto": "TRILHA", "dica": "Caminho no mato"},
+      {"texto": "AMBULÂNCIA", "emoji": "🚑"},
+      {"texto": "AEROPORTO", "dica": "Onde os aviões pousam"}
     ]
   },
   {
@@ -825,7 +849,10 @@
       {"texto": "FÊNIX", "dica": "Ave que renasce do fogo"},
       {"texto": "PEGASO", "dica": "Cavalo alado"},
       {"texto": "LABIRINTO", "dica": "Lugar de muitos caminhos"},
-      {"texto": "ODISSEIA", "dica": "Longa viagem"}
+      {"texto": "ODISSEIA", "dica": "Longa viagem"},
+      {"texto": "UNICÓRNIO", "dica": "Cavalo mágico de um chifre"},
+      {"texto": "LOBISOMEM", "dica": "Homem que vira lobo"},
+      {"texto": "CAVALEIRO", "dica": "Guerreiro de armadura"}
     ]
   },
   {
@@ -966,7 +993,12 @@
       {"texto": "CÚRCUMA", "dica": "Raiz amarela de tempero"},
       {"texto": "BAUNILHA", "dica": "Essência do bolo"},
       {"texto": "GENGIBRE", "dica": "Raiz picante"},
-      {"texto": "LOURO", "dica": "Folha do feijão"}
+      {"texto": "LOURO", "dica": "Folha do feijão"},
+      {"texto": "HAMBÚRGUER", "emoji": "🍔"},
+      {"texto": "CHOCOLATE", "emoji": "🍫"},
+      {"texto": "BRIGADEIRO", "dica": "Doce brasileiro de festa, bolinha"},
+      {"texto": "SANDUÍCHE", "dica": "Pão recheado de lanche"},
+      {"texto": "REQUEIJÃO", "dica": "Creme de passar no pão"}
     ]
   },
   {
@@ -1003,7 +1035,10 @@
       {"texto": "VIVEIRO", "dica": "Lugar onde nascem mudas"},
       {"texto": "ADUBO", "dica": "Alimento da terra"},
       {"texto": "COLHEITA", "dica": "Hora de recolher a plantação"},
-      {"texto": "SAFRA", "dica": "Produção de um ano agrícola"}
+      {"texto": "SAFRA", "dica": "Produção de um ano agrícola"},
+      {"texto": "MANJERICÃO", "dica": "Erva do molho italiano"},
+      {"texto": "SAMAMBAIA", "dica": "Planta de folhas recortadas"},
+      {"texto": "TREPADEIRA", "dica": "Planta que sobe nas paredes"}
     ]
   },
   {
@@ -1019,7 +1054,9 @@
       {"texto": "GINCANA", "dica": "Competição de brincadeiras"},
       {"texto": "ADIVINHA", "dica": "Charada"},
       {"texto": "CHARADA", "dica": "Enigma para resolver"},
-      {"texto": "DOMINÓ", "dica": "Peças com bolinhas"}
+      {"texto": "DOMINÓ", "dica": "Peças com bolinhas"},
+      {"texto": "BRONZEADO", "dica": "Pele queimada de sol"},
+      {"texto": "HORIZONTE", "dica": "Linha onde o céu encontra o mar"}
     ]
   },
   {
@@ -1040,7 +1077,12 @@
       {"texto": "VILÃO", "dica": "O malvado da história"},
       {"texto": "AVENTUREIRO", "dica": "Quem se lança em perigos"},
       {"texto": "EXPLORADOR", "dica": "Quem descobre lugares"},
-      {"texto": "TESOUREIRO", "dica": "Quem guarda o dinheiro"}
+      {"texto": "TESOUREIRO", "dica": "Quem guarda o dinheiro"},
+      {"texto": "ESCORREGA", "dica": "Desce deslizando"},
+      {"texto": "BICICLETA", "emoji": "🚲"},
+      {"texto": "SERPENTINA", "dica": "Fita enrolada de papel"},
+      {"texto": "QUADRILHA", "dica": "Dança da festa junina"},
+      {"texto": "CASAMENTO", "dica": "Festa dos noivos"}
     ]
   },
   {
@@ -1068,7 +1110,8 @@
       {"texto": "GUIZO", "dica": "Sino de coleira de gato"},
       {"texto": "COLEIRA", "dica": "Prende o cão"},
       {"texto": "RAÇÃO", "dica": "Comida de cão e gato"},
-      {"texto": "VETERINÁRIA", "dica": "Médica dos bichos"}
+      {"texto": "VETERINÁRIA", "dica": "Médica dos bichos"},
+      {"texto": "CHIQUEIRO", "dica": "Casa do porco"}
     ]
   },
   {
@@ -1095,7 +1138,8 @@
       {"texto": "INSÔNIA", "dica": "Dificuldade de dormir"},
       {"texto": "PESADELO", "dica": "Sonho ruim"},
       {"texto": "BOCEJAR", "dica": "Abrir a boca de cansaço"},
-      {"texto": "ESPREGUIÇAR", "dica": "Esticar o corpo ao acordar"}
+      {"texto": "ESPREGUIÇAR", "dica": "Esticar o corpo ao acordar"},
+      {"texto": "MACHUCADO", "dica": "Ferida"}
     ]
   },
   {
@@ -1132,7 +1176,14 @@
       {"texto": "SUPERMERCADO", "dica": "Loja grande de alimentos"},
       {"texto": "HORTIFRUTI", "dica": "Loja de frutas e verduras"},
       {"texto": "CHURRASCARIA", "dica": "Restaurante de carnes"},
-      {"texto": "CONFEITARIA", "dica": "Loja de doces"}
+      {"texto": "CONFEITARIA", "dica": "Loja de doces"},
+      {"texto": "BIBLIOTECA", "dica": "Lugar cheio de livros"},
+      {"texto": "SORVETERIA", "dica": "Loja de gelados cremosos"},
+      {"texto": "RODOVIÁRIA", "dica": "Onde os ônibus de viagem partem"},
+      {"texto": "PREFEITURA", "dica": "Casa do governo da cidade"},
+      {"texto": "DELEGACIA", "dica": "Onde ficam os policiais"},
+      {"texto": "CEMITÉRIO", "dica": "Lugar de descanso final"},
+      {"texto": "LANCHONETE", "dica": "Vende sanduíches"}
     ]
   },
   {
@@ -1165,7 +1216,14 @@
       {"texto": "GRANITO", "dica": "Rocha dura"},
       {"texto": "MÁRMORE", "dica": "Rocha lisa e elegante"},
       {"texto": "PETRÓLEO", "dica": "Líquido preto usado como combustível"},
-      {"texto": "GASOLINA", "dica": "Combustível do carro"}
+      {"texto": "GASOLINA", "dica": "Combustível do carro"},
+      {"texto": "CARANGUEJO", "emoji": "🦀"},
+      {"texto": "MARGARIDA", "dica": "Flor de pétalas brancas"},
+      {"texto": "TEMPESTADE", "dica": "Chuva com vento e raios"},
+      {"texto": "CORUJINHA", "dica": "Ave pequena da noite"},
+      {"texto": "PERIQUITO", "dica": "Papagaio pequeno e verde"},
+      {"texto": "TUCANINHO", "dica": "Ave de bico grande, mas pequena"},
+      {"texto": "ANDORINHA", "dica": "Ave que migra no verão"}
     ]
   },
   {
@@ -1191,7 +1249,11 @@
       {"texto": "CANIVETE", "dica": "Faca que dobra"},
       {"texto": "LAMPIÃO", "dica": "Luz de óleo"},
       {"texto": "ISQUEIRO", "dica": "Faz fogo"},
-      {"texto": "FÓSFORO", "dica": "Palito que acende"}
+      {"texto": "FÓSFORO", "dica": "Palito que acende"},
+      {"texto": "RETÂNGULO", "dica": "Quatro lados, dois compridos"},
+      {"texto": "ESCADINHA", "dica": "Degraus pequenos"},
+      {"texto": "TELESCÓPIO", "dica": "Olha as estrelas"},
+      {"texto": "COMPUTADOR", "dica": "Máquina de teclado e tela"}
     ]
   }
 ]

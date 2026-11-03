@@ -15,6 +15,7 @@ import {
   podeEscolherLetra,
   podeGirar,
 } from '../logica/jogo.js';
+import { ESTRELAS_MAXIMAS_POR_PAINEL } from '../logica/regras.js';
 import { contarCasasFechadas, montarResposta } from '../logica/texto.js';
 import { useFoco, useVoltar } from '../navegacao/useNavegacao.js';
 import BotaoSom from '../audio/BotaoSom.jsx';
@@ -157,7 +158,7 @@ export default function Jogo({ estado, despachar, aoSair }) {
         ))}
       </ul>
       {!competitivo && (
-        <p className="jogo-equipe">Estrelas da equipe: {estado.estrelas} de {totalPaineis * 3}</p>
+        <p className="jogo-equipe">Estrelas da equipe: {estado.estrelas} de {totalPaineis * ESTRELAS_MAXIMAS_POR_PAINEL}</p>
       )}
 
       <Painel

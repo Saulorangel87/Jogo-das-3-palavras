@@ -6,6 +6,16 @@ import {
   letrasDoTexto,
   mesmaResposta,
 } from './texto.js';
+import {
+  ESTRELAS_MAXIMAS_POR_PAINEL,
+  ESTRELAS_MINIMAS,
+  ESTRELAS_POR_ERROS,
+  FATIAS_ROLETA,
+  MULTIPLICADORES_DOS_PAINEIS,
+  PONTOS_POR_CASA_FECHADA,
+} from './regras.js';
+
+export { FATIAS_ROLETA };
 
 export const MODOS = { COMPETITIVO: 'competitivo', COOPERATIVO: 'cooperativo' };
 export const FASES = { JOGANDO: 'jogando', RESOLVIDO: 'resolvido', FIM: 'fim' };
@@ -20,10 +30,6 @@ export const JOGADAS = {
   LETRA_ERRADA: 'letra-errada',
   CHUTE_ERRADO: 'chute-errado',
 };
-
-export const FATIAS_ROLETA = [10, 25, 5, 30, 15, 50, 20, 40];
-// Perto da média da roleta (24), mas sem o risco de errar a letra e perder a vez.
-const PONTOS_POR_CASA_FECHADA = 20;
 
 export function criarPartida({ modo, nivel, jogadores, rodada }) {
   return {
@@ -50,12 +56,13 @@ export function painelAtual(estado) {
 }
 
 export function multiplicadorAtual(estado) {
-  return estado.indicePainel + 1;
+  const ultimo = MULTIPLICADORES_DOS_PAINEIS.length - 1;
+  return MULTIPLICADORES_DOS_PAINEIS[Math.min(estado.indicePainel, ultimo)];
 }
 
 export function calcularEstrelas(erros) {
-  if (erros <= 2) return 3;
-  return erros <= 4 ? 2 : 1;
+  const faixa = ESTRELAS_POR_ERROS.find((f) => erros <= f.ateErros);
+  return faixa ? faixa.estrelas : ESTRELAS_MINIMAS;
 }
 
 export function indiceDaFatia(sorteio) {
@@ -227,7 +234,7 @@ export function aplicarAcao(estado, acao) {
 
 export function calcularResultado(estado) {
   if (estado.modo === MODOS.COOPERATIVO) {
-    return { estrelas: estado.estrelas, maximo: estado.paineis.length * 3 };
+    return { estrelas: estado.estrelas, maximo: estado.paineis.length * ESTRELAS_MAXIMAS_POR_PAINEL };
   }
   const ranking = [...estado.jogadores].sort((a, b) => b.pontos - a.pontos);
   const maior = ranking[0].pontos;
