@@ -69,7 +69,7 @@ A roleta fica fora do cooperativo porque lá não há pontos para ela sortear.
 
 | | Iniciante (5–7) | Intermediário (7–9) | Avançado (10+) |
 |---|---|---|---|
-| Painel | Palavra de 2 sílabas: PATO, BOLA | Palavra mais longa, com dígrafos: GALINHA | Frase curta, com acentos e ç: PÃO COM MANTEIGA |
+| Painel | Palavra curta (2 a 10 letras): PATO, BOLA, CHUVA | Palavra mais longa (5 a 12 letras), com dígrafos: GALINHA | Frase curta (2 a 6 palavras, até 30 letras), com acentos e ç: PÃO COM MANTEIGA |
 | Dica | Emoji | Emoji | Frase |
 | Teclado | Letras da palavra + 4 extras | Alfabeto completo | Alfabeto completo |
 | Resolver | 3 opções escritas | Preencher as casas | Preencher as casas |
@@ -114,7 +114,7 @@ Tudo gerado por código com a **Web Audio API direta, sem biblioteca** (decisão
 2. Telas: Início → Configuração da partida (modo, nível, nº de jogadores 2–4, personagem de cada um) → Jogo → Resultado.
 3. Níveis **Iniciante, Intermediário e Avançado**.
 4. Modos **Competitivo e Cooperativo** funcionando.
-5. Banco de painéis em `src/data/palavras.json`, com o formato abaixo. A partida sorteia um tema e 3 painéis dele.
+5. Banco de painéis em `src/data/iniciante.json`, `intermediario.json` e `avancado.json` (mais de 1000 itens por nível, carregados só quando o nível é escolhido), com o formato abaixo. A partida sorteia um tema e 3 painéis dele.
 6. Navegação completa por setas + Enter, mouse e toque.
 7. Áudio por código (efeitos e jingles, sem trilha ainda), sem PWA, sem backend.
 
@@ -137,7 +137,9 @@ Tudo gerado por código com a **Web Audio API direta, sem biblioteca** (decisão
 }
 ```
 
-Textos só com letras maiúsculas (com acentos) e espaços, e no máximo 12 letras por palavra, para caber no celular.
+Textos só com letras maiúsculas (com acentos) e espaços, sem hífen, e no máximo 12 letras por palavra, para caber no celular.
+
+Regras do banco (conferidas em `src/data/palavras.test.js`): mínimo de 1000 itens por nível, sem repetição, cada tema com 3 itens ou mais. Cada item tem `emoji` **ou** `dica` escrita. Emoji só de Unicode antigo (até a versão 9), por causa de TV e navegador antigos; sem emoji seguro, usa-se dica escrita. A dica escrita não pode conter a palavra da resposta. Nada de marcas, pessoas reais ou palavras ofensivas.
 
 As opções erradas do "Resolver" (só no iniciante) vêm de outros itens do mesmo nível, fora dos 3 painéis da partida, priorizando os que começam com a mesma letra, têm o mesmo tamanho ou são do mesmo tema.
 

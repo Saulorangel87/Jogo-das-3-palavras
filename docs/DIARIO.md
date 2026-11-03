@@ -82,7 +82,7 @@ Registro de cada etapa: o que mudou e por quê. A entrada mais recente fica no f
 - `src/logica/jogo.js`: roleta, letras, resolver, pontos e estrelas.
 - `src/logica/texto.js`: comparação de letras, em que acentos e cedilha contam como a letra base.
 - `src/logica/rodada.js`: sorteio dos 3 painéis, do teclado e das opções.
-- `src/data/palavras.json`: 3 níveis, com palavras e frases escritas para o jogo.
+- `src/data/palavras.json`: 3 níveis, com palavras e frases escritas para o jogo (na etapa 14 virou um arquivo por nível).
 
 **Por quê:** a regra continua separada da interface. A ação `GIRAR` recebe o sorteio de fora, para o servidor do modo online poder decidir o resultado.
 
@@ -188,3 +188,23 @@ Registro de cada etapa: o que mudou e por quê. A entrada mais recente fica no f
 - Só com teclado: abrir o painel, subir e descer o volume, silenciar e fechar com Voltar. Também dentro da partida, onde Voltar fecha só o painel de som. O painel cabe em 360x640.
 
 **Não verificado:** como os sons realmente **soam**. Não consigo ouvir, então o equilíbrio de volume entre os sons e a qualidade dos timbres dependem do ouvido do Saulo. Também falta testar em TV ou navegador antigo.
+
+## 2026-11-03 — Etapa 14: mais de mil itens por nível
+
+**O que mudou:** o banco saiu de 43 itens para mais de 3 mil, a pedido do Saulo ("pelo menos mil palavras para cada nível").
+
+- **Iniciante:** 1080 palavras de 2 a 10 letras, em 39 temas (fazenda, casa, corpo, comida, escola, profissões e outros).
+- **Intermediário:** 1035 palavras de 5 a 12 letras, em 32 temas (frutas, países, capitais, ciência, tecnologia, verbos e outros).
+- **Avançado:** 1018 frases de 2 a 6 palavras, em 19 temas (ditados populares, receitas, escola, natureza, cidade, esportes, festas e outros).
+- O `palavras.json` único foi dividido em `iniciante.json`, `intermediario.json` e `avancado.json`. `carregarPalavras(nivel)` carrega cada um só quando pedido (`import()` dinâmico) e guarda em cache. O build gera um arquivo por nível, de 50 a 60 KB cada.
+
+**Decisões:**
+
+- **O iniciante deixou de ser só "2 sílabas".** Mil palavras simples de 2 sílabas que dão para ilustrar não existem. Agora são palavras curtas, de 2 a 10 letras, e o `CLAUDE.md` foi ajustado.
+- **Nem tudo tem emoji.** Muitos itens usam uma dica escrita curta (por exemplo, "Vem da vaca"). Emoji só de Unicode até a versão 9, porque TV e navegador antigos não desenham os novos. Os que eram novos demais (🪁, 🧃, 🥥, 🦒, 🦓, 🦷) foram trocados por dica escrita.
+- Os textos foram escritos em listas compactas (`TEXTO|dica`, por tema) e convertidos por um script que descartou o que não servia: repetidos, hífen, palavra fora do tamanho do nível, emoji novo e dica que entrega a resposta. Cerca de 20% do que escrevi caiu nesse filtro.
+- Os testes passaram a conferir tudo isso: mínimo de 1000, repetição, tamanhos por nível, emoji antigo e dica sem a resposta (85 testes).
+
+**Verificado:** testes e build (inclusive o pacote antigo para TV) passam. No Chrome, os 3 níveis carregam com as contagens certas e uma partida avançada abre em 360x640 com a frase quebrando em linhas.
+
+**Não verificado:** a revisão do conteúdo é minha, sem dicionário de português na máquina. Pode haver dica fraca, ambígua ou palavra que não combine com o nível. Vale o Saulo (ou as crianças) jogar e apontar o que estranhar. Também falta ver as frases mais longas na TV.

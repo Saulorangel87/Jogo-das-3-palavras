@@ -1,5 +1,7 @@
 import { describe, expect, it } from 'vitest';
-import banco from '../data/palavras.json';
+import iniciante from '../data/iniciante.json';
+import intermediario from '../data/intermediario.json';
+import avancado from '../data/avancado.json';
 import { montarRodada } from './rodada.js';
 import { letrasDoTexto } from './texto.js';
 
@@ -12,6 +14,7 @@ function gerador(semente) {
 }
 
 const NIVEIS = ['iniciante', 'intermediario', 'avancado'];
+const banco = { iniciante, intermediario, avancado };
 
 describe('montarRodada', () => {
   it.each(['intermediario', 'avancado'])('%s: não tem opções de resposta', (nivel) => {
