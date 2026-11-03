@@ -1,6 +1,8 @@
+import { useEffect } from 'react';
 import Estrelas from '../componentes/Estrelas.jsx';
 import { MODOS, calcularResultado } from '../logica/jogo.js';
 import { useFoco, useVoltar } from '../navegacao/useNavegacao.js';
+import { tocarEfeito } from '../audio/motor.js';
 import Personagem from '../personagens/Personagem.jsx';
 import './Resultado.css';
 
@@ -12,6 +14,10 @@ function tituloCompetitivo(vencedores) {
 export default function Resultado({ estado, aoJogarDeNovo, aoInicio }) {
   const resultado = calcularResultado(estado);
   const competitivo = estado.modo === MODOS.COMPETITIVO;
+
+  useEffect(() => {
+    tocarEfeito('fim');
+  }, []);
 
   useFoco('resultado');
   useVoltar(aoInicio);

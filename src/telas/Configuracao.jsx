@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { PERSONAGENS } from '../data/personagens.js';
 import { MODOS } from '../logica/jogo.js';
 import { useFoco, useVoltar } from '../navegacao/useNavegacao.js';
+import { tocarJingle } from '../audio/motor.js';
 import Personagem from '../personagens/Personagem.jsx';
 import './Configuracao.css';
 
@@ -27,6 +28,7 @@ export default function Configuracao({ aoIniciar, aoVoltar }) {
   }
 
   function escolher(personagem) {
+    tocarJingle(personagem.id);
     const novos = [...escolhidos, personagem];
     if (novos.length === total) aoIniciar({ modo, nivel, jogadores: novos });
     else setEscolhidos(novos);

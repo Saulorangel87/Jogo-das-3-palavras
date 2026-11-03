@@ -4,7 +4,7 @@ import './Roleta.css';
 const CORES = ['#ffd23f', '#8ecae6', '#ff8fab', '#95d5b2', '#f4a261', '#cdb4db', '#a8dadc', '#ffb703'];
 const CENTRO = 100;
 const RAIO = 96;
-const GRAUS = 360 / FATIAS_ROLETA.length;
+export const GRAUS = 360 / FATIAS_ROLETA.length;
 
 function ponto(graus, raio) {
   // 0 grau é o topo; o ângulo cresce no sentido horário.

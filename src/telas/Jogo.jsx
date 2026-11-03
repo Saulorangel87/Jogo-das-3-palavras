@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import Estrelas from '../componentes/Estrelas.jsx';
 import Painel from '../componentes/Painel.jsx';
-import Roleta, { proximoAngulo } from '../componentes/Roleta.jsx';
+import Roleta, { GRAUS, proximoAngulo } from '../componentes/Roleta.jsx';
 import Teclado from '../componentes/Teclado.jsx';
 import {
   ACOES,
@@ -16,6 +16,10 @@ import {
 } from '../logica/jogo.js';
 import { contarCasasFechadas, montarResposta } from '../logica/texto.js';
 import { useFoco, useVoltar } from '../navegacao/useNavegacao.js';
+import BotaoSom from '../audio/BotaoSom.jsx';
+import PainelSom from '../audio/PainelSom.jsx';
+import { tocarEfeito } from '../audio/motor.js';
+import { useEfeitosDoJogo } from '../audio/useEfeitosDoJogo.js';
 import Personagem from '../personagens/Personagem.jsx';
 import { expressaoNoJogo } from '../personagens/expressao.js';
 import './Jogo.css';
@@ -68,6 +72,8 @@ export default function Jogo({ estado, despachar, aoSair }) {
     return () => clearTimeout(temporizador);
   }, [girando]);
 
+  useEfeitosDoJogo(estado);
+
   useFoco(
     [
       estado.indicePainel,
@@ -92,7 +98,10 @@ export default function Jogo({ estado, despachar, aoSair }) {
 
   function girar() {
     const sorteio = Math.random();
-    setAngulo(proximoAngulo(angulo, indiceDaFatia(sorteio)));
+    const novoAngulo = proximoAngulo(angulo, indiceDaFatia(sorteio));
+    // Um tique por divisão de fatia que passa pelo ponteiro.
+    tocarEfeito('giro', { tiques: Math.round((novoAngulo - angulo) / GRAUS), duracao: DURACAO_GIRO });
+    setAngulo(novoAngulo);
     setGirando(true);
     despachar({ tipo: ACOES.GIRAR, sorteio });
   }
@@ -114,16 +123,25 @@ export default function Jogo({ estado, despachar, aoSair }) {
           {estado.tema} · Painel {estado.indicePainel + 1} de {totalPaineis}
           {competitivo && ` · pontos ×${multiplicadorAtual(estado)}`}
         </span>
-        <button
-          className="botao botao-secundario jogo-sair"
-          disabled={girando}
-          onClick={() => {
-            setDigitadas([]);
-            setAberto('sair');
-          }}
-        >
-          Sair
-        </button>
+        <div className="jogo-topo-botoes">
+          <BotaoSom
+            className="jogo-sair"
+            aoAbrir={() => {
+              setDigitadas([]);
+              setAberto('som');
+            }}
+          />
+          <button
+            className="botao botao-secundario jogo-sair"
+            disabled={girando}
+            onClick={() => {
+              setDigitadas([]);
+              setAberto('sair');
+            }}
+          >
+            Sair
+          </button>
+        </div>
       </header>
 
       <ul className="jogo-placar">
@@ -273,6 +291,8 @@ export default function Jogo({ estado, despachar, aoSair }) {
           </div>
         </>
       )}
+
+      {aberto === 'som' && <PainelSom aoFechar={() => setAberto(null)} />}
 
       {aberto === 'sair' && (
         <div className="jogo-modal" data-modal role="dialog" aria-modal="true" aria-labelledby="titulo-sair">

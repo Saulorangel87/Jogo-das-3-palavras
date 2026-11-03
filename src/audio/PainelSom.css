@@ -1,0 +1,82 @@
+.som-fundo {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 5vh 5vw;
+  background: rgba(10, 16, 32, 0.85);
+}
+
+.som-caixa {
+  width: 100%;
+  max-width: 30rem;
+  padding: 1.5rem;
+  border-radius: 1rem;
+  background: var(--painel);
+  text-align: center;
+}
+
+.som-linha {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 1rem;
+}
+
+.som-passo {
+  flex: none;
+  min-width: 3.2rem;
+  padding: 0.2rem 0.8rem;
+  font-size: 1.8rem;
+  line-height: 1.2;
+}
+
+.som-volume {
+  margin: 0 0.8rem;
+}
+
+.som-barras {
+  display: flex;
+  justify-content: center;
+}
+
+.som-barra {
+  width: 0.9rem;
+  height: 1.8rem;
+  margin: 0 0.12rem;
+  border-radius: 0.2rem;
+  background: var(--casa-fechada);
+}
+
+.som-barra-cheia {
+  background: var(--destaque);
+}
+
+.som-texto {
+  display: block;
+  margin-top: 0.3rem;
+  font-size: 0.95rem;
+  font-weight: 700;
+}
+
+.som-botoes {
+  margin-top: 1.2rem;
+}
+
+.som-botoes .botao-secundario {
+  background: var(--fundo);
+}
+
+@media (max-width: 600px) {
+  .som-barra {
+    width: 0.6rem;
+  }
+
+  .som-volume {
+    margin: 0 0.4rem;
+  }
+}
