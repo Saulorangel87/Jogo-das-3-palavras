@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { codigoDoEndereco, formatarCodigo, linkDoConvite, mensagemDeErro, teclasDoCodigo } from './mensagens.js';
+import { codigoDoEndereco, formatarCodigo, linkDoConvite, mensagemDeErro, teclasDoCodigo, textoDeQuemSaiu } from './mensagens.js';
 
 describe('código do convite', () => {
   it('lê o código do link e aceita minúsculas', () => {
@@ -31,5 +31,21 @@ describe('mensagens', () => {
   it('erro desconhecido ainda dá uma mensagem', () => {
     expect(mensagemDeErro('qualquer')).toMatch(/errado/);
     expect(mensagemDeErro('sala-cheia')).toMatch(/cheia/);
+  });
+});
+
+describe('quem saiu, no resultado', () => {
+  const j = (nome, saiu) => ({ nome, saiu });
+
+  it('não diz nada quando ninguém saiu', () => {
+    expect(textoDeQuemSaiu([j('Lalá'), j('Bóris')], false)).toBeNull();
+  });
+
+  it('explica a partida que acabou por saída', () => {
+    expect(textoDeQuemSaiu([j('Lalá'), j('Bóris', true)], true)).toBe('Bóris saiu da partida, por isso ela terminou aqui.');
+  });
+
+  it('avisa quem saiu de uma partida que continuou', () => {
+    expect(textoDeQuemSaiu([j('Lalá', true), j('Bóris'), j('Til', true)], false)).toBe('Lalá e Til saíram da partida.');
   });
 });

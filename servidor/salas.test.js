@@ -24,7 +24,7 @@ const T = 1000;
 let g;
 
 beforeEach(() => {
-  g = criarGerenciador({ carregarPalavras: async () => PALAVRAS, limites: { vagaMs: 120, vezMs: 60 } });
+  g = criarGerenciador({ carregarPalavras: async () => PALAVRAS, limites: { vagaMs: 120, vezMs: 60, proximoMs: 30 } });
 });
 
 function salaCom2(nivel = 'avancado') {
@@ -40,6 +40,14 @@ async function partida(nivel) {
 }
 
 const jogar = (s, token, pedido, t = T) => g.jogar({ codigo: s.codigo, token, pedido }, t);
+
+function resolverESeguir(s) {
+  const { paineis, indicePainel, vez } = s.sala.partida;
+  const token = vez === 0 ? s.tokenA : s.tokenB;
+  expect(jogar(s, token, { tipo: ACOES.RESOLVER, resposta: paineis[indicePainel].texto }).ok).toBe(true);
+  expect(jogar(s, s.tokenA, { tipo: ACOES.PROXIMO_PAINEL }).ok).toBe(true);
+  expect(jogar(s, s.tokenB, { tipo: ACOES.PROXIMO_PAINEL }).ok).toBe(true);
+}
 
 describe('código', () => {
   it('tem o formato certo e não forma palavras: sem vogais', () => {
@@ -126,12 +134,7 @@ describe('jogadas: o servidor é a autoridade', () => {
 
   it('a partida vai até o fim', async () => {
     const s = await partida();
-    for (let i = 0; i < 3; i++) {
-      const { paineis, indicePainel, vez } = s.sala.partida;
-      const token = vez === 0 ? s.tokenA : s.tokenB;
-      expect(jogar(s, token, { tipo: ACOES.RESOLVER, resposta: paineis[indicePainel].texto }).ok).toBe(true);
-      expect(jogar(s, token, { tipo: ACOES.PROXIMO_PAINEL }).ok).toBe(true);
-    }
+    for (let i = 0; i < 3; i++) resolverESeguir(s);
     expect(s.sala.fase).toBe(FASES_DA_SALA.FIM);
   });
 });
@@ -242,25 +245,91 @@ describe('quem caiu e quem saiu', () => {
     expect(g.total()).toBe(0);
   });
 
-  it('quem resolveu e caiu não trava o próximo painel', async () => {
+  it('quem caiu não trava o próximo painel', async () => {
     const s = await partida();
     const { texto } = s.sala.partida.paineis[0];
     jogar(s, s.tokenA, { tipo: ACOES.RESOLVER, resposta: texto });
-    expect(jogar(s, s.tokenB, { tipo: ACOES.PROXIMO_PAINEL }).erro).toBe('nao-e-sua-vez');
     g.marcarQueda({ codigo: s.codigo, token: s.tokenA }, T);
     expect(jogar(s, s.tokenB, { tipo: ACOES.PROXIMO_PAINEL }).ok).toBe(true);
+    expect(s.sala.partida.indicePainel).toBe(1);
+  });
+
+  it('cair ou sair esperando alguém também libera quem já clicou', async () => {
+    const s = await partida();
+    const { texto } = s.sala.partida.paineis[0];
+    jogar(s, s.tokenA, { tipo: ACOES.RESOLVER, resposta: texto });
+    jogar(s, s.tokenA, { tipo: ACOES.PROXIMO_PAINEL });
+    g.marcarQueda({ codigo: s.codigo, token: s.tokenB }, T);
+    expect(s.sala.partida.indicePainel).toBe(1);
+  });
+
+  it('com uma pessoa só, a partida termina dizendo que foi por saída', async () => {
+    const s = await partida();
+    g.sair({ codigo: s.codigo, token: s.tokenB }, T);
+    expect(s.sala.fase).toBe(FASES_DA_SALA.FIM);
+    expect(visaoDaSala(s.sala, 'lala', T).partida.encerradaPorSaida).toBe(true);
+    expect(visaoDaSala(s.sala, 'lala', T).partida.jogadores[1].saiu).toBe(true);
+  });
+});
+
+describe('seguir para o próximo painel', () => {
+  async function resolvida() {
+    const s = await partida();
+    jogar(s, s.tokenA, { tipo: ACOES.RESOLVER, resposta: s.sala.partida.paineis[0].texto });
+    return s;
+  }
+
+  it('a palavra só sai da tela quando todos clicam', async () => {
+    const s = await resolvida();
+    expect(jogar(s, s.tokenA, { tipo: ACOES.PROXIMO_PAINEL }).ok).toBe(true);
+    expect(s.sala.partida.fase).toBe(FASES.RESOLVIDO);
+    expect(visaoDaSala(s.sala, 'boris', T).prontos).toEqual(['lala']);
+    expect(jogar(s, s.tokenB, { tipo: ACOES.PROXIMO_PAINEL }).ok).toBe(true);
+    expect(s.sala.partida.indicePainel).toBe(1);
+    expect(s.sala.prontos).toEqual([]);
+  });
+
+  it('não importa quem clica primeiro, e clicar duas vezes não conta como duas pessoas', async () => {
+    const s = await resolvida();
+    jogar(s, s.tokenB, { tipo: ACOES.PROXIMO_PAINEL });
+    jogar(s, s.tokenB, { tipo: ACOES.PROXIMO_PAINEL });
+    expect(s.sala.partida.indicePainel).toBe(0);
+    expect(s.sala.prontos).toEqual(['boris']);
+  });
+
+  it('sem nenhum clique, o tempo não tira a palavra da tela', async () => {
+    const s = await resolvida();
+    g.verificarPrazos(T + 1000);
+    expect(s.sala.partida.fase).toBe(FASES.RESOLVIDO);
+  });
+
+  it('depois do primeiro clique, quem não clica não trava a partida', async () => {
+    const s = await resolvida();
+    jogar(s, s.tokenA, { tipo: ACOES.PROXIMO_PAINEL });
+    expect(visaoDaSala(s.sala, 'boris', T + 10).esperaProximoMs).toBe(20);
+    g.verificarPrazos(T + 29);
+    expect(s.sala.partida.indicePainel).toBe(0);
+    expect(g.verificarPrazos(T + 30).mudaram).toContain(s.sala);
+    expect(s.sala.partida.indicePainel).toBe(1);
+  });
+
+  it('no último painel, o resultado também espera todos', async () => {
+    const s = await partida();
+    resolverESeguir(s);
+    resolverESeguir(s);
+    const { paineis, indicePainel, vez } = s.sala.partida;
+    jogar(s, vez === 0 ? s.tokenA : s.tokenB, { tipo: ACOES.RESOLVER, resposta: paineis[indicePainel].texto });
+    jogar(s, s.tokenA, { tipo: ACOES.PROXIMO_PAINEL });
+    expect(s.sala.fase).toBe(FASES_DA_SALA.JOGANDO);
+    jogar(s, s.tokenB, { tipo: ACOES.PROXIMO_PAINEL });
+    expect(s.sala.fase).toBe(FASES_DA_SALA.FIM);
   });
 });
 
 describe('nada fica guardado', () => {
   it('sala terminada e sala parada são apagadas', async () => {
     const s = await partida();
-    for (let i = 0; i < 3; i++) {
-      const { paineis, indicePainel, vez } = s.sala.partida;
-      const token = vez === 0 ? s.tokenA : s.tokenB;
-      jogar(s, token, { tipo: ACOES.RESOLVER, resposta: paineis[indicePainel].texto });
-      jogar(s, token, { tipo: ACOES.PROXIMO_PAINEL });
-    }
+    for (let i = 0; i < 3; i++) resolverESeguir(s);
     expect(g.total()).toBe(1);
     g.verificarPrazos(T + RESULTADO_VISIVEL_MS);
     expect(g.total()).toBe(0);

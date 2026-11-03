@@ -263,6 +263,22 @@ describe('saída e queda de jogador (online)', () => {
     expect(e.jogadores.map((j) => j.pontos)).toEqual([0, 0, 0]);
   });
 
+  it('quem saiu não vence, mesmo com mais pontos, e fica no fim do placar', () => {
+    const inicial = partidaDe3();
+    const comPontos = { ...inicial, jogadores: inicial.jogadores.map((j, i) => ({ ...j, pontos: i === 0 ? 100 : 10 * i })) };
+    const e = aplicarAcao(comPontos, { tipo: ACOES.MARCAR_SAIDA, indice: 0 });
+    const resultado = calcularResultado(e);
+    expect(resultado.vencedores.map((j) => j.pontos)).toEqual([20]);
+    expect(resultado.ranking[resultado.ranking.length - 1].saiu).toBe(true);
+  });
+
+  it('marca quando a partida acabou porque sobrou uma pessoa', () => {
+    let e = aplicarAcao(partidaDe3(), { tipo: ACOES.MARCAR_SAIDA, indice: 0 });
+    expect(e.encerradaPorSaida).toBeUndefined();
+    e = aplicarAcao(e, { tipo: ACOES.MARCAR_SAIDA, indice: 1 });
+    expect(e.encerradaPorSaida).toBe(true);
+  });
+
   it('quem saiu é pulado na vez', () => {
     let e = aplicarAcao(partidaDe3(), { tipo: ACOES.MARCAR_SAIDA, indice: 1 });
     expect(e.vez).toBe(0);

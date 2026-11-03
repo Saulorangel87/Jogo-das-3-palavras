@@ -16,6 +16,15 @@ export function mensagemDeErro(codigo) {
   return MENSAGENS[codigo] || 'Algo deu errado. Tente de novo.';
 }
 
+// Explica no resultado por que a partida mudou: sem isso, a vitória parece sem motivo.
+export function textoDeQuemSaiu(jogadores, encerrada) {
+  const nomes = jogadores.filter((j) => j.saiu).map((j) => j.nome);
+  if (nomes.length === 0) return null;
+  const lista = nomes.length === 1 ? nomes[0] : `${nomes.slice(0, -1).join(', ')} e ${nomes[nomes.length - 1]}`;
+  const verbo = nomes.length === 1 ? 'saiu' : 'saíram';
+  return encerrada ? `${lista} ${verbo} da partida, por isso ela terminou aqui.` : `${lista} ${verbo} da partida.`;
+}
+
 const FORMATO_DO_CODIGO = /^[BCDFGHJKLMNPRSTVZ]{4}-\d{2}$/;
 export const LETRAS_DO_CODIGO = 'BCDFGHJKLMNPRSTVZ'.split('');
 export const DIGITOS_DO_CODIGO = '0123456789'.split('');

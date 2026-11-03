@@ -28,6 +28,8 @@ import Fundo from '../fundos/Fundo.jsx';
 import './Jogo.css';
 
 const DURACAO_GIRO = 2600;
+// O botão de seguir nasce onde estava a resposta: um toque duplo não pode pular a palavra.
+const ESPERA_PARA_SEGUIR_MS = 1000;
 
 function textoDaJogada(jogada, competitivo) {
   if (!jogada) return null;
@@ -83,10 +85,13 @@ export default function Jogo({ estado, despachar, aoSair, online = null }) {
   const totalPaineis = estado.paineis.length;
   const ultimo = estado.indicePainel === totalPaineis - 1;
   const minhaVez = !online || jogadorDaVez.id === online.voceId;
-  const conexaoDaVez = online ? online.jogadores.find((j) => j.id === jogadorDaVez.id) : null;
-  const daVezOffline = Boolean(conexaoDaVez) && conexaoDaVez.conexao !== 'conectada';
-  const podeAvancar = minhaVez || daVezOffline;
+  const prontos = online ? online.prontos : [];
+  const jaSegui = Boolean(online) && prontos.includes(online.voceId);
+  const faltamSeguir = online
+    ? online.jogadores.filter((j) => j.conexao === 'conectada' && !prontos.includes(j.id)).map((j) => j.nome)
+    : [];
   const segundosDaVez = useSegundosRestantes(online ? online.esperaNaVezMs : null);
+  const segundosParaSeguir = useSegundosRestantes(online && resolvido ? online.esperaProximoMs : null);
   const podeLetra = podeEscolherLetra(estado) && !girando && minhaVez;
   const comOpcoes = Boolean(painel.opcoes);
   const opcoesDisponiveis = comOpcoes
@@ -103,6 +108,16 @@ export default function Jogo({ estado, despachar, aoSair, online = null }) {
   }, [girando]);
 
   useEfeitosDoJogo(estado);
+
+  const resolvidoEm = useRef(0);
+  useEffect(() => {
+    if (resolvido) resolvidoEm.current = Date.now();
+  }, [resolvido]);
+
+  function seguir() {
+    if (Date.now() - resolvidoEm.current < ESPERA_PARA_SEGUIR_MS) return;
+    despachar({ tipo: ACOES.PROXIMO_PAINEL });
+  }
 
   // Online, todos os aparelhos giram a roleta quando o servidor avisa, para a mesma fatia.
   const numeroDoGiro = online && online.giro ? online.giro.numero : 0;
@@ -131,6 +146,7 @@ export default function Jogo({ estado, despachar, aoSair, online = null }) {
       estado.descartadas.length,
       girando,
       aberto,
+      jaSegui,
     ].join('-'),
   );
   useVoltar(() => {
@@ -239,16 +255,15 @@ export default function Jogo({ estado, despachar, aoSair, online = null }) {
               : 'Vocês resolveram! '}
             {!competitivo && <Estrelas quantidade={estado.ganho} />}
           </p>
-          {podeAvancar ? (
-            <button
-              className="botao jogo-proximo"
-              data-foco-inicial
-              onClick={() => despachar({ tipo: ACOES.PROXIMO_PAINEL })}
-            >
+          {jaSegui ? (
+            <p className="jogo-instrucao">Esperando {faltamSeguir.join(', ')}...</p>
+          ) : (
+            <button className="botao jogo-proximo" data-foco-inicial onClick={seguir}>
               {ultimo ? 'Ver resultado' : 'Próximo painel'}
             </button>
-          ) : (
-            <p className="jogo-instrucao">{jogadorDaVez.nome} vai abrir o próximo painel.</p>
+          )}
+          {segundosParaSeguir !== null && (
+            <p className="jogo-instrucao jogo-segue-sozinho">O jogo segue sozinho em {segundosParaSeguir} s.</p>
           )}
         </>
       )}

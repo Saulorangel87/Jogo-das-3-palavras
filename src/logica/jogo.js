@@ -237,7 +237,7 @@ function marcarSaida(estado, indice) {
   if (!jogador || jogador.saiu || estado.fase === FASES.FIM) return estado;
   const jogadores = estado.jogadores.map((j, i) => (i === indice ? { ...j, saiu: true } : j));
   const proximo = { ...estado, jogadores };
-  if (jogadores.filter((j) => !j.saiu).length <= 1) return { ...proximo, fase: FASES.FIM };
+  if (jogadores.filter((j) => !j.saiu).length <= 1) return { ...proximo, fase: FASES.FIM, encerradaPorSaida: true };
   return indice === estado.vez ? passarVez(proximo) : proximo;
 }
 
@@ -265,7 +265,13 @@ export function calcularResultado(estado) {
   if (estado.modo === MODOS.COOPERATIVO) {
     return { estrelas: estado.estrelas, maximo: estado.paineis.length * ESTRELAS_MAXIMAS_POR_PAINEL };
   }
-  const ranking = [...estado.jogadores].sort((a, b) => b.pontos - a.pontos);
+  // Quem saiu fica no placar, mas vence quem ficou até o fim.
+  const ficaram = estado.jogadores.filter((j) => !j.saiu);
+  const candidatos = ficaram.length > 0 ? ficaram : estado.jogadores;
+  const porPontos = (a, b) => b.pontos - a.pontos;
+  const ranking = [...candidatos].sort(porPontos).concat(
+    estado.jogadores.filter((j) => !candidatos.includes(j)).sort(porPontos),
+  );
   const maior = ranking[0].pontos;
-  return { ranking, vencedores: ranking.filter((j) => j.pontos === maior) };
+  return { ranking, vencedores: candidatos.filter((j) => j.pontos === maior) };
 }

@@ -437,3 +437,15 @@ Publicado na VPS com o segundo container. Nada mudou no Cloudflare.
 
 **Próximo:** partida com aparelhos reais. Depois, cooperativo online e ranking.
 
+## 2026-11-03 — Etapa 31: ajustes depois do primeiro teste do Saulo (versão 1.2.1)
+
+**Palavra sumindo:** nenhum temporizador a escondia. Só quem resolveu tinha o botão de seguir, e o clique dele tirava a palavra da tela de todos. Além disso, o botão nasce no lugar da opção de resposta, então um toque duplo pulava a palavra, inclusive no jogo local. Agora cada pessoa clica para seguir, e o botão ignora cliques no primeiro segundo.
+
+**Decisão a rever com as crianças:** depois do primeiro clique, as outras têm 30 segundos, com contagem na tela. Sem isso, uma criança que largou o aparelho travaria todo mundo. Sem nenhum clique, a palavra fica na tela sem prazo.
+
+**Vitória sem motivo:** o resultado não dizia que a outra pessoa tinha saído. Agora diz, por exemplo, "Lalá Lápis saiu da partida, por isso ela terminou aqui." Quem saiu aparece com "(saiu)" no fim do placar e não vence mais, mesmo com mais pontos. Antes, quem saía podia ganhar.
+
+**Verificado (local):** 197 testes. Em duas abas do Chrome: toque duplo ignorado, palavra na tela do outro depois do clique de quem resolveu, os dois cliques, avanço sozinho em 30 s, saída no último painel com 400 a 160 e resultado explicando.
+
+**Não verificado:** a proteção contra toque duplo no jogo local (é o mesmo botão, mas só foi testada online) e a saída no meio de um painel pela tela (coberta nos testes). Produção e celular real, até publicar.
+

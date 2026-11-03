@@ -1,3 +1,8 @@
+.resultado-motivo {
+  margin-bottom: 1rem;
+  font-size: 1.1rem;
+}
+
 .resultado-lista {
   width: 100%;
   max-width: 28rem;

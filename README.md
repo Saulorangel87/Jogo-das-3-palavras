@@ -25,7 +25,9 @@ Cada pessoa joga no seu aparelho, em uma sala privada. Quem cria a sala escolhe 
 
 Feito pensando nas crianças: sem conta, sem chat, sem nome digitado (o nome é o do personagem) e sem lista de quem está online. Nada é gravado: a sala existe só na memória do servidor e some ao terminar. A resposta não sai do servidor antes da hora.
 
-Se alguém perde a conexão, a vaga fica guardada por 2 minutos. Na própria vez, a pessoa tem 60 segundos para voltar, e depois a vez passa, sem perder pontos.
+Se alguém perde a conexão, a vaga fica guardada por 2 minutos. Na própria vez, a pessoa tem 60 segundos para voltar, e depois a vez passa, sem perder pontos. Quem sai da partida não vence, e o resultado avisa quem saiu.
+
+Quando alguém acha a palavra, ela fica na tela até cada pessoa clicar para seguir. Depois do primeiro clique, as outras têm 30 segundos.
 
 ## Smart TV e acessibilidade
 
