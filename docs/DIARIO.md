@@ -262,3 +262,11 @@ Registro de cada etapa: o que mudou e por quê. A entrada mais recente fica no f
 **Verificado no Chrome:** 94 testes e build passam. O efeito foi renderizado fora do tempo real nos casos de 5, 14 e 30 casas: sem silêncio, sem valor inválido e com pico entre 0,37 e 0,65 (o `fim` fica em 0,56; o limite é 1). No jogo, as 34 peças animaram e o quadro parado no meio do voo mostrou o confete e as estrelas espalhados.
 
 **Não verificado:** como o som realmente soa (o Claude não ouve): o volume em relação aos outros sons e se o tilintar combina com a onda dependem do ouvido do Saulo. Também falta a fluidez na TV real.
+
+## 2026-11-03 — Teste na TV real
+
+**Resultado (relato do Saulo):** numa LG de 2024 (webOS 24), o jogo abriu pelo navegador da TV, em modo de desenvolvimento, pela rede local (`http://<IP do computador>:5180`). Tudo funcionou direito (telas, navegação, som). As animações travam um pouco, sem atrapalhar o jogo.
+
+**Possíveis melhorias, se incomodar:** as animações que mais custam são o brilho do quadro (`box-shadow`) e a troca de cor das casas (`background`), que repintam a tela. Dá para trocá-las por `opacity` e `transform`, que a TV desenha com a placa de vídeo. O teste foi no modo de desenvolvimento; o build final tende a rodar mais leve.
+
+**Ainda não verificado:** TV mais antiga (webOS 4 ou anterior), Samsung (Tizen), o build legado e o controle de seta comum (o teste foi com o controle da TV).
