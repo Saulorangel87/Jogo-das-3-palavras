@@ -42,8 +42,25 @@ function montarTeclado(texto, nivel, rng) {
   return [...certas, ...extras].sort();
 }
 
-export function montarRodada(temas, nivel, rng = Math.random) {
-  const tema = temas[Math.floor(rng() * temas.length)];
+export const HISTORICO_VAZIO = { jogadas: [], ultimoTema: null };
+
+// Temas que ainda têm itens suficientes sem repetir o que já saiu em partidas anteriores.
+function temasDisponiveis(temas, jogadas) {
+  return temas
+    .map((t) => ({ ...t, itens: t.itens.filter((i) => !jogadas.has(i.texto)) }))
+    .filter((t) => t.itens.length >= TOTAL_PAINEIS);
+}
+
+// `historico` vem de fora (o módulo é puro): o que já foi jogado neste nível e o último tema.
+// Enquanto houver tema com itens novos, nada repete; quando acaba, o histórico recomeça.
+export function montarRodada(temas, nivel, rng = Math.random, historico = HISTORICO_VAZIO) {
+  let disponiveis = temasDisponiveis(temas, new Set(historico.jogadas));
+  const reinicio = disponiveis.length === 0;
+  if (reinicio) disponiveis = temasDisponiveis(temas, new Set());
+  // Evita cair no mesmo tema da partida anterior, se houver outro.
+  const outros = disponiveis.filter((t) => t.tema !== historico.ultimoTema);
+  const opcoesDeTema = outros.length > 0 ? outros : disponiveis;
+  const tema = opcoesDeTema[Math.floor(rng() * opcoesDeTema.length)];
   const sorteados = embaralhar(tema.itens, rng).slice(0, TOTAL_PAINEIS);
   const naPartida = new Set(sorteados.map((i) => i.texto));
   const candidatos = temas
@@ -52,6 +69,7 @@ export function montarRodada(temas, nivel, rng = Math.random) {
 
   return {
     tema: tema.tema,
+    reinicio,
     paineis: sorteados.map((item) => ({
       ...item,
       letras: montarTeclado(item.texto, nivel, rng),
@@ -64,5 +82,14 @@ export function montarRodada(temas, nivel, rng = Math.random) {
             )
           : null,
     })),
+  };
+}
+
+// Novo histórico depois de montar uma rodada.
+export function registrarRodada(historico, rodada) {
+  const anteriores = rodada.reinicio ? [] : historico.jogadas;
+  return {
+    jogadas: [...anteriores, ...rodada.paineis.map((p) => p.texto)],
+    ultimoTema: rodada.tema,
   };
 }

@@ -1,8 +1,9 @@
 import { useEffect, useRef, useState } from 'react';
 import { iniciarAudio } from './audio/motor.js';
+import { lerHistorico, salvarHistorico } from './data/historico.js';
 import { carregarPalavras } from './data/palavras.js';
 import { FASES, aplicarAcao, criarPartida } from './logica/jogo.js';
-import { montarRodada } from './logica/rodada.js';
+import { montarRodada, registrarRodada } from './logica/rodada.js';
 import { useSetas } from './navegacao/useNavegacao.js';
 import Configuracao from './telas/Configuracao.jsx';
 import Inicio from './telas/Inicio.jsx';
@@ -31,7 +32,10 @@ export default function App() {
     try {
       const temas = await carregarPalavras(config.nivel);
       ultimaConfig.current = config;
-      setPartida(criarPartida({ ...config, rodada: montarRodada(temas, config.nivel) }));
+      const historico = lerHistorico(config.nivel);
+      const rodada = montarRodada(temas, config.nivel, Math.random, historico);
+      salvarHistorico(config.nivel, registrarRodada(historico, rodada));
+      setPartida(criarPartida({ ...config, rodada }));
       setTela('jogo');
     } catch {
       setAviso('Não foi possível carregar as palavras. Tente de novo.');

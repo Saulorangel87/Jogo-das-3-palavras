@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 import iniciante from '../data/iniciante.json';
 import intermediario from '../data/intermediario.json';
 import avancado from '../data/avancado.json';
-import { montarRodada } from './rodada.js';
+import { HISTORICO_VAZIO, montarRodada, registrarRodada } from './rodada.js';
 import { letrasDoTexto } from './texto.js';
 
 function gerador(semente) {
@@ -74,5 +74,63 @@ describe('montarRodada', () => {
     const rodada = montarRodada(temas, 'iniciante', () => 0);
     const bola = rodada.paineis.find((p) => p.texto === 'BOLA');
     expect(bola.opcoes.filter((o) => o !== 'BOLA').sort()).toEqual(['BODE', 'BOLO']);
+  });
+});
+
+describe('histórico de partidas', () => {
+  const pequeno = [
+    { tema: 'A', itens: ['AAA', 'BBB', 'CCC', 'DDD', 'EEE', 'FFF'].map((texto) => ({ texto, dica: 'x' })) },
+    { tema: 'B', itens: ['GGG', 'HHH', 'III'].map((texto) => ({ texto, dica: 'x' })) },
+  ];
+
+  it('não repete palavras enquanto houver itens novos', () => {
+    let historico = HISTORICO_VAZIO;
+    const vistas = [];
+    // Tema A rende 2 partidas de 3 e B uma: 3 partidas sem repetir nada.
+    for (let i = 0; i < 3; i++) {
+      const rodada = montarRodada(pequeno, 'avancado', gerador(i + 1), historico);
+      expect(rodada.reinicio).toBe(false);
+      vistas.push(...rodada.paineis.map((p) => p.texto));
+      historico = registrarRodada(historico, rodada);
+    }
+    expect(new Set(vistas).size).toBe(9);
+  });
+
+  it('quando acaba tudo, recomeça o histórico', () => {
+    let historico = HISTORICO_VAZIO;
+    for (let i = 0; i < 3; i++) {
+      historico = registrarRodada(historico, montarRodada(pequeno, 'avancado', gerador(i + 1), historico));
+    }
+    const rodada = montarRodada(pequeno, 'avancado', gerador(9), historico);
+    expect(rodada.reinicio).toBe(true);
+    expect(rodada.paineis).toHaveLength(3);
+    const novo = registrarRodada(historico, rodada);
+    expect(novo.jogadas).toHaveLength(3);
+  });
+
+  it('evita repetir o tema da partida anterior quando há outro', () => {
+    for (let semente = 1; semente <= 50; semente++) {
+      const rodada = montarRodada(pequeno, 'avancado', gerador(semente), {
+        jogadas: [],
+        ultimoTema: 'A',
+      });
+      expect(rodada.tema).toBe('B');
+    }
+  });
+
+  it('no banco real, 100 partidas seguidas de cada nível não repetem palavra', () => {
+    for (const nivel of NIVEIS) {
+      let historico = HISTORICO_VAZIO;
+      const vistas = new Set();
+      for (let i = 0; i < 100; i++) {
+        const rodada = montarRodada(banco[nivel], nivel, gerador(i + 11), historico);
+        expect(rodada.reinicio).toBe(false);
+        for (const p of rodada.paineis) {
+          expect(vistas.has(p.texto)).toBe(false);
+          vistas.add(p.texto);
+        }
+        historico = registrarRodada(historico, rodada);
+      }
+    }
   });
 });

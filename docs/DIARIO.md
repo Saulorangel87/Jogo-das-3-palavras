@@ -208,3 +208,14 @@ Registro de cada etapa: o que mudou e por quê. A entrada mais recente fica no f
 **Verificado:** testes e build (inclusive o pacote antigo para TV) passam. No Chrome, os 3 níveis carregam com as contagens certas e uma partida avançada abre em 360x640 com a frase quebrando em linhas.
 
 **Não verificado:** a revisão do conteúdo é minha, sem dicionário de português na máquina. Pode haver dica fraca, ambígua ou palavra que não combine com o nível. Vale o Saulo (ou as crianças) jogar e apontar o que estranhar. Também falta ver as frases mais longas na TV.
+
+## 2026-11-03 — Etapa 15: sem palavras repetidas entre partidas
+
+**O que mudou:** o jogo lembra o que já foi jogado em cada nível e não repete.
+
+- `montarRodada` recebe o histórico de fora (`jogadas` e `ultimoTema`), para `src/logica/` continuar puro, e devolve `reinicio` quando não sobra tema com 3 itens novos. `registrarRodada` calcula o histórico novo.
+- `src/data/historico.js` guarda o histórico por nível no `localStorage`, com try/catch. Sem armazenamento, o jogo só deixa de lembrar.
+- O tema da partida anterior também é evitado, se houver outro.
+- Quando o nível esgota, o histórico recomeça sozinho. Sobras de 1 ou 2 itens num tema só voltam depois desse reinício.
+
+**Verificado:** 89 testes, incluindo 100 partidas seguidas em cada nível do banco real sem nenhuma palavra repetida.
