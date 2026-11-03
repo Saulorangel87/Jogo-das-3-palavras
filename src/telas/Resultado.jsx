@@ -54,8 +54,8 @@ export default function Resultado({ estado, aoJogarDeNovo, aoInicio }) {
         </>
       )}
       <div className="grade grade-2 resultado-botoes">
-        <button className="botao" data-foco-inicial onClick={aoJogarDeNovo}>Jogar de novo</button>
-        <button className="botao botao-secundario" onClick={aoInicio}>Início</button>
+        {aoJogarDeNovo && <button className="botao" data-foco-inicial onClick={aoJogarDeNovo}>Jogar de novo</button>}
+        <button className={aoJogarDeNovo ? 'botao botao-secundario' : 'botao'} onClick={aoInicio}>Início</button>
       </div>
     </main>
   );

@@ -75,6 +75,9 @@ function responderArquivo(pedido) {
 self.addEventListener('fetch', function (evento) {
   var pedido = evento.request;
   if (pedido.method !== 'GET') return;
-  if (new URL(pedido.url).origin !== self.location.origin) return;
+  var endereco = new URL(pedido.url);
+  if (endereco.origin !== self.location.origin) return;
+  // A conexão do modo online nunca passa pelo cache.
+  if (endereco.pathname.indexOf('/socket.io') === 0) return;
   evento.respondWith(pedido.mode === 'navigate' ? responderPagina(pedido) : responderArquivo(pedido));
 });

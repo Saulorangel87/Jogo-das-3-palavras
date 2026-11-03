@@ -18,5 +18,27 @@ services:
       - ALL
     security_opt:
       - no-new-privileges:true
+    depends_on:
+      tres-palavras-online:
+        condition: service_healthy
     ports:
       - "100.67.151.30:8810:8080"
+
+  # Servidor do modo online. Sem porta publicada: só o Nginx acima fala com ele.
+  # Não grava nada: as salas ficam na memória.
+  tres-palavras-online:
+    build:
+      context: .
+      dockerfile: servidor/Dockerfile
+    image: tres-palavras-online:latest
+    container_name: tres-palavras-online
+    restart: unless-stopped
+    read_only: true
+    tmpfs:
+      - /tmp
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+    environment:
+      ORIGENS: https://3palavras.devsaulo.com.br

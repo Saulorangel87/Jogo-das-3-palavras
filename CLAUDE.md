@@ -81,6 +81,7 @@ Importante (iniciante): as opções do "Resolver" são **só texto**, sem imagem
 ## Smart TV (obrigatório desde a V1)
 
 - Toda a interação deve funcionar **só com setas + Enter** (controle remoto), além de mouse e toque.
+- **LG (visto com `?diag`):** o navegador abre sem entregar as teclas à página; as setas e o som só funcionam depois de clicar nela com o ponteiro do controle. O jogo não consegue pedir o teclado de volta, então a tela inicial mostra um aviso quando reconhece TV. Navegador da LG testada: Chrome 87.
 - Nunca usar campo de texto livre. Toda entrada é por botões/peças.
 - Elemento em foco sempre muito visível (borda grossa + leve aumento de escala).
 - Ordem de navegação lógica nas grades (setas movem o foco espacialmente).
@@ -153,7 +154,7 @@ As opções erradas do "Resolver" (só no iniciante) vêm de outros itens do mes
 - **Como roda:** `Dockerfile` em duas etapas (Node gera o build do Vite, Nginx serve os arquivos) e `docker-compose.yml` com o container `tres-palavras`. A porta é `100.67.151.30:8810` (só no IP do Tailscale da VPS). Nginx em `deploy/nginx/default.conf` (cache longo para `/assets/`, `index.html` sempre revalidado, cabeçalhos de segurança, gzip).
 - **Rota pública:** Cloudflare Tunnel "Server Oracle" (rota gerenciada no painel Zero Trust/Rede > Túneis, sem Nginx Proxy Manager), `3palavras.devsaulo.com.br` -> `http://100.67.151.30:8810`. O CNAME no DNS foi criado pelo próprio painel.
 - **Publicar uma versão nova:** commitar e rodar `bash deploy/publicar.sh`. Ele envia o commit atual (`git archive`, sem precisar de push), reconstrói a imagem na VPS e confere o endereço público.
-- **Versão e release:** a versão fica em `package.json` (hoje 1.1.3). A cada deploy: atualizar documentos (README, diário, CLAUDE.md), subir a versão (`npm version <x.y.z> --no-git-tag-version`), commitar, enviar `main` ao GitHub, criar a tag `vX.Y.Z` e o release (`gh release create`). O release 1.0.0 foi publicado em 03/11/2026.
+- **Versão e release:** a versão fica em `package.json` (hoje 1.2.0). A cada deploy: atualizar documentos (README, diário, CLAUDE.md), subir a versão (`npm version <x.y.z> --no-git-tag-version`), commitar, enviar `main` ao GitHub, criar a tag `vX.Y.Z` e o release (`gh release create`). O release 1.0.0 foi publicado em 03/11/2026.
 - **Container endurecido:** usuário sem root (101), disco somente leitura, sem capacidades e `no-new-privileges`. O `publicar.sh` reconstrói com `--pull`, para receber correções das imagens base.
 - Os comandos Docker na VPS rodam sem `sudo` para o usuário `ubuntu`.
 - **Regras do Cloudflare para o jogo:** o host está na lista de exclusão da regra de cabeçalhos "Cabeçalho de segurança", então os cabeçalhos do Nginx valem (só o HSTS vem do Cloudflare). A Configuration Rule "3 Palavras - sem Web Analytics" desliga a medição só neste host, e a Cache Rule "3 Palavras - revalidar sw e manifesto" faz o navegador respeitar o `no-cache` do `/sw.js` e do manifesto. Mudar a CSP é em `deploy/nginx/seguranca.inc`.
@@ -162,7 +163,7 @@ As opções erradas do "Resolver" (só no iniciante) vêm de outros itens do mes
 
 ## Modo online (em construção)
 
-**Feito:** servidor em `servidor/` (Node + Socket.IO), com testes. **Falta:** telas, partida no navegador, deploy e teste com aparelhos reais. Ranking (SQLite) continua para depois.
+**Feito:** servidor em `servidor/` (Node + Socket.IO), telas em `src/telas/Online.jsx` e conexão em `src/online/`, carregadas só por quem joga online. **Falta:** publicar, teste com aparelhos reais; cooperativo; ranking (SQLite) continua para depois.
 
 Decisões do Saulo: colegas em celular e PC; primeira versão só no competitivo; qualquer pessoa cria sala, sem conta; o convite é um link com o código da sala.
 
@@ -171,7 +172,9 @@ Decisões do Saulo: colegas em celular e PC; primeira versão só no competitivo
 - **A resposta nunca sai do servidor antes da hora:** `servidor/visao.js` troca as casas fechadas por `_` e esvazia os outros painéis. O cliente não recebe nenhum token alheio.
 - **Código da sala:** 4 consoantes e 2 números (`BRTK-42`); sem vogal não forma palavra. Tentativas erradas limitadas por endereço.
 - **Presença:** a conexão do Socket.IO confere o aparelho a cada 10 segundos. Estados só dentro da sala: `conectada`, `reconectando` (vaga guardada por 2 minutos, volta com token) e `saiu`. Quem cai na própria vez tem 60 segundos, depois a vez passa, sem perder pontos. Não existe lista de quem está online no site.
-- **Mesmo domínio:** `/socket.io` será roteado no Cloudflare Tunnel (WebSocket).
+- **Rede:** o Nginx do site repassa `/socket.io/` ao container `tres-palavras-online`, que não tem porta publicada. Nada muda no Cloudflare, e `docker-compose.yml` sobe os dois.
+- **Tela de jogo:** a mesma `Jogo.jsx`, com a prop `online`. Com ela, o estado vem do servidor, os botões travam fora da vez e a roleta gira quando o servidor avisa (`sala.giro`).
+- **Em desenvolvimento:** `PORTA=3000 ORIGENS=http://localhost:5180 node servidor/principal.js` (depois de `npm install` em `servidor/`) e `npx vite --port 5180`.
 
 ### Segurança das crianças (obrigatório no modo online)
 

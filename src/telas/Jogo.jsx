@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import Estrelas from '../componentes/Estrelas.jsx';
 import Painel from '../componentes/Painel.jsx';
 import { atrasoDaCelebracao } from '../componentes/celebracao.js';
@@ -32,14 +32,18 @@ const DURACAO_GIRO = 2600;
 function textoDaJogada(jogada, competitivo) {
   if (!jogada) return null;
   if (jogada.tipo === JOGADAS.LETRA_ERRADA) return `Não tem a letra ${jogada.letra}.`;
-  if (jogada.tipo === JOGADAS.CHUTE_ERRADO) return `Não é ${jogada.resposta}.`;
+  if (jogada.tipo === JOGADAS.CHUTE_ERRADO) {
+    // Online, o servidor não repassa o que foi digitado casa a casa.
+    return jogada.resposta ? `Não é ${jogada.resposta}.` : 'Essa não é a resposta.';
+  }
   const casas = jogada.quantidade === 1 ? '1 letra' : `${jogada.quantidade} letras`;
   const pontos = competitivo ? ` +${jogada.pontos} pontos!` : '';
   return `Tem ${casas} ${jogada.letra}!${pontos}`;
 }
 
-function textoDaInstrucao(estado, nome, girando) {
+function textoDaInstrucao(estado, nome, girando, minhaVez) {
   if (girando) return `${nome} está girando a roleta...`;
+  if (!minhaVez) return `Vez de ${nome}.`;
   if (estado.modo === MODOS.COOPERATIVO) return `${nome}, escolha uma letra ou resolva.`;
   if (estado.valorRoleta !== null) {
     return `${nome}, vale ${estado.valorRoleta} por letra. Escolha uma letra.`;
@@ -47,7 +51,25 @@ function textoDaInstrucao(estado, nome, girando) {
   return `${nome}, gire a roleta ou resolva.`;
 }
 
-export default function Jogo({ estado, despachar, aoSair }) {
+// Conta de 1 em 1 segundo a partir do tempo que o servidor informou.
+function useSegundosRestantes(ms) {
+  const [segundos, setSegundos] = useState(null);
+  useEffect(() => {
+    if (ms === null || ms === undefined) {
+      setSegundos(null);
+      return undefined;
+    }
+    const fim = Date.now() + ms;
+    const atualizar = () => setSegundos(Math.max(0, Math.ceil((fim - Date.now()) / 1000)));
+    atualizar();
+    const relogio = setInterval(atualizar, 1000);
+    return () => clearInterval(relogio);
+  }, [ms]);
+  return segundos;
+}
+
+// `online` só existe na partida pela internet: o estado vem do servidor, e `despachar` pede a jogada a ele.
+export default function Jogo({ estado, despachar, aoSair, online = null }) {
   // Estado só de interface: a regra continua toda em src/logica/.
   const [aberto, setAberto] = useState(null); // null, 'resolver' ou 'sair'
   const [girando, setGirando] = useState(false);
@@ -60,7 +82,12 @@ export default function Jogo({ estado, despachar, aoSair }) {
   const jogadorDaVez = estado.jogadores[estado.vez];
   const totalPaineis = estado.paineis.length;
   const ultimo = estado.indicePainel === totalPaineis - 1;
-  const podeLetra = podeEscolherLetra(estado) && !girando;
+  const minhaVez = !online || jogadorDaVez.id === online.voceId;
+  const conexaoDaVez = online ? online.jogadores.find((j) => j.id === jogadorDaVez.id) : null;
+  const daVezOffline = Boolean(conexaoDaVez) && conexaoDaVez.conexao !== 'conectada';
+  const podeAvancar = minhaVez || daVezOffline;
+  const segundosDaVez = useSegundosRestantes(online ? online.esperaNaVezMs : null);
+  const podeLetra = podeEscolherLetra(estado) && !girando && minhaVez;
   const comOpcoes = Boolean(painel.opcoes);
   const opcoesDisponiveis = comOpcoes
     ? painel.opcoes.filter((o) => !estado.descartadas.includes(o))
@@ -76,6 +103,23 @@ export default function Jogo({ estado, despachar, aoSair }) {
   }, [girando]);
 
   useEfeitosDoJogo(estado);
+
+  // Online, todos os aparelhos giram a roleta quando o servidor avisa, para a mesma fatia.
+  const numeroDoGiro = online && online.giro ? online.giro.numero : 0;
+  const giroVisto = useRef(numeroDoGiro);
+  useEffect(() => {
+    if (numeroDoGiro === giroVisto.current) return;
+    giroVisto.current = numeroDoGiro;
+    animarGiro(online.giro.fatia);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [numeroDoGiro]);
+
+  // Se a vez passou enquanto o painel de resolver estava aberto, ele fecha.
+  useEffect(() => {
+    if (minhaVez) return;
+    setDigitadas([]);
+    setAberto((atual) => (atual === 'resolver' ? null : atual));
+  }, [minhaVez]);
 
   useFoco(
     [
@@ -99,13 +143,21 @@ export default function Jogo({ estado, despachar, aoSair }) {
     setAberto(aberto ? null : 'sair');
   }
 
-  function girar() {
-    const sorteio = Math.random();
-    const novoAngulo = proximoAngulo(angulo, indiceDaFatia(sorteio));
+  function animarGiro(fatia) {
+    const novoAngulo = proximoAngulo(angulo, fatia);
     // Um tique por divisão de fatia que passa pelo ponteiro.
     tocarEfeito('giro', { tiques: Math.round((novoAngulo - angulo) / GRAUS), duracao: DURACAO_GIRO });
     setAngulo(novoAngulo);
     setGirando(true);
+  }
+
+  function girar() {
+    if (online) {
+      despachar({ tipo: ACOES.GIRAR });
+      return;
+    }
+    const sorteio = Math.random();
+    animarGiro(indiceDaFatia(sorteio));
     despachar({ tipo: ACOES.GIRAR, sorteio });
   }
 
@@ -152,7 +204,12 @@ export default function Jogo({ estado, despachar, aoSair }) {
         {estado.jogadores.map((j, i) => (
           <li key={j.id} className={i === estado.vez ? 'jogo-jogador jogo-jogador-vez' : 'jogo-jogador'}>
             <Personagem personagem={j} expressao={expressaoNoJogo(estado, i)} />
-            <span className="jogo-nome">{j.nome}</span>
+            <span className="jogo-nome">
+              {j.nome}
+              {online && j.id === online.voceId && ' (você)'}
+              {j.saiu && ' (saiu)'}
+              {!j.saiu && online && online.jogadores.find((o) => o.id === j.id)?.conexao === 'reconectando' && ' (reconectando)'}
+            </span>
             {competitivo && <strong>{j.pontos}</strong>}
           </li>
         ))}
@@ -182,13 +239,17 @@ export default function Jogo({ estado, despachar, aoSair }) {
               : 'Vocês resolveram! '}
             {!competitivo && <Estrelas quantidade={estado.ganho} />}
           </p>
-          <button
-            className="botao jogo-proximo"
-            data-foco-inicial
-            onClick={() => despachar({ tipo: ACOES.PROXIMO_PAINEL })}
-          >
-            {ultimo ? 'Ver resultado' : 'Próximo painel'}
-          </button>
+          {podeAvancar ? (
+            <button
+              className="botao jogo-proximo"
+              data-foco-inicial
+              onClick={() => despachar({ tipo: ACOES.PROXIMO_PAINEL })}
+            >
+              {ultimo ? 'Ver resultado' : 'Próximo painel'}
+            </button>
+          ) : (
+            <p className="jogo-instrucao">{jogadorDaVez.nome} vai abrir o próximo painel.</p>
+          )}
         </>
       )}
 
@@ -259,7 +320,10 @@ export default function Jogo({ estado, despachar, aoSair }) {
             {jogada && !girando && (
               <p className={jogadaRuim ? 'jogo-jogada jogo-jogada-ruim' : 'jogo-jogada jogo-jogada-boa'}>{jogada}</p>
             )}
-            <p className="jogo-instrucao">{textoDaInstrucao(estado, jogadorDaVez.nome, girando)}</p>
+            <p className="jogo-instrucao">{textoDaInstrucao(estado, jogadorDaVez.nome, girando, minhaVez)}</p>
+            {segundosDaVez !== null && (
+              <p className="jogo-instrucao">{jogadorDaVez.nome} caiu. Se não voltar em {segundosDaVez} s, a vez passa.</p>
+            )}
           </div>
 
           <div className="jogo-acoes">
@@ -269,8 +333,8 @@ export default function Jogo({ estado, despachar, aoSair }) {
                 {competitivo && (
                   <button
                     className="botao jogo-girar"
-                    disabled={!podeGirar(estado) || girando}
-                    data-foco-inicial={podeGirar(estado) ? '' : undefined}
+                    disabled={!podeGirar(estado) || girando || !minhaVez}
+                    data-foco-inicial={podeGirar(estado) && minhaVez ? '' : undefined}
                     onClick={girar}
                   >
                     Girar
@@ -278,7 +342,7 @@ export default function Jogo({ estado, despachar, aoSair }) {
                 )}
                 <button
                   className="botao botao-secundario jogo-resolver-botao"
-                  disabled={girando}
+                  disabled={girando || !minhaVez}
                   onClick={() => setAberto('resolver')}
                 >
                   Resolver

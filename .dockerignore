@@ -4,3 +4,5 @@ dist
 docs
 *.md
 .playwright-mcp
+**/node_modules
+**/*.test.js

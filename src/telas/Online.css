@@ -1,0 +1,126 @@
+.online-explicacao {
+  margin: 0 0 1rem;
+  color: var(--texto-suave);
+}
+
+.online-aviso {
+  margin-bottom: 1rem;
+  color: var(--erro);
+  font-weight: 700;
+}
+
+.online-codigo {
+  margin: 0 0 0.6rem;
+  color: var(--destaque);
+  font-size: 2.6rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+}
+
+.online-link {
+  margin-bottom: 0.4rem;
+  font-size: 0.8rem;
+  overflow-wrap: anywhere;
+}
+
+.online-teclas {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  grid-gap: 0.5rem;
+  width: 100%;
+  max-width: 30rem;
+}
+
+.online-tecla {
+  padding: 0.4rem;
+  font-size: 1.3rem;
+}
+
+.online-teclas .botao-secundario {
+  grid-column: span 2;
+}
+
+.online-jogadoras {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-gap: 0.6rem;
+  width: 100%;
+  max-width: 34rem;
+  margin: 0 0 1rem;
+  padding: 0;
+  list-style: none;
+}
+
+.online-jogadora {
+  display: grid;
+  grid-template-columns: 2.6rem minmax(0, 1fr);
+  grid-column-gap: 0.5rem;
+  align-items: center;
+  padding: 0.4rem 0.6rem;
+  border-radius: 0.8rem;
+  background: var(--painel);
+  text-align: left;
+}
+
+.online-jogadora .personagem {
+  grid-row: span 2;
+  width: 2.6rem;
+  height: 2.6rem;
+}
+
+/* Presença: a cor nunca aparece sozinha, sempre com o texto. */
+.online-presenca {
+  font-size: 0.75rem;
+}
+
+.online-presenca::before {
+  content: '';
+  display: inline-block;
+  width: 0.6em;
+  height: 0.6em;
+  margin-right: 0.3em;
+  border-radius: 50%;
+  background: currentColor;
+}
+
+.online-presenca-conectada {
+  color: var(--acerto);
+}
+
+.online-presenca-reconectando {
+  color: var(--destaque);
+}
+
+.online-presenca-saiu {
+  color: var(--texto-suave);
+}
+
+.online-botoes {
+  display: grid;
+  grid-auto-flow: column;
+  grid-gap: 0.8rem;
+}
+
+.online-faixa {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 50;
+  padding: 0.4rem;
+  background: var(--destaque);
+  color: var(--botao-texto);
+  font-weight: 700;
+  text-align: center;
+}
+
+@media (max-width: 600px) {
+  .online-jogadoras {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .online-botoes {
+    grid-auto-flow: row;
+    width: 100%;
+  }
+}

@@ -21,3 +21,15 @@
 .inicio-som {
   margin-top: 1rem;
 }
+
+.inicio-tv {
+  max-width: 34rem;
+  margin-bottom: 1rem;
+  color: var(--destaque);
+  font-weight: 700;
+}
+
+.inicio-online {
+  min-width: 12rem;
+  margin-top: 1rem;
+}

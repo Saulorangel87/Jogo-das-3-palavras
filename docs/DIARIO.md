@@ -408,3 +408,19 @@ Registro de cada etapa: o que mudou e por quê. A entrada mais recente fica no f
 
 **Próximo:** telas de criar, entrar e aguardar.
 
+## 2026-11-03 — Etapa 29: modo online pronto para publicar (versão 1.2.0)
+
+**Menu da TV, resolvido o mistério:** a foto do `?diag` na LG mostrou `Página com teclado: NÃO` e `Tecla: nenhuma ainda`. O navegador da TV fica com as teclas até a página receber um clique, e o `window.focus()` não basta. Não é bug do jogo, e não há como pedir o teclado pelo código. A tela inicial agora avisa quando reconhece TV. O som depende do mesmo clique; falta confirmar que ele sai depois disso.
+
+**Modo online:**
+
+- **Telas:** Jogar online, criar sala, entrar por link ou por código em botões, sala de espera com presença e convite. A partida usa a mesma `Jogo.jsx`.
+- **Quedas:** faixa "Sua internet caiu", "(reconectando)" no placar, contagem de 60 segundos na própria vez. Recarregar a página volta à mesma vaga.
+- **Infraestrutura:** segundo container, sem porta publicada, sem root e com disco somente leitura. O Nginx repassa `/socket.io/`. Nada muda no Cloudflare.
+
+**Bug achado no teste:** quem recarregava sem o link do convite caía na tela inicial e perdia a partida. Corrigido.
+
+**Verificado (local):** 185 testes. Com os dois containers e duas abas no Chrome: convite, personagem ocupado travado, presença, vez, roleta igual nas duas telas, queda com contagem, volta pela mesma vaga, painel resolvido, saída e resultado. Em 360 px não há rolagem lateral.
+
+**Não verificado:** produção (WebSocket pelo Cloudflare), celulares de verdade em redes diferentes e tela bloqueada. A partida completa de 3 painéis pela tela só foi até o segundo painel; os 3 painéis completos estão cobertos nos testes do servidor.
+
