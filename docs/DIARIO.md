@@ -464,3 +464,12 @@ Pedido do Saulo, para ninguém travar a partida sem clicar. A contagem começa q
 
 
 **Verificado (versão 1.2.2):** 199 testes. Local, sem nenhum clique: seguiu sozinho em cerca de 16 s (os 15 s mais a verificação do servidor, que roda a cada segundo). Em produção, em duas abas: com um clique só, seguiu no prazo, com "Só falta você clicar!" para quem faltava; com os dois cliques, seguiu na hora. A borda clara dos botões da tela inicial está no ar. **Não verificado:** o prazo levando ao resultado no último painel pela tela (coberto nos testes) e celular real.
+
+## 2026-11-03 — Etapa 34: um clique só seguia de painel (versão 1.2.3)
+
+O Saulo viu a tela sair com o clique de um lado só. Reproduzido em produção: com os dois conectados, um clique não avançava; com o outro aparelho caído, avançava na hora. A causa era a regra "quem caiu não segura ninguém", que veio de antes da contagem. Com celular de tela apagada ou 4G oscilando, a queda de segundos fazia um clique valer por dois. Agora só seguem todos os cliques ou o fim da contagem; quem caiu ainda conta, e só quem saiu de vez deixa de contar.
+
+**Celular em 4G e notebook no Wi-Fi:** testados pelo Saulo, rodaram bem.
+
+**Som na TV, ainda sem causa:** o Saulo notou que o som para ao entrar no online na TV. Em Chromium, medindo as notas criadas em produção, a música segue em todas as telas do online e na partida, com o áudio em `running`. Nada no código do online para a música. Não foi feita correção às cegas: falta o `?diag` na TV para ver o estado do áudio.
+

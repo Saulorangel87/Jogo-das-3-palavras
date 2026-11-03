@@ -137,7 +137,6 @@ export function criarGerenciador({ carregarPalavras, rng = sortear, limites = {}
     if (!jogador) return null;
     jogador.conexao = CONEXAO.RECONECTANDO;
     jogador.quedaEm = agora;
-    avancarSeTodosProntos(sala, agora);
     atualizarEsperaDaVez(sala, agora);
     return sala;
   }
@@ -183,11 +182,11 @@ export function criarGerenciador({ carregarPalavras, rng = sortear, limites = {}
     atualizarEsperaDaVez(sala, agora);
   }
 
-  // Todos clicam para seguir. Quem caiu ou saiu não segura as outras, e quem não clica tem o prazo de verificarPrazos.
+  // Segue quando todos clicam, ou no fim do prazo de verificarPrazos. Quem caiu ainda conta: uma
+  // queda de segundos (celular com a tela apagada) não pode fazer um clique só valer por dois.
   function avancarSeTodosProntos(sala, agora) {
     if (!sala.partida || sala.partida.fase !== FASES.RESOLVIDO || sala.prontos.length === 0) return;
-    const conectados = sala.jogadores.filter((j) => j.conexao === CONEXAO.CONECTADA);
-    if (conectados.length === 0 || conectados.some((j) => !sala.prontos.includes(j.id))) return;
+    if (ativos(sala).some((j) => !sala.prontos.includes(j.id))) return;
     avancarPainel(sala, agora);
   }
 

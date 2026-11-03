@@ -89,7 +89,7 @@ export default function Jogo({ estado, despachar, aoSair, online = null }) {
   const prontos = online ? online.prontos : [];
   const jaSegui = Boolean(online) && prontos.includes(online.voceId);
   const faltamSeguir = online
-    ? online.jogadores.filter((j) => j.conexao === 'conectada' && !prontos.includes(j.id)).map((j) => j.nome)
+    ? online.jogadores.filter((j) => j.conexao !== 'saiu' && !prontos.includes(j.id)).map((j) => j.nome)
     : [];
   const segundosDaVez = useSegundosRestantes(online ? online.esperaNaVezMs : null);
   const segundosParaSeguir = useSegundosRestantes(online && resolvido ? online.esperaProximoMs : null);

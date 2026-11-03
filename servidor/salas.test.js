@@ -245,22 +245,38 @@ describe('quem caiu e quem saiu', () => {
     expect(g.total()).toBe(0);
   });
 
-  it('quem caiu não trava o próximo painel', async () => {
+  it('quem caiu ainda conta: um clique só não segue, e o prazo resolve', async () => {
     const s = await partida();
     const { texto } = s.sala.partida.paineis[0];
     jogar(s, s.tokenA, { tipo: ACOES.RESOLVER, resposta: texto });
-    g.marcarQueda({ codigo: s.codigo, token: s.tokenA }, T);
-    expect(jogar(s, s.tokenB, { tipo: ACOES.PROXIMO_PAINEL }).ok).toBe(true);
+    g.marcarQueda({ codigo: s.codigo, token: s.tokenB }, T);
+    jogar(s, s.tokenA, { tipo: ACOES.PROXIMO_PAINEL });
+    expect(s.sala.partida.indicePainel).toBe(0);
+    g.verificarPrazos(T + 30);
     expect(s.sala.partida.indicePainel).toBe(1);
   });
 
-  it('cair ou sair esperando alguém também libera quem já clicou', async () => {
+  it('cair depois de um clique também não faz seguir antes da hora', async () => {
     const s = await partida();
     const { texto } = s.sala.partida.paineis[0];
     jogar(s, s.tokenA, { tipo: ACOES.RESOLVER, resposta: texto });
     jogar(s, s.tokenA, { tipo: ACOES.PROXIMO_PAINEL });
     g.marcarQueda({ codigo: s.codigo, token: s.tokenB }, T);
-    expect(s.sala.partida.indicePainel).toBe(1);
+    expect(s.sala.partida.indicePainel).toBe(0);
+  });
+
+  it('quem sai de vez deixa de contar: quem já clicou segue', async () => {
+    const a = g.criarSala({ nivel: 'avancado', personagemId: 'lala' }, T);
+    const { codigo } = a.sala;
+    const b = g.entrarNaSala({ codigo, personagemId: 'boris' }, T);
+    const c = g.entrarNaSala({ codigo, personagemId: 'til' }, T);
+    await g.comecar({ codigo, token: a.jogador.token }, T);
+    g.jogar({ codigo, token: a.jogador.token, pedido: { tipo: ACOES.RESOLVER, resposta: a.sala.partida.paineis[0].texto } }, T);
+    g.jogar({ codigo, token: a.jogador.token, pedido: { tipo: ACOES.PROXIMO_PAINEL } }, T);
+    g.jogar({ codigo, token: b.jogador.token, pedido: { tipo: ACOES.PROXIMO_PAINEL } }, T);
+    expect(a.sala.partida.indicePainel).toBe(0);
+    g.sair({ codigo, token: c.jogador.token }, T);
+    expect(a.sala.partida.indicePainel).toBe(1);
   });
 
   it('com uma pessoa só, a partida termina dizendo que foi por saída', async () => {
