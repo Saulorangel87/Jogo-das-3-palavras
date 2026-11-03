@@ -155,7 +155,7 @@ As opções erradas do "Resolver" (só no iniciante) vêm de outros itens do mes
 - **Versão e release:** a versão fica em `package.json` (hoje 1.1.1). A cada deploy: atualizar documentos (README, diário, CLAUDE.md), subir a versão (`npm version <x.y.z> --no-git-tag-version`), commitar, enviar `main` ao GitHub, criar a tag `vX.Y.Z` e o release (`gh release create`). O release 1.0.0 foi publicado em 03/11/2026.
 - **Container endurecido:** usuário sem root (101), disco somente leitura, sem capacidades e `no-new-privileges`. O `publicar.sh` reconstrói com `--pull`, para receber correções das imagens base.
 - Os comandos Docker na VPS rodam sem `sudo` para o usuário `ubuntu`.
-- O Cloudflare sobrescreve alguns cabeçalhos (por exemplo, o CSP chega só como `upgrade-insecure-requests`); isso não atrapalha o jogo.
+- **Regras do Cloudflare para o jogo:** o host está na lista de exclusão da regra de cabeçalhos "Cabeçalho de segurança", então os cabeçalhos do Nginx valem (só o HSTS vem do Cloudflare). A Configuration Rule "3 Palavras - sem Web Analytics" desliga a medição só neste host, e a Cache Rule "3 Palavras - revalidar sw e manifesto" faz o navegador respeitar o `no-cache` do `/sw.js` e do manifesto. Mudar a CSP é em `deploy/nginx/seguranca.inc`.
 - **PWA:** instalável e jogável sem internet depois da primeira visita (os 3 níveis ficam guardados). O service worker tenta a rede para a página e usa o cache para os arquivos com hash; uma versão nova aparece na visita seguinte, e o cache da versão anterior fica guardado para abas abertas. Arquivo novo fora de `public/` e `src/` precisa entrar no `Dockerfile`.
 - **Falta:** teste na TV real pelo domínio de produção.
 

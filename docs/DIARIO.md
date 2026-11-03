@@ -363,3 +363,9 @@ Registro de cada etapa: o que mudou e por quê. A entrada mais recente fica no f
 
 **Atualização:** o Saulo aprovou os itens do GitHub. Dependabot (alertas e correções) ligado, `main` protegido contra force-push e exclusão pela regra "Proteger main", sem exigir PR, e Actions desligadas até haver um workflow. Os itens do Cloudflare continuam pendentes.
 
+**Atualização (Cloudflare):** os três itens aplicados, valendo só para o jogo. O host entrou na lista de exclusão da regra "Cabeçalho de segurança", e a CSP do Nginx passou a chegar ao navegador. A nova regra "3 Palavras - sem Web Analytics" desliga a medição só aqui, porque o Web Analytics vale para a zona inteira. A nova regra "3 Palavras - revalidar sw e manifesto" cobre só esses dois arquivos.
+
+**Verificado:** cabeçalhos dos outros 13 endereços comparados antes e depois, todos iguais. `devsaulo` e `cddcampos` continuam com o script de medição. O jogo abre uma partida com a CSP ativa, sem o script no HTML, com console limpo depois de baixar a página de novo. O `InvalidStateError` da auditoria sumiu junto com o script.
+
+**Observação:** um navegador que já visitou o site pode reaproveitar a cópia antiga da página, com o script, até a próxima publicação (o ETag é o mesmo). Nesse caso, a CSP bloqueia o script.
+
