@@ -1,0 +1,11 @@
+# Produção: 3palavras.devsaulo.com.br
+# A porta fica presa ao IP do Tailscale da VPS; o Cloudflare Tunnel
+# ("Server Oracle") entrega o tráfego público a ela.
+services:
+  tres-palavras:
+    build: .
+    image: tres-palavras:latest
+    container_name: tres-palavras
+    restart: unless-stopped
+    ports:
+      - "100.67.151.30:8810:8080"
