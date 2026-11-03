@@ -1,8 +1,7 @@
 import { useEffect, useRef } from 'react';
 import { FASES, JOGADAS, MODOS } from '../logica/jogo.js';
+import { atrasoDaCelebracao, atrasoDoEstouro, contarCasas, passoDaOnda } from '../componentes/celebracao.js';
 import { tocarEfeito, tocarJingle } from './motor.js';
-
-const ATRASO_DEPOIS_DA_LETRA = 0.45;
 
 // Escolhe o som olhando só a mudança de estado: as regras não sabem que existe áudio.
 export function useEfeitosDoJogo(estado) {
@@ -24,10 +23,14 @@ export function useEfeitosDoJogo(estado) {
     }
 
     if (estado.fase === FASES.RESOLVIDO && antes.fase !== FASES.RESOLVIDO) {
-      // Se a última letra abriu o painel, espera o som da letra terminar.
-      const atraso = novaJogada ? ATRASO_DEPOIS_DA_LETRA : 0;
-      if (estado.modo === MODOS.COMPETITIVO) tocarJingle(estado.jogadores[estado.vez].id, atraso);
-      else tocarEfeito('resolvido', {}, atraso);
+      // Mesmos tempos da animação do painel: o som acompanha a onda e o estouro de confete.
+      const casas = contarCasas(estado.paineis[estado.indicePainel].texto);
+      const atraso = atrasoDaCelebracao(estado) / 1000;
+      const competitivo = estado.modo === MODOS.COMPETITIVO;
+      tocarEfeito('celebracao', { casas, passo: passoDaOnda(casas) / 1000, comJingle: competitivo }, atraso);
+      if (competitivo) {
+        tocarJingle(estado.jogadores[estado.vez].id, atraso + atrasoDoEstouro(casas) / 1000);
+      }
     }
   }, [estado]);
 }

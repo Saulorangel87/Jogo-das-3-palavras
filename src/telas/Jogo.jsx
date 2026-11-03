@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import Estrelas from '../componentes/Estrelas.jsx';
 import Painel from '../componentes/Painel.jsx';
+import { atrasoDaCelebracao } from '../componentes/celebracao.js';
 import Roleta, { GRAUS, proximoAngulo } from '../componentes/Roleta.jsx';
 import Teclado from '../componentes/Teclado.jsx';
 import {
@@ -163,6 +164,7 @@ export default function Jogo({ estado, despachar, aoSair }) {
         texto={painel.texto}
         letrasUsadas={estado.letrasUsadas}
         aberto={resolvido}
+        atraso={atrasoDaCelebracao(estado)}
         digitadas={preenchendo ? digitadas : null}
       />
 

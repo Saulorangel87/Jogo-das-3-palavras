@@ -1,8 +1,14 @@
 // Efeitos do jogo. Cada um recebe (ctx, destino, quando, opcoes) e devolve a duração em segundos.
-import { bip, frequencia } from './sintese.js';
+import { bip, frequencia, rajada } from './sintese.js';
 import { tocarNota } from './instrumentos.js';
 
 const ESPACO_MINIMO_ENTRE_TIQUES = 0.03;
+// Mesma pausa de celebracao.js entre o fim da onda e o estouro de confete (em segundos).
+const PAUSA_ATE_O_ESTOURO = 0.3;
+// Escala de dó maior em pentatônica, subindo duas oitavas e meia (notas MIDI).
+const ESCALA_DA_ONDA = [72, 74, 76, 79, 81, 84, 86, 88, 91, 93, 96];
+// Brilhos do confete: [atraso em segundos, frequência em Hz].
+const BRILHOS = [[0.02, 3520], [0.08, 4186], [0.15, 3136], [0.21, 4699], [0.29, 3951], [0.37, 5274], [0.46, 3729], [0.55, 4435]];
 
 // Instantes (em segundos) dos tiques da roleta: aceleram no começo e desaceleram até parar,
 // acompanhando a curva da animação. Cada tique é uma divisão de fatia passando pelo ponteiro.
@@ -56,8 +62,32 @@ export const EFEITOS = {
     return 0.55;
   },
 
-  resolvido(ctx, destino, quando) {
-    return arpejo(ctx, destino, 'piano', [72, 76, 79, 84], quando, 0.11, 0.3);
+  // Painel resolvido: um tilintar sobe a escala acompanhando a onda de pulinhos das casas
+  // e termina num estouro de confete. `passo` e `casas` vêm dos mesmos tempos da animação.
+  // Com `comJingle`, o jingle do personagem faz o final e o acorde fica de fora.
+  celebracao(ctx, destino, quando, { casas = 5, passo = 0.07, comJingle = false } = {}) {
+    const total = Math.max(casas, 1);
+    for (let i = 0; i < total; i++) {
+      const nota = ESCALA_DA_ONDA[Math.floor((i * ESCALA_DA_ONDA.length) / total)];
+      const t = quando + i * passo + 0.1;
+      bip(ctx, destino, { tipo: 'sine', freq: frequencia(nota), quando: t, dur: 0.2, vol: 0.16 });
+      bip(ctx, destino, { tipo: 'triangle', freq: frequencia(nota + 12), quando: t, dur: 0.12, vol: 0.04 });
+    }
+
+    const estouro = quando + (total - 1) * passo + PAUSA_ATE_O_ESTOURO;
+    // Estalo do confete saindo, seguido de uma chuva de brilhos agudos.
+    bip(ctx, destino, { tipo: 'sine', freq: 520, ate: 160, quando: estouro, dur: 0.12, vol: 0.2 });
+    rajada(ctx, destino, { quando: estouro, dur: 0.3, vol: 0.09, filtro: { tipo: 'highpass', freq: 5000 } });
+    BRILHOS.forEach(([atraso, freq]) => {
+      bip(ctx, destino, { tipo: 'sine', freq, quando: estouro + atraso, dur: 0.1, vol: 0.07 });
+    });
+
+    if (comJingle) return estouro - quando + 0.5;
+    [72, 76, 79, 84].forEach((nota) => {
+      bip(ctx, destino, { tipo: 'triangle', freq: frequencia(nota), quando: estouro, dur: 0.9, vol: 0.09 });
+      bip(ctx, destino, { tipo: 'sine', freq: frequencia(nota + 12), quando: estouro, dur: 0.7, vol: 0.04 });
+    });
+    return estouro - quando + 0.9;
   },
 
   fim(ctx, destino, quando) {

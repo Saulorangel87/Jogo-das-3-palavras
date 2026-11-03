@@ -246,3 +246,19 @@ Registro de cada etapa: o que mudou e por quê. A entrada mais recente fica no f
 **Verificado no Chrome:** num painel resolvido, as 3 animações dispararam, os atrasos saíram escalonados (0, 70, 140 ms…), e no fim as casas ficaram verdes e sem deslocamento. 89 testes e build passam.
 
 **Não verificado:** a fluidez na TV real e em celular fraco.
+
+## 2026-11-03 — Etapa 18: comemoração mais festiva, com som
+
+**O que mudou:** resolver um painel agora tem uma comemoração em três tempos, e o som acompanha cada um.
+
+1. **Onda:** as casas pulam uma a uma (como na etapa 17). No som, um tilintar de sino sobe uma escala pentatônica, uma nota por casa.
+2. **Estouro:** depois da última casa, 34 peças de confete e estrelas saem do centro do painel (`Festa.jsx`) e o quadro brilha. No som, entram um estalo, um chiado de confete e uma chuva de brilhos agudos.
+3. **Final:** no cooperativo, um acorde brilhante fecha a comemoração. No competitivo, o jingle do personagem que resolveu começa no estouro, e não mais no começo, para cair junto com o confete.
+
+**Como o som acompanha a imagem:** os tempos moram em `src/componentes/celebracao.js` (passo da onda, atraso do estouro, espera pelo som da letra) e são usados pelo `Painel`, pela `Festa` e pelo `useEfeitosDoJogo`. Se uma letra resolveu o painel, tudo espera 450 ms para o som da letra terminar. O efeito `resolvido` virou `celebracao` e recebe o número de casas e o passo da onda.
+
+**Cuidados:** só CSS (variáveis e `calc`, que o Chromium 57 aceita) e Web Audio, sem biblioteca. As peças usam sorteio de semente fixa. Quem pede menos movimento no sistema não vê o confete.
+
+**Verificado no Chrome:** 94 testes e build passam. O efeito foi renderizado fora do tempo real nos casos de 5, 14 e 30 casas: sem silêncio, sem valor inválido e com pico entre 0,37 e 0,65 (o `fim` fica em 0,56; o limite é 1). No jogo, as 34 peças animaram e o quadro parado no meio do voo mostrou o confete e as estrelas espalhados.
+
+**Não verificado:** como o som realmente soa (o Claude não ouve): o volume em relação aos outros sons e se o tilintar combina com a onda dependem do ouvido do Saulo. Também falta a fluidez na TV real.

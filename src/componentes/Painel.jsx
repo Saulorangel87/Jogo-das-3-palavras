@@ -1,8 +1,11 @@
 import { normalizarLetra } from '../logica/texto.js';
+import { atrasoDoEstouro, passoDaOnda } from './celebracao.js';
+import Festa from './Festa.jsx';
 import './Painel.css';
 
 // `digitadas` só existe enquanto o jogador preenche as casas para resolver.
-export default function Painel({ texto, letrasUsadas, aberto, digitadas }) {
+// `atraso` (em ms) adia a comemoração quando o som de uma letra ainda está tocando.
+export default function Painel({ texto, letrasUsadas, aberto, digitadas, atraso = 0 }) {
   let casaFechada = 0;
 
   const palavras = texto.split(' ').map((palavra) =>
@@ -23,9 +26,9 @@ export default function Painel({ texto, letrasUsadas, aberto, digitadas }) {
   );
 
   // Ao resolver, as casas dão um pulinho em onda. O passo encolhe nas frases longas
-  // para a onda inteira durar menos de um segundo.
+  // para a onda inteira durar menos de um segundo (os tempos vêm de celebracao.js, como no som).
   const total = palavras.reduce((soma, casas) => soma + casas.length, 0);
-  const passo = Math.min(70, Math.floor(800 / total));
+  const passo = passoDaOnda(total);
   let posicao = 0;
 
   const descricao = palavras
@@ -33,20 +36,26 @@ export default function Painel({ texto, letrasUsadas, aberto, digitadas }) {
     .join(', ');
 
   return (
-    <div className={aberto ? 'painel painel-resolvido' : 'painel'} role="img" aria-label={`Painel: ${descricao}`}>
+    <div
+      className={aberto ? 'painel painel-resolvido' : 'painel'}
+      style={aberto ? { animationDelay: `${atraso + atrasoDoEstouro(total) - 100}ms` } : undefined}
+      role="img"
+      aria-label={`Painel: ${descricao}`}
+    >
       {palavras.map((casas, i) => (
         <div key={i} className="painel-palavra">
           {casas.map((casa, j) => (
             <span
               key={j}
               className={casa.classe}
-              style={aberto ? { animationDelay: `${passo * posicao++}ms` } : undefined}
+              style={aberto ? { animationDelay: `${atraso + passo * posicao++}ms` } : undefined}
             >
               {casa.letra}
             </span>
           ))}
         </div>
       ))}
+      {aberto && <Festa atraso={atraso + atrasoDoEstouro(total)} />}
     </div>
   );
 }
