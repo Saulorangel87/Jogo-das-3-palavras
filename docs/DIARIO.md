@@ -284,3 +284,18 @@ Registro de cada etapa: o que mudou e por quê. A entrada mais recente fica no f
 **Verificado:** 116 testes e build. As seis trilhas foram renderizadas fora do tempo real: sem valores inválidos, picos de 0,26 a 0,37 e sem trechos mudos (exceto 1 segundo na `misterio`, que é esparsa de propósito). No Chrome: antes do toque não há som, depois do primeiro clique o áudio roda, a faixa muda com a tela (abertura, depois a do tema, depois abertura de novo), e o painel de som muda o volume da música sem mexer nos efeitos.
 
 **Não verificado:** como a música soa. O Claude não ouve, então melodia, andamento, cansaço do loop e volume dependem do ouvido do Saulo. Se alguma faixa irritar, é só trocar os dados ou o mapa de temas. Também falta ver se a TV aguenta a música junto com as animações (já havia um pouco de travamento).
+
+## 2026-11-03 — Etapa 20: música nova, que acompanha o andamento do jogo
+
+**Por quê:** o Saulo achou a música da etapa 19 "muito ruim" e pediu algo mais compatível com o jogo, que acelere conforme as palavras são descobertas. Troquei a música inteira.
+
+**O que mudou:**
+
+- **Andamento e camadas seguem o painel.** O jogo avisa à música quanto do painel já abriu (letras abertas ÷ letras do painel). O andamento vai do mínimo ao máximo da faixa (por exemplo, de 100 a 132 bpm na `saltitante`), subindo de poucos em poucos passos, sem trancos. As camadas entram em ordem: base (colchão macio e baixo) sempre; arpejo cheio a partir de 25%; melodia a partir de 30%; bateria a partir de 60%.
+- **Cada painel recomeça um pouco mais rápido** (3% a mais que o anterior), e ao começar um painel novo o andamento desce de novo. Enquanto o painel comemora, a música abaixa para os sons de festa aparecerem, e no resultado ela para.
+- **Música nova:** abertura mais quatro faixas de jogo (`saltitante`, `aventura`, `festa`, `suave`), com melodias em escala pentatônica (não "desafina" com nenhum acorde), progressões de acordes simples e timbres macios feitos para fundo (kalimba, baixo redondo, harpa, colchão), com um filtro que corta o chiado agudo. O tema da partida ainda escolhe a faixa.
+- **Código:** o agendador passo a passo é puro e testável (`criarAgendador`). O motor agenda só 0,6 s à frente, para a música reagir logo ao jogo.
+
+**Verificado:** 125 testes (andamento, camadas, reinício, volta do loop, situação do jogo → música) e build. As faixas foram renderizadas fora do tempo real numa partida simulada: sem valores inválidos, pico máximo 0,48 e volume estável (a força sobe de 0,045 para 0,068 com as camadas). No Chrome, jogando: o andamento foi de 122 para 130, 136 e 142 bpm conforme as letras abriram, e caiu no painel seguinte.
+
+**Não verificado:** como a música soa. O Claude não ouve, e a versão anterior já tinha sido reprovada pelo ouvido do Saulo. Se ainda não agradar, o que ajuda é saber o que incomoda: o timbre, a melodia, a velocidade, o volume ou o jeito de acelerar.

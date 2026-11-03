@@ -18,7 +18,7 @@ export default function App() {
   const ultimaConfig = useRef(null);
 
   useSetas();
-  useMusica(tela, partida && partida.tema, partida && partida.fase === FASES.FIM);
+  useMusica(tela, partida);
 
   // Os navegadores só liberam o som depois do primeiro toque, clique ou tecla do jogador.
   useEffect(() => {
