@@ -49,3 +49,48 @@
     font-size: 1.15rem;
   }
 }
+
+/* Painel resolvido: onda de pulinhos, brilho no quadro e casas verdes que ficam. */
+.painel-resolvido {
+  animation: painel-brilho 1.2s ease-out;
+}
+
+.painel-resolvido .painel-casa {
+  background: var(--acerto);
+  color: var(--botao-texto);
+  animation: painel-pulo 0.5s ease-out both;
+}
+
+@keyframes painel-pulo {
+  0% {
+    background: var(--botao);
+    transform: translateY(0) scale(1);
+  }
+  40% {
+    background: var(--destaque);
+    transform: translateY(-0.6rem) scale(1.2);
+  }
+  100% {
+    background: var(--acerto);
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes painel-brilho {
+  0% {
+    box-shadow: 0 0 0 0 rgba(255, 210, 63, 0);
+  }
+  35% {
+    box-shadow: 0 0 2.2rem 0.4rem rgba(255, 210, 63, 0.7);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(255, 210, 63, 0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .painel-resolvido,
+  .painel-resolvido .painel-casa {
+    animation: none;
+  }
+}

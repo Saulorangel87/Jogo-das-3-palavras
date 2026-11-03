@@ -22,16 +22,28 @@ export default function Painel({ texto, letrasUsadas, aberto, digitadas }) {
     }),
   );
 
+  // Ao resolver, as casas dão um pulinho em onda. O passo encolhe nas frases longas
+  // para a onda inteira durar menos de um segundo.
+  const total = palavras.reduce((soma, casas) => soma + casas.length, 0);
+  const passo = Math.min(70, Math.floor(800 / total));
+  let posicao = 0;
+
   const descricao = palavras
     .map((casas) => casas.map((c) => c.letra || 'vazio').join(' '))
     .join(', ');
 
   return (
-    <div className="painel" role="img" aria-label={`Painel: ${descricao}`}>
+    <div className={aberto ? 'painel painel-resolvido' : 'painel'} role="img" aria-label={`Painel: ${descricao}`}>
       {palavras.map((casas, i) => (
         <div key={i} className="painel-palavra">
           {casas.map((casa, j) => (
-            <span key={j} className={casa.classe}>{casa.letra}</span>
+            <span
+              key={j}
+              className={casa.classe}
+              style={aberto ? { animationDelay: `${passo * posicao++}ms` } : undefined}
+            >
+              {casa.letra}
+            </span>
           ))}
         </div>
       ))}

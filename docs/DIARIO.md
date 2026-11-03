@@ -234,3 +234,15 @@ Registro de cada etapa: o que mudou e por quê. A entrada mais recente fica no f
 **Verificado no Chrome:** início, configuração, jogo e resultado (este por uma página de prévia descartada), e o texto continua legível. 89 testes e build passam.
 
 **Não verificado:** como o SVG se comporta na TV real e no celular de verdade.
+
+## 2026-11-03 — Etapa 17: animação ao resolver a palavra
+
+**O que mudou:** quando o painel é resolvido, as casas dão um pulinho em onda, da primeira à última, e o quadro faz um brilho amarelo rápido. As casas terminam verdes, o que também marca o painel como concluído.
+
+- Só CSS (`transform`, `background` e `box-shadow` em `@keyframes`), sem biblioteca, compatível com o Chromium 57 das TVs. O atraso de cada casa vem de `animation-delay` calculado em `Painel.jsx`.
+- O passo da onda encolhe nas frases longas (70 ms no máximo), para a onda inteira durar menos de um segundo.
+- Quem pede menos movimento no sistema (`prefers-reduced-motion`) vê só as casas verdes, sem animação.
+
+**Verificado no Chrome:** num painel resolvido, as 3 animações dispararam, os atrasos saíram escalonados (0, 70, 140 ms…), e no fim as casas ficaram verdes e sem deslocamento. 89 testes e build passam.
+
+**Não verificado:** a fluidez na TV real e em celular fraco.
