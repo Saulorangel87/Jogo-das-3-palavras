@@ -462,3 +462,5 @@ O Saulo notou que "Jogar online" e "Som" ficavam camuflados no celular. Em tela 
 
 Pedido do Saulo, para ninguém travar a partida sem clicar. A contagem começa quando a palavra é resolvida e aparece para todos. Se todos clicarem, segue na hora. Se alguém não clicar, ou ninguém clicar, segue sozinho ao fim dos 15 segundos, inclusive no último painel. Isso substitui o "sem prazo" da etapa 31 e resolve a limitação anotada lá. O prazo fica em `servidor/regrasOnline.js`.
 
+
+**Verificado (versão 1.2.2):** 199 testes. Local, sem nenhum clique: seguiu sozinho em cerca de 16 s (os 15 s mais a verificação do servidor, que roda a cada segundo). Em produção, em duas abas: com um clique só, seguiu no prazo, com "Só falta você clicar!" para quem faltava; com os dois cliques, seguiu na hora. A borda clara dos botões da tela inicial está no ar. **Não verificado:** o prazo levando ao resultado no último painel pela tela (coberto nos testes) e celular real.
