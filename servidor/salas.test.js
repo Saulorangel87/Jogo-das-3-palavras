@@ -24,7 +24,7 @@ const T = 1000;
 let g;
 
 beforeEach(() => {
-  g = criarGerenciador({ carregarPalavras: async () => PALAVRAS, limites: { vagaMs: 120, vezMs: 60, proximoMs: 30 } });
+  g = criarGerenciador({ carregarPalavras: async () => PALAVRAS, limites: { vagaMs: 120, vezMs: 60 } });
 });
 
 function salaCom2(nivel = 'avancado') {
@@ -297,20 +297,12 @@ describe('seguir para o próximo painel', () => {
     expect(s.sala.prontos).toEqual(['boris']);
   });
 
-  it('sem nenhum clique, o tempo não tira a palavra da tela', async () => {
-    const s = await resolvida();
-    g.verificarPrazos(T + 1000);
-    expect(s.sala.partida.fase).toBe(FASES.RESOLVIDO);
-  });
-
-  it('depois do primeiro clique, quem não clica não trava a partida', async () => {
+  it('o tempo nunca passa de painel: sem o clique dos dois, a palavra fica na tela', async () => {
     const s = await resolvida();
     jogar(s, s.tokenA, { tipo: ACOES.PROXIMO_PAINEL });
-    expect(visaoDaSala(s.sala, 'boris', T + 10).esperaProximoMs).toBe(20);
-    g.verificarPrazos(T + 29);
+    g.verificarPrazos(T + 100000);
+    expect(s.sala.partida.fase).toBe(FASES.RESOLVIDO);
     expect(s.sala.partida.indicePainel).toBe(0);
-    expect(g.verificarPrazos(T + 30).mudaram).toContain(s.sala);
-    expect(s.sala.partida.indicePainel).toBe(1);
   });
 
   it('no último painel, o resultado também espera todos', async () => {

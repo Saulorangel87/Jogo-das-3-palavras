@@ -42,7 +42,8 @@ describe('quem saiu, no resultado', () => {
   });
 
   it('explica a partida que acabou por saída', () => {
-    expect(textoDeQuemSaiu([j('Lalá'), j('Bóris', true)], true)).toBe('Bóris saiu da partida, por isso ela terminou aqui.');
+    expect(textoDeQuemSaiu([j('Lalá'), j('Bóris', true)], true)).toBe('Bóris, seu adversário, saiu da partida. Quem ficou venceu!');
+    expect(textoDeQuemSaiu([j('Lalá', true), j('Bóris', true), j('Til')], true)).toBe('Lalá e Bóris, seus adversários, saíram da partida. Quem ficou venceu!');
   });
 
   it('avisa quem saiu de uma partida que continuou', () => {

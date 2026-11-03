@@ -21,8 +21,11 @@ export function textoDeQuemSaiu(jogadores, encerrada) {
   const nomes = jogadores.filter((j) => j.saiu).map((j) => j.nome);
   if (nomes.length === 0) return null;
   const lista = nomes.length === 1 ? nomes[0] : `${nomes.slice(0, -1).join(', ')} e ${nomes[nomes.length - 1]}`;
-  const verbo = nomes.length === 1 ? 'saiu' : 'saíram';
-  return encerrada ? `${lista} ${verbo} da partida, por isso ela terminou aqui.` : `${lista} ${verbo} da partida.`;
+  const uma = nomes.length === 1;
+  if (!encerrada) return `${lista} ${uma ? 'saiu' : 'saíram'} da partida.`;
+  return uma
+    ? `${lista}, seu adversário, saiu da partida. Quem ficou venceu!`
+    : `${lista}, seus adversários, saíram da partida. Quem ficou venceu!`;
 }
 
 const FORMATO_DO_CODIGO = /^[BCDFGHJKLMNPRSTVZ]{4}-\d{2}$/;

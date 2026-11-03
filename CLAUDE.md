@@ -173,7 +173,7 @@ Decisões do Saulo: colegas em celular e PC; primeira versão só no competitivo
 - **Código da sala:** 4 consoantes e 2 números (`BRTK-42`); sem vogal não forma palavra. Tentativas erradas limitadas por endereço.
 - **Presença:** a conexão do Socket.IO confere o aparelho a cada 10 segundos. Estados só dentro da sala: `conectada`, `reconectando` (vaga guardada por 2 minutos, volta com token) e `saiu`. Quem cai na própria vez tem 60 segundos, depois a vez passa, sem perder pontos. Não existe lista de quem está online no site.
 - **Rede:** o Nginx do site repassa `/socket.io/` ao container `tres-palavras-online`, que não tem porta publicada. Nada muda no Cloudflare, e `docker-compose.yml` sobe os dois.
-- **Seguir para o próximo painel:** a palavra fica na tela até cada pessoa clicar. Depois do primeiro clique, as outras têm 30 segundos, e quem caiu não segura ninguém. No aparelho, o botão ignora cliques no primeiro segundo, para um toque duplo não pular a palavra.
+- **Seguir para o próximo painel:** todos precisam clicar, sem prazo (decisão do Saulo, mais equilibrado). A palavra fica na tela até lá. Só quem caiu ou saiu não segura ninguém. No aparelho, o botão ignora cliques no primeiro segundo, para um toque duplo não pular a palavra.
 - **Quem sai:** fica no placar marcado como "(saiu)" e não vence, mesmo com mais pontos. O resultado explica a saída.
 - **Tela de jogo:** a mesma `Jogo.jsx`, com a prop `online`. Com ela, o estado vem do servidor, os botões travam fora da vez e a roleta gira quando o servidor avisa (`sala.giro`).
 - **Em desenvolvimento:** `PORTA=3000 ORIGENS=http://localhost:5180 node servidor/principal.js` (depois de `npm install` em `servidor/`) e `npx vite --port 5180`.

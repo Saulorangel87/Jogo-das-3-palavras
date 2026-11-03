@@ -7,7 +7,6 @@ import { montarRodada } from '../src/logica/rodada.js';
 import { codigoValido, gerarCodigo, gerarToken } from './codigo.js';
 import {
   ESPERA_NA_VEZ_MS,
-  ESPERA_PROXIMO_PAINEL_MS,
   MAX_JOGADORES,
   MAX_SALAS,
   MIN_JOGADORES,
@@ -29,11 +28,7 @@ const erro = (motivo) => ({ ok: false, erro: motivo });
 
 export function criarGerenciador({ carregarPalavras, rng = sortear, limites = {} } = {}) {
   const salas = new Map();
-  const limitesDaSala = {
-    vagaMs: limites.vagaMs ?? VAGA_GUARDADA_MS,
-    vezMs: limites.vezMs ?? ESPERA_NA_VEZ_MS,
-    proximoMs: limites.proximoMs ?? ESPERA_PROXIMO_PAINEL_MS,
-  };
+  const limitesDaSala = { vagaMs: limites.vagaMs ?? VAGA_GUARDADA_MS, vezMs: limites.vezMs ?? ESPERA_NA_VEZ_MS };
   const maxSalas = limites.maxSalas ?? MAX_SALAS;
 
   function criarJogador(personagem, agora) {
@@ -74,7 +69,6 @@ export function criarGerenciador({ carregarPalavras, rng = sortear, limites = {}
       giro: null,
       vezOfflineDesde: null,
       prontos: [],
-      prontosDesde: null,
       ultimaAtividade: agora,
       fimEm: null,
       limites: limitesDaSala,
@@ -178,12 +172,11 @@ export function criarGerenciador({ carregarPalavras, rng = sortear, limites = {}
   function avancarPainel(sala, agora) {
     sala.partida = aplicarAcao(sala.partida, { tipo: ACOES.PROXIMO_PAINEL });
     sala.prontos = [];
-    sala.prontosDesde = null;
     sincronizarFim(sala, agora);
     atualizarEsperaDaVez(sala, agora);
   }
 
-  // Cada pessoa clica para seguir, para ninguém perder a palavra. Quem caiu não segura as outras.
+  // Todos precisam clicar para seguir, sem prazo. Só quem caiu ou saiu não segura as outras.
   function avancarSeTodosProntos(sala, agora) {
     if (!sala.partida || sala.partida.fase !== FASES.RESOLVIDO || sala.prontos.length === 0) return;
     const conectados = sala.jogadores.filter((j) => j.conexao === CONEXAO.CONECTADA);
@@ -242,7 +235,6 @@ export function criarGerenciador({ carregarPalavras, rng = sortear, limites = {}
 
     if (acao.tipo === ACOES.PROXIMO_PAINEL) {
       if (!sala.prontos.includes(jogador.id)) sala.prontos.push(jogador.id);
-      if (sala.prontosDesde === null) sala.prontosDesde = agora;
       sala.ultimaAtividade = agora;
       avancarSeTodosProntos(sala, agora);
       return { ok: true, sala };
@@ -278,14 +270,6 @@ export function criarGerenciador({ carregarPalavras, rng = sortear, limites = {}
           registrarSaida(sala, jogador, agora);
           mudaram.add(sala);
         }
-      }
-      if (
-        sala.prontosDesde !== null &&
-        sala.partida.fase === FASES.RESOLVIDO &&
-        agora - sala.prontosDesde >= limitesDaSala.proximoMs
-      ) {
-        avancarPainel(sala, agora);
-        mudaram.add(sala);
       }
       if (sala.vezOfflineDesde !== null && agora - sala.vezOfflineDesde >= limitesDaSala.vezMs) {
         sala.partida = aplicarAcao(sala.partida, { tipo: ACOES.PASSAR_VEZ });

@@ -18,6 +18,7 @@ import {
 import { ESTRELAS_MAXIMAS_POR_PAINEL } from '../logica/regras.js';
 import { contarCasasFechadas, montarResposta } from '../logica/texto.js';
 import { useFoco, useVoltar } from '../navegacao/useNavegacao.js';
+import { textoDeQuemSaiu } from '../online/mensagens.js';
 import BotaoSom from '../audio/BotaoSom.jsx';
 import PainelSom from '../audio/PainelSom.jsx';
 import { tocarEfeito } from '../audio/motor.js';
@@ -91,7 +92,7 @@ export default function Jogo({ estado, despachar, aoSair, online = null }) {
     ? online.jogadores.filter((j) => j.conexao === 'conectada' && !prontos.includes(j.id)).map((j) => j.nome)
     : [];
   const segundosDaVez = useSegundosRestantes(online ? online.esperaNaVezMs : null);
-  const segundosParaSeguir = useSegundosRestantes(online && resolvido ? online.esperaProximoMs : null);
+  const quemSaiu = online ? estado.jogadores.filter((j) => j.saiu).map((j) => j.nome) : [];
   const podeLetra = podeEscolherLetra(estado) && !girando && minhaVez;
   const comOpcoes = Boolean(painel.opcoes);
   const opcoesDisponiveis = comOpcoes
@@ -262,8 +263,8 @@ export default function Jogo({ estado, despachar, aoSair, online = null }) {
               {ultimo ? 'Ver resultado' : 'Próximo painel'}
             </button>
           )}
-          {segundosParaSeguir !== null && (
-            <p className="jogo-instrucao jogo-segue-sozinho">O jogo segue sozinho em {segundosParaSeguir} s.</p>
+          {!jaSegui && prontos.length > 0 && faltamSeguir.length === 1 && (
+            <p className="jogo-instrucao jogo-falta-voce">Só falta você clicar!</p>
           )}
         </>
       )}
@@ -339,6 +340,7 @@ export default function Jogo({ estado, despachar, aoSair, online = null }) {
             {segundosDaVez !== null && (
               <p className="jogo-instrucao">{jogadorDaVez.nome} caiu. Se não voltar em {segundosDaVez} s, a vez passa.</p>
             )}
+            {quemSaiu.length > 0 && <p className="jogo-instrucao">{textoDeQuemSaiu(estado.jogadores, false)}</p>}
           </div>
 
           <div className="jogo-acoes">
