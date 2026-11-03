@@ -451,3 +451,9 @@ Publicado na VPS com o segundo container. Nada mudou no Cloudflare.
 
 **Não verificado:** a proteção contra toque duplo no jogo local (é o mesmo botão, mas só foi testada online) e celular real.
 
+
+## 2026-11-03 — Etapa 32: botões da tela inicial no celular
+
+O Saulo notou que "Jogar online" e "Som" ficavam camuflados no celular. Em tela estreita, eles caem em cima da onda azul do fundo, que tem quase a mesma cor do botão. No notebook a onda fica longe. Os dois ganharam uma borda clara, só na tela inicial.
+
+**Verificado:** em 390 x 700, no navegador. **Não verificado:** celular real.

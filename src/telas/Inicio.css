@@ -33,3 +33,9 @@
   min-width: 12rem;
   margin-top: 1rem;
 }
+
+/* No celular, estes botões caem em cima da onda azul do fundo: a borda clara os separa dela. */
+.inicio-online,
+.inicio-som {
+  border-color: var(--texto);
+}
