@@ -21,4 +21,24 @@ describe('escolherDestino', () => {
     expect(escolherDestino(a, [b, c, d], 'cima')).toBe(-1);
     expect(escolherDestino(a, [b, c, d], 'esquerda')).toBe(-1);
   });
+
+  it('prefere quem está na mesma linha a um botão logo abaixo, quase na mesma coluna', () => {
+    // Painel de som: o + fica quase em cima do Fechar, e o − está na linha do +.
+    const menos = { left: 300, top: 100, width: 60, height: 60 };
+    const mais = { left: 560, top: 100, width: 60, height: 60 };
+    const silenciar = { left: 300, top: 200, width: 150, height: 60 };
+    const fechar = { left: 500, top: 200, width: 150, height: 60 };
+    const outros = [menos, silenciar, fechar];
+    expect(escolherDestino(mais, outros, 'esquerda')).toBe(0);
+    expect(escolherDestino(mais, outros, 'baixo')).toBe(2);
+    expect(escolherDestino(menos, [mais, silenciar, fechar], 'baixo')).toBe(1);
+    expect(escolherDestino(fechar, [menos, mais, silenciar], 'cima')).toBe(1);
+  });
+
+  it('sem ninguém alinhado, cai para o mais próximo na direção', () => {
+    const origem = { left: 0, top: 0, width: 100, height: 50 };
+    const abaixoADireita = { left: 300, top: 200, width: 100, height: 50 };
+    expect(escolherDestino(origem, [abaixoADireita], 'direita')).toBe(0);
+    expect(escolherDestino(origem, [abaixoADireita], 'baixo')).toBe(0);
+  });
 });
