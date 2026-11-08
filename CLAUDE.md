@@ -170,6 +170,7 @@ As opções erradas do "Resolver" (só no iniciante) vêm de outros itens do mes
 - Os comandos Docker na VPS rodam sem `sudo` para o usuário `ubuntu`.
 - **Regras do Cloudflare para o jogo:** o host está na lista de exclusão da regra de cabeçalhos "Cabeçalho de segurança", então os cabeçalhos do Nginx valem (só o HSTS vem do Cloudflare). A Configuration Rule "3 Palavras - sem Web Analytics" desliga a medição só neste host, e a Cache Rule "3 Palavras - revalidar sw e manifesto" faz o navegador respeitar o `no-cache` do `/sw.js` e do manifesto. Mudar a CSP é em `deploy/nginx/seguranca.inc`.
 - **PWA:** instalável e jogável sem internet depois da primeira visita (os 3 níveis ficam guardados). O service worker tenta a rede para a página e usa o cache para os arquivos com hash; uma versão nova aparece na visita seguinte, e o cache da versão anterior fica guardado para abas abertas. Arquivo novo fora de `public/` e `src/` precisa entrar no `Dockerfile`.
+- **Borda a borda (1.3.1, experimento):** o `viewport` tem `viewport-fit=cover` e as margens de segurança (`.tela`, modais, faixa do online) somam `env(safe-area-inset-*)` às de TV. Serve para o fundo azul passar sob a barra de navegação do Android e tentar sumir a linha de 1 pixel na divisa; o efeito no celular não foi confirmado (ver diário, etapas 40 e 41).
 - **Falta:** teste na TV real pelo domínio de produção.
 
 ## Modo online (no ar desde 03/11/2026, versão 1.2.0)
