@@ -2,8 +2,21 @@
 // testar com crianças, mude aqui; nada mais precisa ser tocado.
 // JavaScript puro, sem React nem window: o servidor online reutiliza este arquivo.
 
-// Valores das fatias da roleta (competitivo). Sem fatia que tire pontos.
-export const FATIAS_ROLETA = [10, 25, 5, 30, 15, 50, 20, 40];
+// Fatias da roleta (competitivo), na ordem em que aparecem girando no sentido horário.
+// Sem fatia que tire pontos. `peso` é a largura da fatia em relação às outras (padrão 1):
+// uma fatia mais estreita sai menos. A primeira e a última devem valer pontos.
+export const TIPOS_DE_FATIA = { PONTOS: 'pontos' };
+export const FATIAS_ROLETA = [
+  { tipo: TIPOS_DE_FATIA.PONTOS, valor: 10 },
+  { tipo: TIPOS_DE_FATIA.PONTOS, valor: 25 },
+  { tipo: TIPOS_DE_FATIA.PONTOS, valor: 5 },
+  { tipo: TIPOS_DE_FATIA.PONTOS, valor: 30 },
+  { tipo: TIPOS_DE_FATIA.PONTOS, valor: 100, peso: 0.5, jackpot: true },
+  { tipo: TIPOS_DE_FATIA.PONTOS, valor: 15 },
+  { tipo: TIPOS_DE_FATIA.PONTOS, valor: 50 },
+  { tipo: TIPOS_DE_FATIA.PONTOS, valor: 20 },
+  { tipo: TIPOS_DE_FATIA.PONTOS, valor: 40 },
+];
 
 // Resolver certo: pontos por casa ainda fechada (× multiplicador do painel).
 // Perto da média da roleta (24), mas sem o risco de errar a letra e perder a vez.

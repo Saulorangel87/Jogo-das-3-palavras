@@ -9,6 +9,8 @@ import {
   calcularEstrelas,
   calcularResultado,
   criarPartida,
+  indiceDaFatia,
+  limitesDasFatias,
   podeGirar,
   temRelogio,
 } from './jogo.js';
@@ -39,8 +41,8 @@ const pontos = (e) => e.jogadores.map((j) => j.pontos);
 
 describe('roleta', () => {
   it('o sorteio define a fatia', () => {
-    expect(girar(partida(), 0).valorRoleta).toBe(FATIAS_ROLETA[0]);
-    expect(girar(partida(), 0.999).valorRoleta).toBe(FATIAS_ROLETA[FATIAS_ROLETA.length - 1]);
+    expect(girar(partida(), 0).valorRoleta).toBe(FATIAS_ROLETA[0].valor);
+    expect(girar(partida(), 0.999).valorRoleta).toBe(FATIAS_ROLETA[FATIAS_ROLETA.length - 1].valor);
   });
 
   it('não gira de novo antes de usar o giro', () => {
@@ -50,7 +52,34 @@ describe('roleta', () => {
   });
 
   it('não tem fatia punitiva', () => {
-    expect(FATIAS_ROLETA.every((v) => v > 0)).toBe(true);
+    expect(FATIAS_ROLETA.filter((f) => f.tipo === 'pontos').every((f) => f.valor > 0)).toBe(true);
+  });
+
+  it('os limites das fatias cobrem de 0 a 1 sem buracos, e fatia estreita ocupa menos', () => {
+    const limites = limitesDasFatias();
+    expect(limites[0].inicio).toBe(0);
+    expect(limites[limites.length - 1].fim).toBeCloseTo(1, 10);
+    limites.slice(1).forEach((l, i) => expect(l.inicio).toBe(limites[i].fim));
+    const largura = (i) => limites[i].fim - limites[i].inicio;
+    const jackpot = FATIAS_ROLETA.findIndex((f) => f.jackpot);
+    const comum = FATIAS_ROLETA.findIndex((f) => !f.peso);
+    expect(largura(jackpot)).toBeLessThan(largura(comum));
+  });
+
+  it('o sorteio cai em cada fatia na proporção da sua largura', () => {
+    const limites = limitesDasFatias();
+    limites.forEach((l, i) => {
+      expect(indiceDaFatia(l.inicio)).toBe(i);
+      expect(indiceDaFatia((l.inicio + l.fim) / 2)).toBe(i);
+    });
+    expect(indiceDaFatia(0.9999999)).toBe(limites.length - 1);
+  });
+
+  it('a fatia de 100 pontos paga como qualquer fatia de pontos', () => {
+    const indice = FATIAS_ROLETA.findIndex((f) => f.jackpot);
+    const { inicio, fim } = limitesDasFatias()[indice];
+    const e = letra(girar(partida(), (inicio + fim) / 2), 'C');
+    expect(pontos(e)).toEqual([FATIAS_ROLETA[indice].valor * 2, 0]);
   });
 
   it('não existe no cooperativo', () => {

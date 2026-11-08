@@ -74,8 +74,23 @@ export function calcularEstrelas(erros) {
   return faixa ? faixa.estrelas : ESTRELAS_MINIMAS;
 }
 
+// Onde cada fatia começa e termina, de 0 a 1 (a roleta desenha com isto, e o sorteio cai nestes trechos).
+export function limitesDasFatias() {
+  const total = FATIAS_ROLETA.reduce((soma, f) => soma + (f.peso ?? 1), 0);
+  let inicio = 0;
+  return FATIAS_ROLETA.map((f) => {
+    const fim = inicio + (f.peso ?? 1) / total;
+    const limites = { inicio, fim };
+    inicio = fim;
+    return limites;
+  });
+}
+
+const LIMITES_DAS_FATIAS = limitesDasFatias();
+
 export function indiceDaFatia(sorteio) {
-  return Math.floor(sorteio * FATIAS_ROLETA.length);
+  const indice = LIMITES_DAS_FATIAS.findIndex((l) => sorteio >= l.inicio && sorteio < l.fim);
+  return indice === -1 ? LIMITES_DAS_FATIAS.length - 1 : indice;
 }
 
 function ehCompetitivo(estado) {
@@ -131,7 +146,7 @@ function girar(estado, sorteio) {
   if (!podeGirar(estado)) return estado;
   return {
     ...estado,
-    valorRoleta: FATIAS_ROLETA[indiceDaFatia(sorteio)],
+    valorRoleta: FATIAS_ROLETA[indiceDaFatia(sorteio)].valor,
     ultimaJogada: null,
   };
 }

@@ -1,9 +1,12 @@
-import { FATIAS_ROLETA } from '../logica/jogo.js';
+import { FATIAS_ROLETA, limitesDasFatias } from '../logica/jogo.js';
 import './Roleta.css';
 
 const CORES = ['#ffd23f', '#8ecae6', '#ff8fab', '#95d5b2', '#f4a261', '#cdb4db', '#a8dadc', '#ffb703'];
+const COR_JACKPOT = '#ffb703';
 const CENTRO = 100;
 const RAIO = 96;
+const LIMITES = limitesDasFatias();
+// Média da largura das fatias: o som do giro conta um tique a cada divisão que passa pelo ponteiro.
 export const GRAUS = 360 / FATIAS_ROLETA.length;
 
 function ponto(graus, raio) {
@@ -15,16 +18,25 @@ function ponto(graus, raio) {
   };
 }
 
+function inicioDaFatia(indice) {
+  return LIMITES[indice].inicio * 360;
+}
+
+function fimDaFatia(indice) {
+  return LIMITES[indice].fim * 360;
+}
+
 function caminhoDaFatia(indice) {
-  const inicio = ponto(indice * GRAUS, RAIO);
-  const fim = ponto((indice + 1) * GRAUS, RAIO);
+  const inicio = ponto(inicioDaFatia(indice), RAIO);
+  const fim = ponto(fimDaFatia(indice), RAIO);
   return `M${CENTRO} ${CENTRO} L${inicio.x} ${inicio.y} A${RAIO} ${RAIO} 0 0 1 ${fim.x} ${fim.y} Z`;
 }
 
 // Giro horário que para a fatia sorteada no ponteiro, sempre andando para a frente.
 export function proximoAngulo(anguloAtual, indice) {
+  const meio = (inicioDaFatia(indice) + fimDaFatia(indice)) / 2;
   const voltasCompletas = Math.ceil(anguloAtual / 360) + 3;
-  return voltasCompletas * 360 + (360 - (indice + 0.5) * GRAUS);
+  return voltasCompletas * 360 + (360 - meio);
 }
 
 export default function Roleta({ angulo, duracao }) {
@@ -37,23 +49,29 @@ export default function Roleta({ angulo, duracao }) {
           transition: `transform ${duracao}ms cubic-bezier(0.15, 0.8, 0.25, 1)`,
         }}
       >
-        {FATIAS_ROLETA.map((valor, i) => {
-          const meio = (i + 0.5) * GRAUS;
+        {FATIAS_ROLETA.map((fatia, i) => {
+          const meio = (inicioDaFatia(i) + fimDaFatia(i)) / 2;
           const texto = ponto(meio, RAIO * 0.68);
+          const estreita = (fatia.peso ?? 1) < 1;
           return (
             <g key={i}>
-              <path d={caminhoDaFatia(i)} fill={CORES[i % CORES.length]} stroke="#14213d" strokeWidth="2" />
+              <path
+                d={caminhoDaFatia(i)}
+                fill={fatia.jackpot ? COR_JACKPOT : CORES[i % CORES.length]}
+                stroke="#14213d"
+                strokeWidth="2"
+              />
               <text
                 x={texto.x}
                 y={texto.y}
                 fill="#14213d"
-                fontSize="22"
+                fontSize={estreita ? 15 : 22}
                 fontWeight="800"
                 textAnchor="middle"
                 dominantBaseline="central"
                 transform={`rotate(${meio} ${texto.x} ${texto.y})`}
               >
-                {valor}
+                {fatia.valor}
               </text>
             </g>
           );
