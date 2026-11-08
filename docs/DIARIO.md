@@ -532,3 +532,7 @@ Publicação das etapas 35 a 39: relógio de 30 segundos por vez, painéis de du
 
 **Atenção ao publicar:** o servidor online guarda as salas só na memória, então uma partida online em andamento na hora da publicação é encerrada.
 
+**Verificado em produção (versão 1.3.0), no Chrome:** o site publicado traz a versão nova: o relógio aparece ("Tempo da vez: 29 segundos") e a roleta tem as 14 fatias com os rótulos (10, ×2, 25, +GIRO, 5, 30, LETRA, 100, 15, ESCUDO, 50, SONECA, 20, 40). **Não verificado:** os sons novos, o online com aparelhos reais e o cooperativo em produção.
+
+**Linha branca no celular (pendente):** o Saulo viu uma linha branca na parte de baixo do app no celular, que já existia antes desta versão, e vai conferir depois da atualização. Procurei no computador, num quadro de 390 px: o fundo do `html` e do `body` é azul-escuro, o fundo desenhado cobre a janela toda e nenhum elemento claro encosta embaixo. O único traço claro do fundo é a fita das bandeirinhas, no alto da tela de resultado. A causa não foi achada sem ver a tela do celular. Se ela continuar: anotar o aparelho, o navegador, se o app está instalado (PWA) e em qual tela aparece. Hipóteses a testar: a faixa de gestos do Android no app instalado, e o fundo do `html` sem cor própria na rolagem elástica do iPhone.
+
