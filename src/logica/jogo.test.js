@@ -10,6 +10,7 @@ import {
   calcularResultado,
   criarPartida,
   podeGirar,
+  temRelogio,
 } from './jogo.js';
 
 const ALFABETO = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
@@ -295,5 +296,53 @@ describe('saída e queda de jogador (online)', () => {
     let e = aplicarAcao(partidaDe3(), { tipo: ACOES.MARCAR_SAIDA, indice: 0 });
     e = aplicarAcao(e, { tipo: ACOES.MARCAR_SAIDA, indice: 1 });
     expect(e.fase).toBe(FASES.FIM);
+  });
+});
+
+describe('relógio da vez', () => {
+  const tempoEsgotado = (e) => aplicarAcao(e, { tipo: ACOES.TEMPO_ESGOTADO });
+
+  it('acabou o tempo: a vez passa, sem erro, sem perder pontos e descartando o giro', () => {
+    let e = girar(partida(), 0);
+    e = tempoEsgotado(e);
+    expect(e.vez).toBe(1);
+    expect(e.valorRoleta).toBeNull();
+    expect(e.erros).toBe(0);
+    expect(pontos(e)).toEqual([0, 0]);
+    expect(e.ultimaJogada).toEqual({ tipo: JOGADAS.TEMPO_ESGOTADO, quem: 0 });
+  });
+
+  it('o turno sobe a cada ação que muda o jogo, mas não ao girar', () => {
+    let e = partida();
+    expect(e.turno).toBe(0);
+    e = girar(e, 0);
+    expect(e.turno).toBe(0);
+    e = letra(e, 'C');
+    expect(e.vez).toBe(0);
+    expect(e.turno).toBe(1);
+    e = tempoEsgotado(e);
+    expect(e.turno).toBe(2);
+  });
+
+  it('ação inválida não mexe no turno', () => {
+    const e = partida();
+    expect(letra(e, 'C')).toBe(e);
+    expect(e.turno).toBe(0);
+  });
+
+  it('só existe no competitivo e com o painel aberto', () => {
+    expect(temRelogio(partida())).toBe(true);
+    expect(temRelogio(partida(MODOS.COOPERATIVO))).toBe(false);
+    const coop = partida(MODOS.COOPERATIVO);
+    expect(tempoEsgotado(coop)).toBe(coop);
+    const resolvido = resolver(partida(), 'COCO');
+    expect(temRelogio(resolvido)).toBe(false);
+    expect(tempoEsgotado(resolvido)).toBe(resolvido);
+  });
+
+  it('quem saiu é pulado quando o tempo acaba', () => {
+    let e = aplicarAcao(partida(MODOS.COMPETITIVO, 3), { tipo: ACOES.MARCAR_SAIDA, indice: 1 });
+    e = tempoEsgotado(e);
+    expect(e.vez).toBe(2);
   });
 });

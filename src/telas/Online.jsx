@@ -207,6 +207,7 @@ export default function Online({ codigoInicial, aoVoltar, aoMudarPartida }) {
             giro: sala.giro,
             jogadores: sala.jogadores,
             esperaNaVezMs: sala.esperaNaVezMs,
+            tempoDaVezMs: sala.tempoDaVezMs,
             prontos: sala.prontos,
             esperaProximoMs: sala.esperaProximoMs,
             conexao,

@@ -13,6 +13,7 @@ import {
   MIN_JOGADORES,
   RESULTADO_VISIVEL_MS,
   SALA_PARADA_MS,
+  TEMPO_DA_VEZ_MS,
   VAGA_GUARDADA_MS,
 } from './regrasOnline.js';
 
@@ -33,6 +34,7 @@ export function criarGerenciador({ carregarPalavras, rng = sortear, limites = {}
     vagaMs: limites.vagaMs ?? VAGA_GUARDADA_MS,
     vezMs: limites.vezMs ?? ESPERA_NA_VEZ_MS,
     proximoMs: limites.proximoMs ?? ESPERA_PROXIMO_PAINEL_MS,
+    turnoMs: limites.turnoMs ?? TEMPO_DA_VEZ_MS,
   };
   const maxSalas = limites.maxSalas ?? MAX_SALAS;
 
@@ -73,6 +75,8 @@ export function criarGerenciador({ carregarPalavras, rng = sortear, limites = {}
       partida: null,
       giro: null,
       vezOfflineDesde: null,
+      turnoVisto: null,
+      turnoDesde: null,
       prontos: [],
       resolvidoDesde: null,
       ultimaAtividade: agora,
@@ -112,7 +116,7 @@ export function criarGerenciador({ carregarPalavras, rng = sortear, limites = {}
     if (!jogador) return erro('vaga-perdida');
     jogador.conexao = CONEXAO.CONECTADA;
     jogador.quedaEm = null;
-    atualizarEsperaDaVez(sala, agora);
+    atualizarPrazosDaVez(sala, agora);
     return { ok: true, sala, jogador };
   }
 
@@ -120,9 +124,18 @@ export function criarGerenciador({ carregarPalavras, rng = sortear, limites = {}
     return sala.partida.jogadores.findIndex((j) => j.id === jogador.id);
   }
 
-  function atualizarEsperaDaVez(sala, agora) {
+  // Cuida dos dois prazos da vez: o relógio de 30 segundos (reinicia quando o `turno` da partida
+  // muda) e a espera de quem caiu na própria vez.
+  function atualizarPrazosDaVez(sala, agora) {
     const partida = sala.partida;
     const emJogo = sala.fase === FASES_DA_SALA.JOGANDO && partida && partida.fase === FASES.JOGANDO;
+    if (!emJogo) {
+      sala.turnoVisto = null;
+      sala.turnoDesde = null;
+    } else if (sala.turnoVisto !== partida.turno) {
+      sala.turnoVisto = partida.turno;
+      sala.turnoDesde = agora;
+    }
     const daVez = emJogo ? sala.jogadores.find((j) => j.id === partida.jogadores[partida.vez].id) : null;
     if (daVez && daVez.conexao === CONEXAO.RECONECTANDO) {
       if (sala.vezOfflineDesde === null) sala.vezOfflineDesde = agora;
@@ -137,7 +150,7 @@ export function criarGerenciador({ carregarPalavras, rng = sortear, limites = {}
     if (!jogador) return null;
     jogador.conexao = CONEXAO.RECONECTANDO;
     jogador.quedaEm = agora;
-    atualizarEsperaDaVez(sala, agora);
+    atualizarPrazosDaVez(sala, agora);
     return sala;
   }
 
@@ -155,7 +168,7 @@ export function criarGerenciador({ carregarPalavras, rng = sortear, limites = {}
       sincronizarFim(sala, agora);
       avancarSeTodosProntos(sala, agora);
     }
-    atualizarEsperaDaVez(sala, agora);
+    atualizarPrazosDaVez(sala, agora);
     if (ativos(sala).length === 0) salas.delete(sala.codigo);
   }
 
@@ -179,7 +192,7 @@ export function criarGerenciador({ carregarPalavras, rng = sortear, limites = {}
     sala.prontos = [];
     sala.resolvidoDesde = null;
     sincronizarFim(sala, agora);
-    atualizarEsperaDaVez(sala, agora);
+    atualizarPrazosDaVez(sala, agora);
   }
 
   // Segue quando todos clicam, ou no fim do prazo de verificarPrazos. Quem caiu ainda conta: uma
@@ -205,6 +218,7 @@ export function criarGerenciador({ carregarPalavras, rng = sortear, limites = {}
     sala.partida = criarPartida({ modo: MODOS.COMPETITIVO, nivel: sala.nivel, jogadores, rodada });
     sala.fase = FASES_DA_SALA.JOGANDO;
     sala.ultimaAtividade = agora;
+    atualizarPrazosDaVez(sala, agora);
     return { ok: true, sala };
   }
 
@@ -257,7 +271,7 @@ export function criarGerenciador({ carregarPalavras, rng = sortear, limites = {}
     if (girou) sala.giro = { numero: (sala.giro ? sala.giro.numero : 0) + 1, fatia: indiceDaFatia(acao.sorteio) };
     sala.ultimaAtividade = agora;
     sincronizarFim(sala, agora);
-    atualizarEsperaDaVez(sala, agora);
+    atualizarPrazosDaVez(sala, agora);
     return { ok: true, sala };
   }
 
@@ -287,10 +301,15 @@ export function criarGerenciador({ carregarPalavras, rng = sortear, limites = {}
         avancarPainel(sala, agora);
         mudaram.add(sala);
       }
+      if (sala.turnoDesde !== null && agora - sala.turnoDesde >= limitesDaSala.turnoMs) {
+        sala.partida = aplicarAcao(sala.partida, { tipo: ACOES.TEMPO_ESGOTADO });
+        atualizarPrazosDaVez(sala, agora);
+        mudaram.add(sala);
+      }
       if (sala.vezOfflineDesde !== null && agora - sala.vezOfflineDesde >= limitesDaSala.vezMs) {
         sala.partida = aplicarAcao(sala.partida, { tipo: ACOES.PASSAR_VEZ });
         sala.vezOfflineDesde = null;
-        atualizarEsperaDaVez(sala, agora);
+        atualizarPrazosDaVez(sala, agora);
         mudaram.add(sala);
       }
     }

@@ -477,3 +477,14 @@ O Saulo viu a tela sair com o clique de um lado só. Reproduzido em produção: 
 **Verificado em produção (versão 1.2.3):** com dois clientes reais pela rede, sem navegador: com o outro caído, um clique não seguiu e o jogo seguiu sozinho no fim da contagem; quem caiu voltou pela mesma vaga; com os dois conectados, um clique não seguiu e o segundo seguiu na hora; quem saiu perdeu. A tela não foi conferida em produção nesta versão, porque ela não mudou além do nome de quem falta clicar.
 
 **Som na TV:** o Saulo entrou no online pelo botão e pelo link, e o som parou nos dois casos. Então o link recarregando a página não explica tudo. Ele vai testar mais na TV.
+
+## 2026-11-08 — Etapa 35: relógio de 30 segundos por vez (ainda sem versão nova)
+
+Pedido do Saulo, dentro de uma rodada de mudanças na roleta. Cada vez no competitivo dura 30 segundos, com barra e contagem na tela. Acabou o tempo, a vez passa sem erro e sem perder pontos. Acertar uma letra e continuar reinicia o relógio; girar não. O cooperativo fica sem relógio. Nos últimos 5 segundos a barra fica vermelha e há um tique para quem está na vez.
+
+**Como funciona:** o estado ganhou um `turno`, que sobe a cada ação que muda o jogo (menos o giro). A lógica continua pura: o relógio vive fora dela e pede a ação `TEMPO_ESGOTADO`. No local é um prazo no `Jogo.jsx`; no online o servidor guarda o instante em que o turno começou e passa a vez em `verificarPrazos` (uma checagem por segundo). O aparelho recebe `tempoDaVezMs` e só mostra a contagem.
+
+**Limitação:** o relógio de 30 s passa a vez antes dos 60 s de quem caiu na própria vez, então a espera de 60 s quase nunca chega a valer. Ficou assim de propósito, para não mexer em duas regras de uma vez.
+
+**Verificado:** 211 testes (a lógica, o relógio no servidor e a visão) e o build. **Verificado no navegador (jogo local, 2 jogadores, Iniciante):** a barra e a contagem aparecem; girar não reinicia o relógio e acertar uma letra o devolve a 30 s, com a vez na mesma pessoa; nos últimos 5 s a barra fica vermelha; ao acabar o tempo a vez passa uma vez só, com "Acabou o tempo!" e sem mudar o placar; com o painel "Resolver" aberto, o painel fecha e o relógio continua visível. Sem erros no console. **Não verificado:** o tique de som ouvido, o online com aparelhos reais e o cooperativo na tela. Não foi feito deploy nem commit.
+

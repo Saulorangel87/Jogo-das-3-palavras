@@ -1,8 +1,11 @@
 // Todos os números do modo online num lugar só, como em src/logica/regras.js.
+import { TEMPO_DA_VEZ_S } from '../src/logica/regras.js';
+
 export const MIN_JOGADORES = 2;
 export const MAX_JOGADORES = 4;
 
 export const VAGA_GUARDADA_MS = 2 * 60 * 1000; // quem caiu mantém a vaga por este tempo
+export const TEMPO_DA_VEZ_MS = TEMPO_DA_VEZ_S * 1000; // relógio de cada vez; acabou, a vez passa
 export const ESPERA_NA_VEZ_MS = 60 * 1000; // quem caiu na própria vez: depois disto, a vez passa
 export const ESPERA_PROXIMO_PAINEL_MS = 15 * 1000; // palavra resolvida: quem não clicar em seguir, segue depois disto
 export const SALA_PARADA_MS = 30 * 60 * 1000; // sala sem nenhuma jogada é apagada

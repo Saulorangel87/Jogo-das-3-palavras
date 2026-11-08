@@ -18,7 +18,7 @@ export function useEfeitosDoJogo(estado) {
       tocarEfeito('letraCerta', { quantidade: jogada.quantidade });
     } else if (novaJogada && jogada.tipo === JOGADAS.LETRA_ERRADA) {
       tocarEfeito('letraErrada');
-    } else if (novaJogada && jogada.tipo === JOGADAS.CHUTE_ERRADO) {
+    } else if (novaJogada && (jogada.tipo === JOGADAS.CHUTE_ERRADO || jogada.tipo === JOGADAS.TEMPO_ESGOTADO)) {
       tocarEfeito('chuteErrado');
     }
 

@@ -14,7 +14,7 @@ Cada partida tem **3 painéis** do mesmo tema. O painel mostra uma casa fechada 
 | Resolver | escolher entre 3 opções escritas | preencher as casas fechadas | preencher as casas fechadas |
 
 **Modos**
-- **Competitivo:** 2 a 4 jogadores em turnos, com roleta. Letra certa vale `valor da roleta × letras abertas × multiplicador do painel` (×1, ×2 e ×3), e quem acerta continua. Vence quem tiver mais pontos.
+- **Competitivo:** 2 a 4 jogadores em turnos, com roleta e **relógio de 30 segundos por vez**: acabou o tempo, a vez passa, sem perder pontos. Acertar uma letra e continuar reinicia o relógio; girar a roleta não. Letra certa vale `valor da roleta × letras abertas × multiplicador do painel` (×1, ×2 e ×3), e quem acerta continua. Vence quem tiver mais pontos.
 - **Cooperativo:** 2 a 4 jogadores na mesma equipe, sem roleta. Cada painel vale até 3 estrelas, conforme os erros da equipe.
 
 Há 8 personagens originais (Lalá Lápis, Bóris Borracha, Capitão Til, Galinha Cedilha, Tito Tatu, Vó Vírgula, Zuca Zebra e Sapo Soletra), cada um com seu instrumento e sua música. A trilha acompanha a partida: o andamento sobe conforme as letras abrem.
@@ -25,7 +25,7 @@ Cada pessoa joga no seu aparelho, em uma sala privada. Quem cria a sala escolhe 
 
 Feito pensando nas crianças: sem conta, sem chat, sem nome digitado (o nome é o do personagem) e sem lista de quem está online. Nada é gravado: a sala existe só na memória do servidor e some ao terminar. A resposta não sai do servidor antes da hora.
 
-Se alguém perde a conexão, a vaga fica guardada por 2 minutos. Na própria vez, a pessoa tem 60 segundos para voltar, e depois a vez passa, sem perder pontos. Quem sai da partida não vence, e o resultado avisa quem saiu.
+Se alguém perde a conexão, a vaga fica guardada por 2 minutos. Quem cai na própria vez tem até 60 segundos para voltar, mas o relógio de 30 segundos da vez (veja abaixo) passa a vez antes disso, sem perder pontos. Quem sai da partida não vence, e o resultado avisa quem saiu.
 
 Quando alguém acha a palavra, ela fica na tela até todas as pessoas clicarem para seguir, ou por no máximo 15 segundos.
 

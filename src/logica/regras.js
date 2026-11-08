@@ -12,6 +12,10 @@ export const PONTOS_POR_CASA_FECHADA = 20;
 // Multiplicador de cada painel, na ordem. O 3º pode virar o jogo.
 export const MULTIPLICADORES_DOS_PAINEIS = [1, 2, 3];
 
+// Competitivo: tempo de cada vez, em segundos. Acabou, a vez passa, sem perder pontos.
+// O relógio reinicia quando a pessoa acerta uma letra e continua; girar a roleta não reinicia.
+export const TEMPO_DA_VEZ_S = 30;
+
 // Cooperativo: estrelas por painel conforme os erros da equipe
 // (letra errada ou resolver errado). Do melhor para o pior.
 export const ESTRELAS_POR_ERROS = [

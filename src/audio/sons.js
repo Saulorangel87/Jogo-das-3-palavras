@@ -41,6 +41,12 @@ export const EFEITOS = {
     return duracao / 1000;
   },
 
+  // Aviso curto nos últimos segundos da vez.
+  tique(ctx, destino, quando) {
+    bip(ctx, destino, { tipo: 'square', freq: 880, quando, dur: 0.05, vol: 0.08 });
+    return 0.05;
+  },
+
   letraCerta(ctx, destino, quando, { quantidade = 1 } = {}) {
     const notas = [1047, 1319, 1568].slice(0, Math.min(Math.max(quantidade, 1), 3));
     notas.forEach((freq, i) => {

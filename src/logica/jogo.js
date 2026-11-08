@@ -13,9 +13,10 @@ import {
   FATIAS_ROLETA,
   MULTIPLICADORES_DOS_PAINEIS,
   PONTOS_POR_CASA_FECHADA,
+  TEMPO_DA_VEZ_S,
 } from './regras.js';
 
-export { FATIAS_ROLETA };
+export { FATIAS_ROLETA, TEMPO_DA_VEZ_S };
 
 export const MODOS = { COMPETITIVO: 'competitivo', COOPERATIVO: 'cooperativo' };
 export const FASES = { JOGANDO: 'jogando', RESOLVIDO: 'resolvido', FIM: 'fim' };
@@ -27,11 +28,14 @@ export const ACOES = {
   // Só no online: o servidor decide quando alguém caiu ou saiu da partida.
   PASSAR_VEZ: 'PASSAR_VEZ',
   MARCAR_SAIDA: 'MARCAR_SAIDA',
+  // O relógio da vez acabou: quem controla o tempo (aparelho local ou servidor) pede esta ação.
+  TEMPO_ESGOTADO: 'TEMPO_ESGOTADO',
 };
 export const JOGADAS = {
   LETRA_CERTA: 'letra-certa',
   LETRA_ERRADA: 'letra-errada',
   CHUTE_ERRADO: 'chute-errado',
+  TEMPO_ESGOTADO: 'tempo-esgotado',
 };
 
 export function criarPartida({ modo, nivel, jogadores, rodada }) {
@@ -44,6 +48,8 @@ export function criarPartida({ modo, nivel, jogadores, rodada }) {
     estrelas: 0,
     indicePainel: 0,
     vez: 0,
+    // Sobe a cada ação que muda o jogo, menos o giro. Quem controla o relógio da vez reinicia a contagem quando ele muda.
+    turno: 0,
     letrasUsadas: [],
     descartadas: [],
     erros: 0,
@@ -231,6 +237,18 @@ function passarVez(estado) {
   return { ...estado, valorRoleta: null, ultimaJogada: null, vez: proximoJogador(estado) };
 }
 
+// Acabou o tempo da vez: passa para a próxima pessoa, sem erro e sem perder pontos.
+function tempoEsgotado(estado) {
+  if (estado.fase !== FASES.JOGANDO || !ehCompetitivo(estado)) return estado;
+  const quem = estado.vez;
+  return { ...passarVez(estado), ultimaJogada: { tipo: JOGADAS.TEMPO_ESGOTADO, quem } };
+}
+
+// O relógio da vez só roda no competitivo, enquanto o painel está aberto.
+export function temRelogio(estado) {
+  return ehCompetitivo(estado) && estado.fase === FASES.JOGANDO;
+}
+
 // Quem saiu fica no placar, mas não joga mais. Sobrando uma pessoa só, a partida termina.
 function marcarSaida(estado, indice) {
   const jogador = estado.jogadores[indice];
@@ -242,7 +260,14 @@ function marcarSaida(estado, indice) {
 }
 
 // Ações inválidas devolvem o mesmo estado, sem lançar erro.
+// Toda ação que muda o jogo, menos o giro, sobe o `turno`: o relógio da vez recomeça.
 export function aplicarAcao(estado, acao) {
+  const proximo = aplicarAcaoSemTurno(estado, acao);
+  if (proximo === estado || acao.tipo === ACOES.GIRAR) return proximo;
+  return { ...proximo, turno: estado.turno + 1 };
+}
+
+function aplicarAcaoSemTurno(estado, acao) {
   switch (acao.tipo) {
     case ACOES.GIRAR:
       return girar(estado, acao.sorteio);
@@ -256,6 +281,8 @@ export function aplicarAcao(estado, acao) {
       return passarVez(estado);
     case ACOES.MARCAR_SAIDA:
       return marcarSaida(estado, acao.indice);
+    case ACOES.TEMPO_ESGOTADO:
+      return tempoEsgotado(estado);
     default:
       return estado;
   }

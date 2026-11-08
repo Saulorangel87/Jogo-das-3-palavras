@@ -127,7 +127,7 @@ describe('jogadas: o servidor é a autoridade', () => {
 
   it('recusa pedidos malformados sem quebrar', async () => {
     const s = await partida();
-    for (const pedido of [null, 5, 'x', {}, { tipo: 'HACK' }, { tipo: ACOES.ESCOLHER_LETRA, letra: 'AB' }, { tipo: ACOES.ESCOLHER_LETRA, letra: 1 }, { tipo: ACOES.RESOLVER, resposta: 'x'.repeat(61) }, { tipo: ACOES.MARCAR_SAIDA, indice: 1 }, { tipo: ACOES.PASSAR_VEZ }]) {
+    for (const pedido of [null, 5, 'x', {}, { tipo: 'HACK' }, { tipo: ACOES.ESCOLHER_LETRA, letra: 'AB' }, { tipo: ACOES.ESCOLHER_LETRA, letra: 1 }, { tipo: ACOES.RESOLVER, resposta: 'x'.repeat(61) }, { tipo: ACOES.MARCAR_SAIDA, indice: 1 }, { tipo: ACOES.PASSAR_VEZ }, { tipo: ACOES.TEMPO_ESGOTADO }]) {
       expect(jogar(s, s.tokenA, pedido).ok).toBe(false);
     }
   });
@@ -380,5 +380,75 @@ describe('nada fica guardado', () => {
     const g2 = criarGerenciador({ carregarPalavras: async () => PALAVRAS, limites: { maxSalas: 1 } });
     g2.criarSala({ nivel: 'iniciante', personagemId: 'lala' }, T);
     expect(g2.criarSala({ nivel: 'iniciante', personagemId: 'lala' }, T).erro).toBe('servidor-cheio');
+  });
+});
+
+describe('relógio da vez', () => {
+  beforeEach(() => {
+    g = criarGerenciador({
+      carregarPalavras: async () => PALAVRAS,
+      limites: { vagaMs: 5000, vezMs: 5000, proximoMs: 5000, turnoMs: 50 },
+    });
+  });
+
+  it('começa com a partida e a visão informa o que resta', async () => {
+    const s = await partida();
+    expect(visaoDaSala(s.sala, 'lala', T + 20).tempoDaVezMs).toBe(30);
+    expect(visaoDaSala(s.sala, 'lala', T + 80).tempoDaVezMs).toBe(0);
+  });
+
+  it('acabou o tempo: a vez passa sem perder pontos, e o relógio recomeça', async () => {
+    const s = await partida();
+    g.verificarPrazos(T + 49);
+    expect(s.sala.partida.vez).toBe(0);
+    const { mudaram } = g.verificarPrazos(T + 50);
+    expect(mudaram).toContain(s.sala);
+    expect(s.sala.partida.vez).toBe(1);
+    expect(s.sala.partida.jogadores[0].pontos).toBe(0);
+    expect(s.sala.partida.ultimaJogada.tipo).toBe('tempo-esgotado');
+    g.verificarPrazos(T + 99);
+    expect(s.sala.partida.vez).toBe(1);
+    g.verificarPrazos(T + 100);
+    expect(s.sala.partida.vez).toBe(0);
+  });
+
+  it('girar não reinicia o relógio', async () => {
+    const s = await partida();
+    expect(jogar(s, s.tokenA, { tipo: ACOES.GIRAR }, T + 40).ok).toBe(true);
+    g.verificarPrazos(T + 50);
+    expect(s.sala.partida.vez).toBe(1);
+  });
+
+  it('acertar uma letra e continuar reinicia o relógio', async () => {
+    const s = await partida();
+    const { paineis, indicePainel } = s.sala.partida;
+    expect(jogar(s, s.tokenA, { tipo: ACOES.GIRAR }, T + 10).ok).toBe(true);
+    const certa = jogar(s, s.tokenA, { tipo: ACOES.ESCOLHER_LETRA, letra: paineis[indicePainel].texto[0] }, T + 40);
+    expect(certa.ok).toBe(true);
+    expect(s.sala.partida.vez).toBe(0);
+    g.verificarPrazos(T + 60);
+    expect(s.sala.partida.vez).toBe(0);
+    g.verificarPrazos(T + 90);
+    expect(s.sala.partida.vez).toBe(1);
+  });
+
+  it('com o painel resolvido o relógio para, e o painel seguinte recomeça do zero', async () => {
+    const s = await partida();
+    const { paineis, indicePainel } = s.sala.partida;
+    expect(jogar(s, s.tokenA, { tipo: ACOES.RESOLVER, resposta: paineis[indicePainel].texto }, T + 10).ok).toBe(true);
+    expect(visaoDaSala(s.sala, 'lala', T + 20).tempoDaVezMs).toBeNull();
+    g.verificarPrazos(T + 100);
+    expect(s.sala.partida.vez).toBe(0);
+    expect(jogar(s, s.tokenA, { tipo: ACOES.PROXIMO_PAINEL }, T + 200).ok).toBe(true);
+    expect(jogar(s, s.tokenB, { tipo: ACOES.PROXIMO_PAINEL }, T + 200).ok).toBe(true);
+    expect(s.sala.partida.indicePainel).toBe(1);
+    expect(visaoDaSala(s.sala, 'lala', T + 210).tempoDaVezMs).toBe(40);
+  });
+
+  it('quem volta de uma queda não ganha tempo extra', async () => {
+    const s = await partida();
+    g.marcarQueda({ codigo: s.codigo, token: s.tokenB }, T + 10);
+    g.retomar({ codigo: s.codigo, token: s.tokenB }, T + 20);
+    expect(visaoDaSala(s.sala, 'boris', T + 30).tempoDaVezMs).toBe(20);
   });
 });

@@ -14,8 +14,9 @@ import {
   painelAtual,
   podeEscolherLetra,
   podeGirar,
+  temRelogio,
 } from '../logica/jogo.js';
-import { ESTRELAS_MAXIMAS_POR_PAINEL } from '../logica/regras.js';
+import { ESTRELAS_MAXIMAS_POR_PAINEL, TEMPO_DA_VEZ_S } from '../logica/regras.js';
 import { contarCasasFechadas, montarResposta } from '../logica/texto.js';
 import { useFoco, useVoltar } from '../navegacao/useNavegacao.js';
 import { textoDeQuemSaiu } from '../online/mensagens.js';
@@ -29,12 +30,15 @@ import Fundo from '../fundos/Fundo.jsx';
 import './Jogo.css';
 
 const DURACAO_GIRO = 2600;
+// Nos últimos segundos da vez o relógio muda de cor e faz um tique por segundo.
+const SEGUNDOS_DE_AVISO = 5;
 // O botão de seguir nasce onde estava a resposta: um toque duplo não pode pular a palavra.
 const ESPERA_PARA_SEGUIR_MS = 1000;
 
 function textoDaJogada(jogada, competitivo) {
   if (!jogada) return null;
   if (jogada.tipo === JOGADAS.LETRA_ERRADA) return `Não tem a letra ${jogada.letra}.`;
+  if (jogada.tipo === JOGADAS.TEMPO_ESGOTADO) return 'Acabou o tempo!';
   if (jogada.tipo === JOGADAS.CHUTE_ERRADO) {
     // Online, o servidor não repassa o que foi digitado casa a casa.
     return jogada.resposta ? `Não é ${jogada.resposta}.` : 'Essa não é a resposta.';
@@ -55,7 +59,8 @@ function textoDaInstrucao(estado, nome, girando, minhaVez) {
 }
 
 // Conta de 1 em 1 segundo a partir do tempo que o servidor informou.
-function useSegundosRestantes(ms) {
+// `chave` recomeça a contagem mesmo quando o tempo informado é igual ao anterior (vez nova com 30 s).
+function useSegundosRestantes(ms, chave) {
   const [segundos, setSegundos] = useState(null);
   useEffect(() => {
     if (ms === null || ms === undefined) {
@@ -67,7 +72,7 @@ function useSegundosRestantes(ms) {
     atualizar();
     const relogio = setInterval(atualizar, 1000);
     return () => clearInterval(relogio);
-  }, [ms]);
+  }, [ms, chave]);
   return segundos;
 }
 
@@ -93,6 +98,10 @@ export default function Jogo({ estado, despachar, aoSair, online = null }) {
     : [];
   const segundosDaVez = useSegundosRestantes(online ? online.esperaNaVezMs : null);
   const segundosParaSeguir = useSegundosRestantes(online && resolvido ? online.esperaProximoMs : null);
+  // Online, o servidor manda o tempo que resta. No jogo local, o aparelho conta os 30 segundos.
+  const comRelogio = temRelogio(estado);
+  const msDaVezRelogio = online ? online.tempoDaVezMs : comRelogio ? TEMPO_DA_VEZ_S * 1000 : null;
+  const segundosRelogio = useSegundosRestantes(comRelogio ? msDaVezRelogio : null, estado.turno);
   const quemSaiu = online ? estado.jogadores.filter((j) => j.saiu).map((j) => j.nome) : [];
   const podeLetra = podeEscolherLetra(estado) && !girando && minhaVez;
   const comOpcoes = Boolean(painel.opcoes);
@@ -110,6 +119,27 @@ export default function Jogo({ estado, despachar, aoSair, online = null }) {
   }, [girando]);
 
   useEfeitosDoJogo(estado);
+
+  // Jogo local: quando o tempo acaba, a vez passa. Cada turno novo cancela e recomeça este prazo.
+  useEffect(() => {
+    if (online || !comRelogio) return undefined;
+    const prazo = setTimeout(() => despachar({ tipo: ACOES.TEMPO_ESGOTADO }), TEMPO_DA_VEZ_S * 1000);
+    return () => clearTimeout(prazo);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [online, comRelogio, estado.turno]);
+
+  // Se a vez passou por tempo enquanto o painel de resolver estava aberto, ele fecha.
+  useEffect(() => {
+    setDigitadas([]);
+    setAberto((atual) => (atual === 'resolver' ? null : atual));
+  }, [estado.vez, estado.indicePainel]);
+
+  // Tique nos últimos segundos, só para quem está na vez (os outros veem o relógio mudar de cor).
+  useEffect(() => {
+    if (segundosRelogio !== null && segundosRelogio > 0 && segundosRelogio <= SEGUNDOS_DE_AVISO && minhaVez) {
+      tocarEfeito('tique');
+    }
+  }, [segundosRelogio, minhaVez]);
 
   const resolvidoEm = useRef(0);
   useEffect(() => {
@@ -248,6 +278,22 @@ export default function Jogo({ estado, despachar, aoSair, online = null }) {
         {painel.emoji && <span className="jogo-emoji" role="img" aria-label="Dica">{painel.emoji}</span>}
         {painel.dica && <span>Dica: {painel.dica}</span>}
       </p>
+
+      {!resolvido && segundosRelogio !== null && (
+        <div
+          className={segundosRelogio <= SEGUNDOS_DE_AVISO ? 'jogo-relogio jogo-relogio-curto' : 'jogo-relogio'}
+          role="timer"
+          aria-label={`Tempo da vez: ${segundosRelogio} segundos`}
+        >
+          <div className="jogo-relogio-barra" aria-hidden="true">
+            <div
+              className="jogo-relogio-enchimento"
+              style={{ width: `${Math.min(100, (segundosRelogio / TEMPO_DA_VEZ_S) * 100)}%` }}
+            />
+          </div>
+          <span className="jogo-relogio-numero" aria-hidden="true">{segundosRelogio} s</span>
+        </div>
+      )}
 
       {resolvido && (
         <>

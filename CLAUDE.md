@@ -54,6 +54,7 @@ Inspirada no formato clássico de descobrir letras em um painel. Só a mecânica
 - Na sua vez, o jogador **gira a roleta** e escolhe uma letra, ou tenta **resolver**.
 - Letra certa: ganha `valor da roleta × casas abertas × multiplicador do painel` e continua jogando.
 - Letra errada: a vez passa.
+- **Relógio da vez: 30 segundos** (`TEMPO_DA_VEZ_S` em `regras.js`), só no competitivo. Acabou o tempo, a vez passa sem erro e sem perder pontos, e o giro não usado se perde (ação `TEMPO_ESGOTADO`, jogada `tempo-esgotado`). O relógio reinicia quando o `turno` do estado muda: toda ação que muda o jogo sobe o `turno`, menos o giro. Acertar uma letra e continuar reinicia; girar não. A lógica é pura e não tem relógio: quem conta o tempo pede a ação (no jogo local, `Jogo.jsx`; no online, o servidor em `verificarPrazos`, com `turnoMs` em `servidor/salas.js`). Nos últimos 5 segundos o relógio fica vermelho e faz um tique para quem está na vez.
 - Resolver certo: ganha 20 pontos por casa ainda fechada × multiplicador do painel, recompensando quem descobre cedo.
 - Resolver errado: a vez passa, e a opção fica riscada no iniciante. Um giro ainda não usado se perde.
 - Vence quem tiver mais pontos após os 3 painéis. Empate é permitido.
@@ -171,7 +172,7 @@ Decisões do Saulo: colegas em celular e PC; primeira versão só no competitivo
 - **Nada é gravado:** salas só na memória, apagadas ao terminar, sem ninguém ou depois de 30 minutos paradas. Sem conta, sem log de endereços ou jogadas.
 - **A resposta nunca sai do servidor antes da hora:** `servidor/visao.js` troca as casas fechadas por `_` e esvazia os outros painéis. O cliente não recebe nenhum token alheio.
 - **Código da sala:** 4 consoantes e 2 números (`BRTK-42`); sem vogal não forma palavra. Tentativas erradas limitadas por endereço.
-- **Presença:** a conexão do Socket.IO confere o aparelho a cada 10 segundos. Estados só dentro da sala: `conectada`, `reconectando` (vaga guardada por 2 minutos, volta com token) e `saiu`. Quem cai na própria vez tem 60 segundos, depois a vez passa, sem perder pontos. Não existe lista de quem está online no site.
+- **Presença:** a conexão do Socket.IO confere o aparelho a cada 10 segundos. Estados só dentro da sala: `conectada`, `reconectando` (vaga guardada por 2 minutos, volta com token) e `saiu`. Quem cai na própria vez tem 60 segundos, depois a vez passa, sem perder pontos (na prática o relógio de 30 segundos da vez passa antes). Não existe lista de quem está online no site.
 - **Rede:** o Nginx do site repassa `/socket.io/` ao container `tres-palavras-online`, que não tem porta publicada. Nada muda no Cloudflare, e `docker-compose.yml` sobe os dois.
 - **Seguir para o próximo painel:** todos clicam (decisão do Saulo, mais equilibrado), com 15 segundos de contagem a partir de quando a palavra é resolvida. Só isso faz seguir: todos clicarem ou a contagem acabar. Quem caiu ainda conta, porque uma queda de segundos não pode fazer um clique valer por dois; só quem saiu de vez deixa de contar. O prazo fica em `servidor/regrasOnline.js`. No aparelho, o botão ignora cliques no primeiro segundo, para um toque duplo não pular a palavra.
 - **Quem sai:** fica no placar marcado como "(saiu)" e não vence, mesmo com mais pontos. O resultado explica a saída.
