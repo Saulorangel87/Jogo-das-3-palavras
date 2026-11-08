@@ -18,8 +18,9 @@ function enderecoDe(socket) {
   return socket.handshake.headers['cf-connecting-ip'] || socket.handshake.address;
 }
 
-export function criarAplicacao({ carregarPalavras, origens, agora = Date.now, limites } = {}) {
-  const gerenciador = criarGerenciador({ carregarPalavras, limites });
+// `rng` só existe para os testes escolherem a fatia da roleta; em produção vale o sorteio do servidor.
+export function criarAplicacao({ carregarPalavras, origens, agora = Date.now, limites, rng } = {}) {
+  const gerenciador = criarGerenciador({ carregarPalavras, limites, rng });
   const http = createServer((pedido, resposta) => {
     if (pedido.url === '/saude') {
       resposta.writeHead(200, { 'Content-Type': 'text/plain' });

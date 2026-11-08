@@ -4,10 +4,12 @@ import {
   FASES,
   FATIAS_ROLETA,
   JOGADAS,
+  JOGADAS_BOAS,
   MODOS,
   aplicarAcao,
   calcularEstrelas,
   calcularResultado,
+  TIPOS_DE_FATIA,
   criarPartida,
   indiceDaFatia,
   limitesDasFatias,
@@ -373,5 +375,225 @@ describe('relógio da vez', () => {
     let e = aplicarAcao(partida(MODOS.COMPETITIVO, 3), { tipo: ACOES.MARCAR_SAIDA, indice: 1 });
     e = tempoEsgotado(e);
     expect(e.vez).toBe(2);
+  });
+});
+
+describe('fatias com efeito', () => {
+  // Sorteio que cai no meio da primeira fatia do tipo pedido.
+  function meioDaFatia(tipo) {
+    const indice = FATIAS_ROLETA.findIndex((f) => f.tipo === tipo);
+    const { inicio, fim } = limitesDasFatias()[indice];
+    return (inicio + fim) / 2;
+  }
+  const girarEm = (e, tipo, sorteioLetra = 0) =>
+    aplicarAcao(e, { tipo: ACOES.GIRAR, sorteio: meioDaFatia(tipo), sorteioLetra });
+  const jogador = (e, i = 0) => e.jogadores[i];
+
+  it('toda fatia da roleta tem um tipo conhecido', () => {
+    const conhecidos = new Set(Object.values(TIPOS_DE_FATIA));
+    for (const fatia of FATIAS_ROLETA) expect(conhecidos.has(fatia.tipo)).toBe(true);
+    for (const tipo of conhecidos) expect(FATIAS_ROLETA.some((f) => f.tipo === tipo)).toBe(true);
+  });
+
+  it('quem joga começa sem bônus nem escudo', () => {
+    expect(partida().jogadores.every((j) => !j.bonus && !j.escudo)).toBe(true);
+  });
+
+  describe('bônus', () => {
+    it('liga o bônus, não dá pontos e a pessoa gira de novo na mesma vez', () => {
+      const e = girarEm(partida(), TIPOS_DE_FATIA.BONUS);
+      expect(jogador(e).bonus).toBe(true);
+      expect(e.valorRoleta).toBeNull();
+      expect(e.vez).toBe(0);
+      expect(podeGirar(e)).toBe(true);
+      expect(e.ultimaJogada).toEqual({ tipo: JOGADAS.BONUS, quem: 0 });
+    });
+
+    it('a próxima letra certa vale em dobro, e o bônus se gasta', () => {
+      let e = girarEm(partida(), TIPOS_DE_FATIA.BONUS);
+      e = letra(girar(e, 0), 'C'); // 10 × 2 casas × painel ×1 × bônus 2
+      expect(pontos(e)).toEqual([40, 0]);
+      expect(jogador(e).bonus).toBe(false);
+      expect(e.ultimaJogada.bonus).toBe(true);
+      e = letra(girar(e, 0), 'O'); // sem bônus
+      expect(pontos(e)).toEqual([60, 0]);
+      expect(e.ultimaJogada.bonus).toBeUndefined();
+    });
+
+    it('errar a letra não gasta o bônus: ele fica até ser usado', () => {
+      let e = girarEm(partida(), TIPOS_DE_FATIA.BONUS);
+      e = letra(girar(e, 0), 'Z');
+      expect(e.vez).toBe(1);
+      expect(jogador(e, 0).bonus).toBe(true);
+    });
+
+    it('já com bônus, cair nele de novo não empilha: vira giro extra', () => {
+      let e = girarEm(partida(), TIPOS_DE_FATIA.BONUS);
+      e = girarEm(e, TIPOS_DE_FATIA.BONUS);
+      expect(e.ultimaJogada.tipo).toBe(JOGADAS.GIRO_EXTRA);
+      e = letra(girar(e, 0), 'C');
+      expect(pontos(e)).toEqual([40, 0]);
+    });
+
+    it('vale também quando a letra certa fecha o painel', () => {
+      let e = girarEm(partida(), TIPOS_DE_FATIA.BONUS);
+      e = letra(girar(e, 0), 'C');
+      e = letra(girar(e, 0), 'O');
+      expect(e.fase).toBe(FASES.RESOLVIDO);
+      expect(jogador(e).bonus).toBe(false);
+    });
+  });
+
+  describe('giro extra', () => {
+    it('não dá pontos nem passa a vez: só gira de novo', () => {
+      const e = girarEm(partida(), TIPOS_DE_FATIA.GIRO_EXTRA);
+      expect(e.valorRoleta).toBeNull();
+      expect(e.vez).toBe(0);
+      expect(pontos(e)).toEqual([0, 0]);
+      expect(podeGirar(e)).toBe(true);
+      expect(e.ultimaJogada.tipo).toBe(JOGADAS.GIRO_EXTRA);
+    });
+  });
+
+  describe('letra grátis', () => {
+    it('abre uma letra do painel, paga por casa e a pessoa gira de novo', () => {
+      const e = girarEm(partida(), TIPOS_DE_FATIA.LETRA_GRATIS, 0); // letras fechadas em ordem: C, O
+      expect(e.letrasUsadas).toEqual(['C']);
+      expect(pontos(e)).toEqual([40, 0]); // 20 × 2 casas × painel ×1
+      expect(e.vez).toBe(0);
+      expect(e.valorRoleta).toBeNull();
+      expect(podeGirar(e)).toBe(true);
+      expect(e.ultimaJogada).toEqual({
+        tipo: JOGADAS.LETRA_CERTA, letra: 'C', quantidade: 2, pontos: 40, quem: 0, gratis: true,
+      });
+    });
+
+    it('o sorteio da letra escolhe qual letra abre', () => {
+      expect(girarEm(partida(), TIPOS_DE_FATIA.LETRA_GRATIS, 0.99).letrasUsadas).toEqual(['O']);
+    });
+
+    it('só abre letra que existe e ainda estava fechada', () => {
+      let e = letra(girar(partida(), 0), 'C');
+      e = girarEm(e, TIPOS_DE_FATIA.LETRA_GRATIS, 0);
+      // Só sobrou o O: abri-lo fecharia o painel de graça, então vira giro extra.
+      expect(e.letrasUsadas).toEqual(['C']);
+      expect(e.ultimaJogada.tipo).toBe(JOGADAS.GIRO_EXTRA);
+      expect(e.fase).toBe(FASES.JOGANDO);
+    });
+
+    it('com o bônus ligado, paga em dobro e gasta o bônus', () => {
+      let e = girarEm(partida(), TIPOS_DE_FATIA.BONUS);
+      e = girarEm(e, TIPOS_DE_FATIA.LETRA_GRATIS, 0);
+      expect(pontos(e)).toEqual([80, 0]);
+      expect(jogador(e).bonus).toBe(false);
+    });
+
+    it('o multiplicador do painel vale também aqui', () => {
+      let e = partida();
+      e = resolver(e, 'COCO');
+      e = proximo(e); // painel 2, ×2, vez do jogador 1
+      e = girarEm(e, TIPOS_DE_FATIA.LETRA_GRATIS, 0); // PATO: letras A, O, P, T → A: 1 casa × 20 × 2
+      expect(e.ultimaJogada.pontos).toBe(40);
+    });
+  });
+
+  describe('escudo', () => {
+    it('liga o escudo e a pessoa gira de novo', () => {
+      const e = girarEm(partida(), TIPOS_DE_FATIA.ESCUDO);
+      expect(jogador(e).escudo).toBe(true);
+      expect(e.vez).toBe(0);
+      expect(podeGirar(e)).toBe(true);
+      expect(e.ultimaJogada).toEqual({ tipo: JOGADAS.ESCUDO, quem: 0 });
+    });
+
+    it('a letra errada não passa a vez, gasta o escudo e a letra fica usada', () => {
+      let e = girarEm(partida(), TIPOS_DE_FATIA.ESCUDO);
+      e = letra(girar(e, 0), 'Z');
+      expect(e.vez).toBe(0);
+      expect(jogador(e).escudo).toBe(false);
+      expect(e.letrasUsadas).toContain('Z');
+      expect(e.valorRoleta).toBeNull();
+      expect(e.ultimaJogada).toEqual({ tipo: JOGADAS.LETRA_ERRADA, letra: 'Z', quem: 0, protegida: true });
+      expect(pontos(e)).toEqual([0, 0]);
+    });
+
+    it('sem o escudo, o segundo erro passa a vez como sempre', () => {
+      let e = girarEm(partida(), TIPOS_DE_FATIA.ESCUDO);
+      e = letra(girar(e, 0), 'Z');
+      e = letra(girar(e, 0), 'X');
+      expect(e.vez).toBe(1);
+    });
+
+    it('acertar uma letra não gasta o escudo', () => {
+      let e = girarEm(partida(), TIPOS_DE_FATIA.ESCUDO);
+      e = letra(girar(e, 0), 'C');
+      expect(jogador(e).escudo).toBe(true);
+    });
+
+    it('um escudo só por pessoa: cair de novo vira giro extra', () => {
+      let e = girarEm(partida(), TIPOS_DE_FATIA.ESCUDO);
+      e = girarEm(e, TIPOS_DE_FATIA.ESCUDO);
+      expect(e.ultimaJogada.tipo).toBe(JOGADAS.GIRO_EXTRA);
+    });
+
+    it('não protege de chutar errado nem do fim do tempo', () => {
+      const e = girarEm(partida(), TIPOS_DE_FATIA.ESCUDO);
+      const chutouErrado = resolver(e, 'ERRADA');
+      expect(chutouErrado.vez).toBe(1);
+      expect(jogador(chutouErrado, 0).escudo).toBe(true);
+      expect(aplicarAcao(e, { tipo: ACOES.TEMPO_ESGOTADO }).vez).toBe(1);
+    });
+  });
+
+  describe('soneca', () => {
+    it('passa a vez sem perder pontos, sem erro e sem tirar os poderes guardados', () => {
+      let e = girarEm(partida(), TIPOS_DE_FATIA.BONUS);
+      e = letra(girar(e, 0), 'C'); // 40 pontos
+      e = girarEm(e, TIPOS_DE_FATIA.ESCUDO);
+      e = girarEm(e, TIPOS_DE_FATIA.SONECA);
+      expect(e.vez).toBe(1);
+      expect(pontos(e)).toEqual([40, 0]);
+      expect(e.erros).toBe(0);
+      expect(jogador(e, 0).escudo).toBe(true);
+      expect(e.valorRoleta).toBeNull();
+      expect(e.ultimaJogada).toEqual({ tipo: JOGADAS.SONECA, quem: 0 });
+      expect(podeGirar(e)).toBe(true);
+    });
+
+    it('quem saiu é pulado', () => {
+      const tres = criarPartida({
+        modo: MODOS.COMPETITIVO,
+        nivel: 'avancado',
+        jogadores: [{ id: 'a' }, { id: 'b' }, { id: 'c' }],
+        rodada: { tema: 'T', paineis: [painel('COCO')] },
+      });
+      let e = aplicarAcao(tres, { tipo: ACOES.MARCAR_SAIDA, indice: 1 });
+      e = girarEm(e, TIPOS_DE_FATIA.SONECA);
+      expect(e.vez).toBe(2);
+    });
+  });
+
+  describe('relógio da vez e a roleta', () => {
+    it('girar numa fatia que não passa a vez não reinicia o relógio, mas a soneca reinicia', () => {
+      const e = partida();
+      expect(girarEm(e, TIPOS_DE_FATIA.BONUS).turno).toBe(e.turno);
+      expect(girarEm(e, TIPOS_DE_FATIA.GIRO_EXTRA).turno).toBe(e.turno);
+      expect(girarEm(e, TIPOS_DE_FATIA.LETRA_GRATIS).turno).toBe(e.turno);
+      expect(girar(e, 0).turno).toBe(e.turno);
+      expect(girarEm(e, TIPOS_DE_FATIA.SONECA).turno).toBe(e.turno + 1);
+    });
+  });
+
+  it('quais jogadas contam como boas', () => {
+    expect(JOGADAS_BOAS.has(JOGADAS.BONUS)).toBe(true);
+    expect(JOGADAS_BOAS.has(JOGADAS.SONECA)).toBe(false);
+    expect(JOGADAS_BOAS.has(JOGADAS.LETRA_ERRADA)).toBe(false);
+  });
+
+  it('o cooperativo continua sem roleta e sem poderes', () => {
+    const e = partida(MODOS.COOPERATIVO);
+    expect(girarEm(e, TIPOS_DE_FATIA.BONUS)).toBe(e);
+    const errou = letra(e, 'Z');
+    expect(errou.vez).toBe(1);
   });
 });

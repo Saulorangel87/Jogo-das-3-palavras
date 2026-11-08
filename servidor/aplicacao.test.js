@@ -36,7 +36,8 @@ const proximaSala = (s, condicao = () => true) => new Promise((ok) => {
 
 beforeEach(async () => {
   clientes = [];
-  app = criarAplicacao({ carregarPalavras: async () => PALAVRAS, origens: [ORIGEM] });
+  // Sorteio fixo: cai na primeira fatia, que vale pontos.
+  app = criarAplicacao({ carregarPalavras: async () => PALAVRAS, origens: [ORIGEM], rng: () => 0 });
   await new Promise((ok) => {
     app.http.listen(0, '127.0.0.1', ok);
   });

@@ -12,11 +12,14 @@ import {
   ESTRELAS_POR_ERROS,
   FATIAS_ROLETA,
   MULTIPLICADORES_DOS_PAINEIS,
+  MULTIPLICADOR_DO_BONUS,
   PONTOS_POR_CASA_FECHADA,
   TEMPO_DA_VEZ_S,
+  TIPOS_DE_FATIA,
+  VALOR_DA_LETRA_GRATIS,
 } from './regras.js';
 
-export { FATIAS_ROLETA, TEMPO_DA_VEZ_S };
+export { FATIAS_ROLETA, TEMPO_DA_VEZ_S, TIPOS_DE_FATIA };
 
 export const MODOS = { COMPETITIVO: 'competitivo', COOPERATIVO: 'cooperativo' };
 export const FASES = { JOGANDO: 'jogando', RESOLVIDO: 'resolvido', FIM: 'fim' };
@@ -36,7 +39,14 @@ export const JOGADAS = {
   LETRA_ERRADA: 'letra-errada',
   CHUTE_ERRADO: 'chute-errado',
   TEMPO_ESGOTADO: 'tempo-esgotado',
+  // Resultados da roleta que não são pontos (o aparelho conta o que aconteceu na tela).
+  BONUS: 'bonus',
+  GIRO_EXTRA: 'giro-extra',
+  ESCUDO: 'escudo',
+  SONECA: 'soneca',
 };
+// Jogadas boas para quem as fez (carinha comemorando, mensagem em verde).
+export const JOGADAS_BOAS = new Set([JOGADAS.LETRA_CERTA, JOGADAS.BONUS, JOGADAS.GIRO_EXTRA, JOGADAS.ESCUDO]);
 
 export function criarPartida({ modo, nivel, jogadores, rodada }) {
   return {
@@ -44,7 +54,8 @@ export function criarPartida({ modo, nivel, jogadores, rodada }) {
     nivel,
     tema: rodada.tema,
     paineis: rodada.paineis,
-    jogadores: jogadores.map((j) => ({ ...j, pontos: 0 })),
+    // `bonus` e `escudo` são os poderes guardados da roleta (só no competitivo).
+    jogadores: jogadores.map((j) => ({ ...j, pontos: 0, bonus: false, escudo: false })),
     estrelas: 0,
     indicePainel: 0,
     vez: 0,
@@ -142,13 +153,79 @@ function fecharPainel(estado, ganhoCompetitivo) {
   };
 }
 
-function girar(estado, sorteio) {
-  if (!podeGirar(estado)) return estado;
+// Muda só os campos de um jogador, sem mexer nos outros.
+function mudarJogador(estado, indice, mudancas) {
+  return estado.jogadores.map((j, i) => (i === indice ? { ...j, ...mudancas } : j));
+}
+
+function giroExtra(estado) {
+  return { ...estado, ultimaJogada: { tipo: JOGADAS.GIRO_EXTRA, quem: estado.vez } };
+}
+
+// Letra grátis: abre uma letra aleatória e paga por ela, sem risco de errar. Se só sobrasse uma letra
+// fechada ela fecharia o painel de graça, então nesse caso vira giro extra.
+function letraGratis(estado, sorteioLetra) {
+  const painel = painelAtual(estado);
+  const fechadas = [...new Set(letrasDoTexto(painel.texto))]
+    .filter((l) => !estado.letrasUsadas.includes(l))
+    .sort();
+  if (fechadas.length < 2) return giroExtra(estado);
+  const letra = fechadas[Math.min(fechadas.length - 1, Math.floor(sorteioLetra * fechadas.length))];
+  const quantidade = contarOcorrencias(painel.texto, letra);
+  const comBonus = estado.jogadores[estado.vez].bonus;
+  const pontos =
+    VALOR_DA_LETRA_GRATIS * quantidade * multiplicadorAtual(estado) * (comBonus ? MULTIPLICADOR_DO_BONUS : 1);
+  const base = comBonus ? { ...estado, jogadores: mudarJogador(estado, estado.vez, { bonus: false }) } : estado;
   return {
-    ...estado,
-    valorRoleta: FATIAS_ROLETA[indiceDaFatia(sorteio)].valor,
-    ultimaJogada: null,
+    ...base,
+    letrasUsadas: [...estado.letrasUsadas, letra],
+    jogadores: somarPontos(base, pontos),
+    ultimaJogada: {
+      tipo: JOGADAS.LETRA_CERTA,
+      letra,
+      quantidade,
+      pontos,
+      quem: estado.vez,
+      gratis: true,
+      ...(comBonus ? { bonus: true } : {}),
+    },
   };
+}
+
+// O sorteio decide a fatia; `sorteioLetra` só serve à letra grátis. Os dois vêm de fora.
+function girar(estado, sorteio, sorteioLetra = 0) {
+  if (!podeGirar(estado)) return estado;
+  const fatia = FATIAS_ROLETA[indiceDaFatia(sorteio)];
+  const base = { ...estado, valorRoleta: null, ultimaJogada: null };
+  const jogador = estado.jogadores[estado.vez];
+  switch (fatia.tipo) {
+    case TIPOS_DE_FATIA.PONTOS:
+      return { ...base, valorRoleta: fatia.valor };
+    case TIPOS_DE_FATIA.BONUS:
+      if (jogador.bonus) return giroExtra(base);
+      return {
+        ...base,
+        jogadores: mudarJogador(estado, estado.vez, { bonus: true }),
+        ultimaJogada: { tipo: JOGADAS.BONUS, quem: estado.vez },
+      };
+    case TIPOS_DE_FATIA.ESCUDO:
+      if (jogador.escudo) return giroExtra(base);
+      return {
+        ...base,
+        jogadores: mudarJogador(estado, estado.vez, { escudo: true }),
+        ultimaJogada: { tipo: JOGADAS.ESCUDO, quem: estado.vez },
+      };
+    case TIPOS_DE_FATIA.LETRA_GRATIS:
+      return letraGratis(base, sorteioLetra);
+    case TIPOS_DE_FATIA.SONECA:
+      return {
+        ...base,
+        vez: proximoJogador(estado),
+        ultimaJogada: { tipo: JOGADAS.SONECA, quem: estado.vez },
+      };
+    default:
+      return giroExtra(base);
+  }
 }
 
 function escolherLetra(estado, letra) {
@@ -164,19 +241,32 @@ function escolherLetra(estado, letra) {
   const letrasUsadas = [...estado.letrasUsadas, letra];
   const quantidade = contarOcorrencias(painel.texto, letra);
 
+  const jogador = estado.jogadores[estado.vez];
+
   if (quantidade === 0) {
+    // O escudo gasta-se aqui: a letra errada não passa a vez, e a pessoa gira de novo.
+    const protegida = ehCompetitivo(estado) && jogador.escudo;
     return {
       ...estado,
       letrasUsadas,
       erros: estado.erros + 1,
       valorRoleta: null,
-      vez: proximoJogador(estado),
-      ultimaJogada: { tipo: JOGADAS.LETRA_ERRADA, letra, quem: estado.vez },
+      jogadores: protegida ? mudarJogador(estado, estado.vez, { escudo: false }) : estado.jogadores,
+      vez: protegida ? estado.vez : proximoJogador(estado),
+      ultimaJogada: {
+        tipo: JOGADAS.LETRA_ERRADA,
+        letra,
+        quem: estado.vez,
+        ...(protegida ? { protegida: true } : {}),
+      },
     };
   }
 
+  // O bônus dobra só esta letra certa e se gasta.
+  const comBonus = ehCompetitivo(estado) && jogador.bonus;
+  const base = comBonus ? { ...estado, jogadores: mudarJogador(estado, estado.vez, { bonus: false }) } : estado;
   const pontos = ehCompetitivo(estado)
-    ? estado.valorRoleta * quantidade * multiplicadorAtual(estado)
+    ? estado.valorRoleta * quantidade * multiplicadorAtual(estado) * (comBonus ? MULTIPLICADOR_DO_BONUS : 1)
     : 0;
   const ultimaJogada = {
     tipo: JOGADAS.LETRA_CERTA,
@@ -184,19 +274,20 @@ function escolherLetra(estado, letra) {
     quantidade,
     pontos,
     quem: estado.vez,
+    ...(comBonus ? { bonus: true } : {}),
   };
 
   if (contarCasasFechadas(painel.texto, letrasUsadas) === 0) {
-    return fecharPainel({ ...estado, letrasUsadas, ultimaJogada }, pontos);
+    return fecharPainel({ ...base, letrasUsadas, ultimaJogada }, pontos);
   }
   return {
-    ...estado,
+    ...base,
     letrasUsadas,
     valorRoleta: null,
     ultimaJogada,
     // No competitivo quem acerta continua; no cooperativo todos revezam.
     vez: ehCompetitivo(estado) ? estado.vez : proximoJogador(estado),
-    jogadores: somarPontos(estado, pontos),
+    jogadores: somarPontos(base, pontos),
   };
 }
 
@@ -275,17 +366,19 @@ function marcarSaida(estado, indice) {
 }
 
 // Ações inválidas devolvem o mesmo estado, sem lançar erro.
-// Toda ação que muda o jogo, menos o giro, sobe o `turno`: o relógio da vez recomeça.
+// Toda ação que muda o jogo sobe o `turno` e o relógio da vez recomeça, menos o giro que não passa a vez.
 export function aplicarAcao(estado, acao) {
   const proximo = aplicarAcaoSemTurno(estado, acao);
-  if (proximo === estado || acao.tipo === ACOES.GIRAR) return proximo;
+  if (proximo === estado) return proximo;
+  // Girar só reinicia o relógio se a vez passou (soneca) ou o painel fechou.
+  if (acao.tipo === ACOES.GIRAR && proximo.vez === estado.vez && proximo.fase === estado.fase) return proximo;
   return { ...proximo, turno: estado.turno + 1 };
 }
 
 function aplicarAcaoSemTurno(estado, acao) {
   switch (acao.tipo) {
     case ACOES.GIRAR:
-      return girar(estado, acao.sorteio);
+      return girar(estado, acao.sorteio, acao.sorteioLetra);
     case ACOES.ESCOLHER_LETRA:
       return escolherLetra(estado, acao.letra);
     case ACOES.RESOLVER:

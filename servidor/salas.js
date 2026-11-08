@@ -227,8 +227,8 @@ export function criarGerenciador({ carregarPalavras, rng = sortear, limites = {}
     if (!pedido || typeof pedido !== 'object') return null;
     switch (pedido.tipo) {
       case ACOES.GIRAR:
-        // O sorteio é sempre do servidor: o que vier do aparelho é ignorado.
-        return { tipo: ACOES.GIRAR, sorteio: rng() };
+        // O sorteio (e o da letra grátis) é sempre do servidor: o que vier do aparelho é ignorado.
+        return { tipo: ACOES.GIRAR, sorteio: rng(), sorteioLetra: rng() };
       case ACOES.ESCOLHER_LETRA:
         return typeof pedido.letra === 'string' && /^[A-Z]$/.test(pedido.letra)
           ? { tipo: ACOES.ESCOLHER_LETRA, letra: pedido.letra }

@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it } from 'vitest';
-import { ACOES, FASES } from '../src/logica/jogo.js';
+import { ACOES, FASES, FATIAS_ROLETA, JOGADAS, TIPOS_DE_FATIA, limitesDasFatias } from '../src/logica/jogo.js';
 import { contarCasasFechadas } from '../src/logica/texto.js';
 import { codigoValido, gerarCodigo } from './codigo.js';
 import { RESULTADO_VISIVEL_MS, SALA_PARADA_MS } from './regrasOnline.js';
@@ -24,7 +24,8 @@ const T = 1000;
 let g;
 
 beforeEach(() => {
-  g = criarGerenciador({ carregarPalavras: async () => PALAVRAS, limites: { vagaMs: 120, vezMs: 60, proximoMs: 30 } });
+  // Sorteio fixo: a roleta cai sempre na primeira fatia (10 pontos), para os testes não dependerem da sorte.
+  g = criarGerenciador({ carregarPalavras: async () => PALAVRAS, rng: () => 0, limites: { vagaMs: 120, vezMs: 60, proximoMs: 30 } });
 });
 
 function salaCom2(nivel = 'avancado') {
@@ -387,6 +388,7 @@ describe('relógio da vez', () => {
   beforeEach(() => {
     g = criarGerenciador({
       carregarPalavras: async () => PALAVRAS,
+      rng: () => 0,
       limites: { vagaMs: 5000, vezMs: 5000, proximoMs: 5000, turnoMs: 50 },
     });
   });
@@ -450,5 +452,81 @@ describe('relógio da vez', () => {
     g.marcarQueda({ codigo: s.codigo, token: s.tokenB }, T + 10);
     g.retomar({ codigo: s.codigo, token: s.tokenB }, T + 20);
     expect(visaoDaSala(s.sala, 'boris', T + 30).tempoDaVezMs).toBe(20);
+  });
+});
+
+describe('fatias com efeito no servidor', () => {
+  const meioDaFatia = (tipo) => {
+    const indice = FATIAS_ROLETA.findIndex((f) => f.tipo === tipo);
+    const { inicio, fim } = limitesDasFatias()[indice];
+    return (inicio + fim) / 2;
+  };
+
+  // O sorteio sai de uma variável que o teste muda antes de cada giro.
+  function gerenciadorComSorteio() {
+    const sorteio = { valor: 0 };
+    g = criarGerenciador({
+      carregarPalavras: async () => PALAVRAS,
+      rng: () => sorteio.valor,
+      limites: { vagaMs: 5000, vezMs: 5000, proximoMs: 5000 },
+    });
+    return sorteio;
+  }
+
+  it('o servidor sorteia a fatia e a letra grátis, e ignora o que o aparelho mandar', async () => {
+    const sorteio = gerenciadorComSorteio();
+    const s = await partida();
+    sorteio.valor = meioDaFatia(TIPOS_DE_FATIA.LETRA_GRATIS);
+    const r = jogar(s, s.tokenA, { tipo: ACOES.GIRAR, sorteio: 0, sorteioLetra: 0 });
+    expect(r.ok).toBe(true);
+    const e = s.sala.partida;
+    expect(e.valorRoleta).toBeNull();
+    expect(e.letrasUsadas).toHaveLength(1);
+    expect(e.ultimaJogada).toMatchObject({ tipo: JOGADAS.LETRA_CERTA, gratis: true, quem: 0 });
+    expect(e.jogadores[0].pontos).toBeGreaterThan(0);
+    expect(e.vez).toBe(0);
+    expect(s.sala.giro.fatia).toBe(FATIAS_ROLETA.findIndex((f) => f.tipo === TIPOS_DE_FATIA.LETRA_GRATIS));
+  });
+
+  it('a letra grátis aparece aberta para todos e a resposta continua escondida', async () => {
+    const sorteio = gerenciadorComSorteio();
+    const s = await partida();
+    sorteio.valor = meioDaFatia(TIPOS_DE_FATIA.LETRA_GRATIS);
+    jogar(s, s.tokenA, { tipo: ACOES.GIRAR });
+    const visao = visaoDaPartida(s.sala.partida);
+    const letra = s.sala.partida.letrasUsadas[0];
+    const painel = visao.paineis[s.sala.partida.indicePainel];
+    expect(painel.texto).toContain(letra);
+    expect(contarCasasFechadas(painel.texto, s.sala.partida.letrasUsadas)).toBeGreaterThan(0);
+  });
+
+  it('a soneca passa a vez e reinicia o relógio da vez', async () => {
+    const sorteio = gerenciadorComSorteio();
+    g = criarGerenciador({
+      carregarPalavras: async () => PALAVRAS,
+      rng: () => sorteio.valor,
+      limites: { vagaMs: 5000, vezMs: 5000, proximoMs: 5000, turnoMs: 50 },
+    });
+    const s = await partida();
+    sorteio.valor = meioDaFatia(TIPOS_DE_FATIA.SONECA);
+    expect(jogar(s, s.tokenA, { tipo: ACOES.GIRAR }, T + 40).ok).toBe(true);
+    expect(s.sala.partida.vez).toBe(1);
+    expect(s.sala.partida.jogadores[0].pontos).toBe(0);
+    expect(visaoDaSala(s.sala, 'boris', T + 40).tempoDaVezMs).toBe(50);
+    g.verificarPrazos(T + 80);
+    expect(s.sala.partida.vez).toBe(1);
+  });
+
+  it('bônus e escudo aparecem para todos no placar', async () => {
+    const sorteio = gerenciadorComSorteio();
+    const s = await partida();
+    sorteio.valor = meioDaFatia(TIPOS_DE_FATIA.BONUS);
+    jogar(s, s.tokenA, { tipo: ACOES.GIRAR });
+    sorteio.valor = meioDaFatia(TIPOS_DE_FATIA.ESCUDO);
+    jogar(s, s.tokenA, { tipo: ACOES.GIRAR });
+    const dela = visaoDaSala(s.sala, 'boris', T).partida.jogadores[0];
+    expect(dela.bonus).toBe(true);
+    expect(dela.escudo).toBe(true);
+    expect(s.sala.partida.vez).toBe(0);
   });
 });

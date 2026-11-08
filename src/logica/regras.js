@@ -3,20 +3,43 @@
 // JavaScript puro, sem React nem window: o servidor online reutiliza este arquivo.
 
 // Fatias da roleta (competitivo), na ordem em que aparecem girando no sentido horário.
-// Sem fatia que tire pontos. `peso` é a largura da fatia em relação às outras (padrão 1):
-// uma fatia mais estreita sai menos. A primeira e a última devem valer pontos.
-export const TIPOS_DE_FATIA = { PONTOS: 'pontos' };
+// Ninguém perde pontos: nenhuma fatia tira pontos de ninguém. `peso` é a largura da fatia em
+// relação às outras (padrão 1): uma fatia mais estreita sai menos. A primeira e a última devem valer pontos.
+//   pontos       letra certa vale `valor` por casa aberta (a de 100 é a rara)
+//   bonus        a próxima letra certa vale em dobro (fica marcado ao lado do jogador até usar); gira de novo
+//   giro-extra   gira de novo sem gastar a vez
+//   letra-gratis abre uma letra aleatória do painel e paga por ela; gira de novo
+//   escudo       a próxima letra errada não passa a vez (um por jogador); gira de novo
+//   soneca       a vez passa para o próximo, sem perder pontos
+export const TIPOS_DE_FATIA = {
+  PONTOS: 'pontos',
+  BONUS: 'bonus',
+  GIRO_EXTRA: 'giro-extra',
+  LETRA_GRATIS: 'letra-gratis',
+  ESCUDO: 'escudo',
+  SONECA: 'soneca',
+};
 export const FATIAS_ROLETA = [
   { tipo: TIPOS_DE_FATIA.PONTOS, valor: 10 },
+  { tipo: TIPOS_DE_FATIA.BONUS },
   { tipo: TIPOS_DE_FATIA.PONTOS, valor: 25 },
+  { tipo: TIPOS_DE_FATIA.GIRO_EXTRA },
   { tipo: TIPOS_DE_FATIA.PONTOS, valor: 5 },
   { tipo: TIPOS_DE_FATIA.PONTOS, valor: 30 },
+  { tipo: TIPOS_DE_FATIA.LETRA_GRATIS },
   { tipo: TIPOS_DE_FATIA.PONTOS, valor: 100, peso: 0.5, jackpot: true },
   { tipo: TIPOS_DE_FATIA.PONTOS, valor: 15 },
+  { tipo: TIPOS_DE_FATIA.ESCUDO },
   { tipo: TIPOS_DE_FATIA.PONTOS, valor: 50 },
+  { tipo: TIPOS_DE_FATIA.SONECA, peso: 0.7 },
   { tipo: TIPOS_DE_FATIA.PONTOS, valor: 20 },
   { tipo: TIPOS_DE_FATIA.PONTOS, valor: 40 },
 ];
+
+// Quanto a próxima letra certa vale com o bônus ligado.
+export const MULTIPLICADOR_DO_BONUS = 2;
+// Valor por casa aberta da letra grátis (perto da média das fatias de pontos).
+export const VALOR_DA_LETRA_GRATIS = 20;
 
 // Resolver certo: pontos por casa ainda fechada (× multiplicador do painel).
 // Perto da média da roleta (24), mas sem o risco de errar a letra e perder a vez.
