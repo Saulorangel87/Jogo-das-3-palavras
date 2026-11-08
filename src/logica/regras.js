@@ -16,6 +16,12 @@ export const MULTIPLICADORES_DOS_PAINEIS = [1, 2, 3];
 // O relógio reinicia quando a pessoa acerta uma letra e continua; girar a roleta não reinicia.
 export const TEMPO_DA_VEZ_S = 30;
 
+// Avançado: painéis de exatamente duas palavras (compostas ou não, como GUARDA CHUVA ou BOLA AZUL).
+// Cada partida tem pelo menos este tanto deles, se o tema tiver, e as outras vagas
+// sorteiam uma palavra dupla nesta chance (0 a 1). Frases maiores ocupam o resto.
+export const PAINEIS_MINIMOS_DE_DUAS_PALAVRAS = 1;
+export const CHANCE_DE_DUAS_PALAVRAS = 0.5;
+
 // Cooperativo: estrelas por painel conforme os erros da equipe
 // (letra errada ou resolver errado). Do melhor para o pior.
 export const ESTRELAS_POR_ERROS = [

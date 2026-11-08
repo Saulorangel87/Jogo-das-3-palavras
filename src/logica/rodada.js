@@ -1,4 +1,5 @@
 // Sorteio da partida. Puro: o gerador de aleatórios pode ser injetado nos testes.
+import { CHANCE_DE_DUAS_PALAVRAS, PAINEIS_MINIMOS_DE_DUAS_PALAVRAS } from './regras.js';
 import { letrasDoTexto } from './texto.js';
 
 const ALFABETO = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
@@ -15,6 +16,27 @@ function embaralhar(lista, rng) {
     [copia[i], copia[j]] = [copia[j], copia[i]];
   }
   return copia;
+}
+
+const temDuasPalavras = (item) => item.texto.split(' ').length === 2;
+
+// Escolhe os painéis do tema. No avançado, garante painéis de duas palavras e dá chance a mais deles;
+// o resto é sorteio comum. Depois embaralha, para a palavra dupla não cair sempre no mesmo painel.
+function sortearPaineis(itens, nivel, rng) {
+  const embaralhados = embaralhar(itens, rng);
+  if (nivel !== 'avancado') return embaralhados.slice(0, TOTAL_PAINEIS);
+  const duplas = embaralhados.filter(temDuasPalavras);
+  const outras = embaralhados.filter((i) => !temDuasPalavras(i));
+  const escolhidos = [];
+  for (let vaga = 0; vaga < TOTAL_PAINEIS; vaga++) {
+    const faltam = TOTAL_PAINEIS - vaga;
+    const jaTem = escolhidos.filter(temDuasPalavras).length;
+    const obrigatorio = PAINEIS_MINIMOS_DE_DUAS_PALAVRAS - jaTem >= faltam;
+    const querDupla = obrigatorio || rng() < CHANCE_DE_DUAS_PALAVRAS;
+    const origem = (querDupla && duplas.length > 0) || outras.length === 0 ? duplas : outras;
+    escolhidos.push(origem.shift());
+  }
+  return embaralhar(escolhidos, rng);
 }
 
 function semelhanca(candidato, alvo) {
@@ -61,7 +83,7 @@ export function montarRodada(temas, nivel, rng = Math.random, historico = HISTOR
   const outros = disponiveis.filter((t) => t.tema !== historico.ultimoTema);
   const opcoesDeTema = outros.length > 0 ? outros : disponiveis;
   const tema = opcoesDeTema[Math.floor(rng() * opcoesDeTema.length)];
-  const sorteados = embaralhar(tema.itens, rng).slice(0, TOTAL_PAINEIS);
+  const sorteados = sortearPaineis(tema.itens, nivel, rng);
   const naPartida = new Set(sorteados.map((i) => i.texto));
   const candidatos = temas
     .flatMap((t) => t.itens.map((i) => ({ ...i, tema: t.tema })))

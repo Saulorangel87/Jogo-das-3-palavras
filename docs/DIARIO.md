@@ -488,3 +488,9 @@ Pedido do Saulo, dentro de uma rodada de mudanças na roleta. Cada vez no compet
 
 **Verificado:** 211 testes (a lógica, o relógio no servidor e a visão) e o build. **Verificado no navegador (jogo local, 2 jogadores, Iniciante):** a barra e a contagem aparecem; girar não reinicia o relógio e acertar uma letra o devolve a 30 s, com a vez na mesma pessoa; nos últimos 5 s a barra fica vermelha; ao acabar o tempo a vez passa uma vez só, com "Acabou o tempo!" e sem mudar o placar; com o painel "Resolver" aberto, o painel fecha e o relógio continua visível. Sem erros no console. **Não verificado:** o tique de som ouvido, o online com aparelhos reais e o cooperativo na tela. Não foi feito deploy nem commit.
 
+## 2026-11-08 — Etapa 36: mais painéis de duas palavras no Avançado
+
+Pedido do Saulo, para a futura "letra de graça" da roleta ter mais o que abrir. O Avançado já tinha 326 itens de duas palavras (32% do banco), mas o sorteio os tratava como qualquer frase, e 33% das partidas não tinham nenhum. Agora cada partida garante pelo menos um painel de duas palavras, e as outras vagas têm 50% de chance de ser outra dupla. Os números ficam em `src/logica/regras.js`. Os outros níveis não mudam.
+
+**Verificado:** 217 testes, incluindo sorteio com tema sem nenhuma dupla (não trava), com poucas duplas e a posição da dupla variando. Medido no banco real em 2.000 partidas: de 67% para 100% das partidas com ao menos uma dupla, e a média de painéis duplos foi de 1,06 para 1,63 por partida. **Não verificado:** a tela. Ainda faltam as palavras compostas novas (etapa seguinte).
+

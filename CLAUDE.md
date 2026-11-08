@@ -77,6 +77,8 @@ A roleta fica fora do cooperativo porque lá não há pontos para ela sortear.
 | Teclado | Letras da palavra + 4 extras | Alfabeto completo | Alfabeto completo |
 | Resolver | 3 opções escritas | Preencher as casas | Preencher as casas |
 
+**Painéis de duas palavras (Avançado):** o sorteio (`sortearPaineis` em `src/logica/rodada.js`) garante pelo menos 1 painel de exatamente duas palavras por partida, se o tema tiver, e cada outra vaga tem 50% de chance de ser outra palavra dupla (`PAINEIS_MINIMOS_DE_DUAS_PALAVRAS` e `CHANCE_DE_DUAS_PALAVRAS` em `regras.js`). Os painéis são embaralhados depois, então a dupla não cai sempre no mesmo multiplicador. Medido no banco real em 2.000 partidas: de 67% das partidas com pelo menos uma dupla (média de 1,06 por partida) para 100% (média de 1,63).
+
 Importante (iniciante): as opções do "Resolver" são **só texto**, sem imagem. Ler as opções é o exercício de leitura.
 
 ## Smart TV (obrigatório desde a V1)

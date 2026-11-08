@@ -3,6 +3,7 @@ import iniciante from '../data/iniciante.json';
 import intermediario from '../data/intermediario.json';
 import avancado from '../data/avancado.json';
 import { HISTORICO_VAZIO, montarRodada, registrarRodada } from './rodada.js';
+import { CHANCE_DE_DUAS_PALAVRAS, PAINEIS_MINIMOS_DE_DUAS_PALAVRAS } from './regras.js';
 import { letrasDoTexto } from './texto.js';
 
 function gerador(semente) {
@@ -132,5 +133,70 @@ describe('histórico de partidas', () => {
         historico = registrarRodada(historico, rodada);
       }
     }
+  });
+});
+
+describe('painéis de duas palavras no avançado', () => {
+  const duas = (p) => p.texto.split(' ').length === 2;
+  const item = (texto) => ({ texto, dica: 'x' });
+  const temaMisto = {
+    tema: 'Misto',
+    itens: [
+      'QUEM SEMEIA COLHE VENTO', 'DEVAGAR SE VAI LONGE', 'CADA MACACO NO GALHO', 'ÁGUA MOLE EM PEDRA DURA',
+      'GUARDA CHUVA', 'BOLA AZUL', 'LUA CHEIA', 'BEIJA FLOR',
+    ].map(item),
+  };
+
+  it('toda partida tem pelo menos o mínimo de painéis de duas palavras, e nenhum painel repete', () => {
+    for (let semente = 1; semente <= 300; semente++) {
+      const { paineis } = montarRodada([temaMisto], 'avancado', gerador(semente));
+      expect(paineis.filter(duas).length).toBeGreaterThanOrEqual(PAINEIS_MINIMOS_DE_DUAS_PALAVRAS);
+      expect(new Set(paineis.map((p) => p.texto)).size).toBe(paineis.length);
+    }
+  });
+
+  it('a palavra dupla não cai sempre na mesma posição', () => {
+    const posicoes = new Set();
+    for (let semente = 1; semente <= 200; semente++) {
+      const { paineis } = montarRodada([temaMisto], 'avancado', gerador(semente));
+      paineis.forEach((p, i) => duas(p) && posicoes.add(i));
+    }
+    expect(posicoes.size).toBe(3);
+  });
+
+  it('sem nenhuma palavra dupla no tema, sorteia normalmente em vez de travar', () => {
+    const tema = { tema: 'Frases', itens: temaMisto.itens.filter((i) => !duas(i)) };
+    const { paineis } = montarRodada([tema], 'avancado', gerador(5));
+    expect(paineis).toHaveLength(3);
+    expect(paineis.some(duas)).toBe(false);
+  });
+
+  it('com poucas palavras duplas, usa todas e completa com frases', () => {
+    const tema = { tema: 'Poucas', itens: [item('GUARDA CHUVA'), item('QUEM SEMEIA COLHE'), item('DEVAGAR SE VAI LONGE'), item('CADA MACACO NO GALHO')] };
+    for (let semente = 1; semente <= 50; semente++) {
+      const { paineis } = montarRodada([tema], 'avancado', gerador(semente));
+      expect(paineis.filter(duas).length).toBeLessThanOrEqual(1);
+      expect(paineis.filter(duas).length).toBeGreaterThanOrEqual(1);
+    }
+  });
+
+  it('os outros níveis não são afetados: nenhum painel é escolhido por ter duas palavras', () => {
+    const antes = montarRodada(banco.intermediario, 'intermediario', gerador(9));
+    expect(antes.paineis.every((p) => !p.texto.includes(' '))).toBe(true);
+  });
+
+  it('no banco real, a maioria das partidas tem painel de duas palavras, e a chance é respeitada', () => {
+    let partidasComDupla = 0;
+    let paineisDuplos = 0;
+    const total = 300;
+    for (let i = 0; i < total; i++) {
+      const { paineis } = montarRodada(banco.avancado, 'avancado', gerador(i + 101));
+      const quantas = paineis.filter(duas).length;
+      if (quantas > 0) partidasComDupla += 1;
+      paineisDuplos += quantas;
+    }
+    // O mínimo vale sempre que o tema tem uma palavra dupla; temas sem nenhuma ficam de fora.
+    expect(partidasComDupla / total).toBeGreaterThan(0.9);
+    expect(paineisDuplos / (total * 3)).toBeGreaterThan(CHANCE_DE_DUAS_PALAVRAS * 0.5);
   });
 });
