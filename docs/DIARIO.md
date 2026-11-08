@@ -518,3 +518,11 @@ Pedido do Saulo, para dar mais dinamismo à roleta: pular a vez, bônus e outras
 
 **Verificado:** 249 testes, que cobrem cada fatia, o servidor decidindo o sorteio, o relógio com a soneca e o cooperativo sem mudança. No Chrome, jogo local com 2 jogadores, forçando cada fatia: bônus (ficha ×2 e depois pontos em dobro), letra grátis (escondida durante o giro e aberta depois, com +40 pontos pelo bônus), escudo (letra errada manteve a vez e gastou a ficha), giro extra e soneca (a vez passou e o relógio reiniciou). **Não verificado:** os sons novos (não ouço), a roleta em celular de 360 px, o online com aparelhos reais e a fatia de 100 na tela.
 
+## 2026-11-08 — Etapa 39: a tela pulava ao girar e ao escolher letra
+
+O Saulo notou, testando a roleta, que a tela subia um pouco ao girar e descia alguns pixels ao clicar numa letra. Medido no Chrome: depois de uma letra aparece a linha da jogada ("Tem 1 letra A!", "Não tem a letra C."), e a área de mensagens passava de 29 para 58 px; ao girar, essa linha sumia. A roleta e o teclado ficavam entre 468 e 497 px do topo, indo e voltando a cada giro e a cada letra. A causa era só a linha da jogada aparecer e sumir.
+
+**Correção:** a linha da jogada fica sempre desenhada, vazia quando não há jogada, e `.jogo-mensagens` reserva a altura de duas linhas (quatro no celular, onde as mensagens quebram). A margem do relógio também diminuiu um pouco, para ele não empurrar a tela.
+
+**Verificado no Chrome:** em janela larga, a roleta e o teclado ficaram parados em 473 px em todos os momentos (parado, girando, depois de girar, depois de letra certa e errada). Em quadro de 385 px (celular), com as mensagens mais longas (bônus, escudo, letra errada com escudo), o deslocamento ficou abaixo de 1 px. **Não verificado:** celular real. No celular a tela já passava da altura da janela e rola um pouco; isso não mudou por causa desta correção, mas a reserva de mensagens acrescenta uns 40 px de altura lá.
+

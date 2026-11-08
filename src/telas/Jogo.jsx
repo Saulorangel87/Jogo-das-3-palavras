@@ -399,9 +399,11 @@ export default function Jogo({ estado, despachar, aoSair, online = null }) {
       {!resolvido && aberto !== 'resolver' && (
         <>
           <div role="status" className="jogo-mensagens">
-            {jogada && !girando && (
-              <p className={jogadaRuim ? 'jogo-jogada jogo-jogada-ruim' : 'jogo-jogada jogo-jogada-boa'}>{jogada}</p>
-            )}
+            {/* A linha da jogada fica sempre desenhada, mesmo vazia: se ela aparecesse e sumisse, a roleta e o
+                teclado pulariam para cima e para baixo a cada giro e a cada letra. */}
+            <p className={jogada && !girando ? (jogadaRuim ? 'jogo-jogada jogo-jogada-ruim' : 'jogo-jogada jogo-jogada-boa') : 'jogo-jogada'}>
+              {jogada && !girando ? jogada : '\u00a0'}
+            </p>
             <p className="jogo-instrucao">{textoDaInstrucao(estado, jogadorDaVez.nome, girando, minhaVez)}</p>
             {segundosDaVez !== null && (
               <p className="jogo-instrucao">{jogadorDaVez.nome} caiu. Se não voltar em {segundosDaVez} s, a vez passa.</p>
