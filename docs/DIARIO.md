@@ -547,4 +547,4 @@ Experimento aprovado pelo Saulo para tentar tirar a linha de 1 pixel na divisa c
 
 **Verificado:** 249 testes e o build passam; no Chrome do computador o layout ficou idêntico ao anterior (as áreas de segurança valem 0 ali), com o `viewport` novo e o `html` em azul-escuro. **Não verificado e pode não funcionar:** o efeito no celular. Relatos sobre `viewport-fit=cover` em PWA instalado são conflitantes, e o divisor pode ser desenhado pelo Android mesmo assim. O app instalado só pega mudanças de manifesto/meta quando o Chrome atualiza o WebAPK: fechar e abrir o app duas vezes, ou reinstalar. Se a linha continuar, responder às três perguntas da etapa 40; se nada resolver, reverter o experimento (as mudanças estão num commit só).
 
-**Atenção ao publicar:** reinicia partidas online em andamento (salas só na memória).
+**Online:** esta versão só mudou o front-end, então o contêiner `tres-palavras-online` não foi recriado (conferido na VPS: no ar desde a publicação da 1.3.0) e as salas abertas não foram apagadas. O aviso de que publicar apaga as salas só vale quando o código do servidor (`servidor/`, `src/logica/`) muda.
