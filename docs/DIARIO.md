@@ -540,3 +540,11 @@ Publicação das etapas 35 a 39: relógio de 30 segundos por vez, painéis de du
 
 **Para decidir o próximo passo:** (1) a linha aparece também no site aberto numa aba do Chrome, sem instalar? (2) outros apps instalados do mesmo celular têm uma divisória igual? (3) reinstalar o app muda algo? Como experimento, a versão 1.3.1 pode ligar `viewport-fit=cover` e usar `env(safe-area-inset-bottom)`, para o fundo azul passar por baixo da barra; precisa de teste no celular e pode não funcionar.
 
+
+## 2026-11-08 — Etapa 41: versão 1.3.1, experimento da linha branca (borda a borda)
+
+Experimento aprovado pelo Saulo para tentar tirar a linha de 1 pixel na divisa com a barra de navegação do Android (app instalado). Mudanças: `viewport-fit=cover` no `index.html` (o app passa a desenhar também sob as barras do sistema), `html` com fundo próprio (`var(--fundo)`), `.tela` com `min-height: 100dvh` e margens de segurança que somam `env(safe-area-inset-*)` às de TV (`max(5vh, env(safe-area-inset-bottom))` etc.), o mesmo nos dois modais (`.som-fundo`, `.jogo-modal`) e na faixa de aviso do online (`.online-faixa`, com o topo somado a `safe-area-inset-top`).
+
+**Verificado:** 249 testes e o build passam; no Chrome do computador o layout ficou idêntico ao anterior (as áreas de segurança valem 0 ali), com o `viewport` novo e o `html` em azul-escuro. **Não verificado e pode não funcionar:** o efeito no celular. Relatos sobre `viewport-fit=cover` em PWA instalado são conflitantes, e o divisor pode ser desenhado pelo Android mesmo assim. O app instalado só pega mudanças de manifesto/meta quando o Chrome atualiza o WebAPK: fechar e abrir o app duas vezes, ou reinstalar. Se a linha continuar, responder às três perguntas da etapa 40; se nada resolver, reverter o experimento (as mudanças estão num commit só).
+
+**Atenção ao publicar:** reinicia partidas online em andamento (salas só na memória).

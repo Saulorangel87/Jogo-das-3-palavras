@@ -16,6 +16,8 @@
 }
 
 html {
+  /* Cor própria: a área sob a barra de navegação nunca fica branca. */
+  background: var(--fundo);
   /* Cresce com a tela: legível no celular e a 3 metros da TV. */
   font-size: calc(10px + 0.4vw + 1.3vh);
 }
@@ -48,8 +50,11 @@ body {
   align-items: center;
   justify-content: center;
   min-height: 100vh;
-  /* Margem de segurança da TV. */
-  padding: 5vh 5vw;
+  min-height: 100dvh;
+  /* Margem de segurança da TV, somada às áreas do sistema (barra de
+     navegação do Android, entalhe do iPhone) com viewport-fit=cover. */
+  padding: max(5vh, env(safe-area-inset-top)) max(5vw, env(safe-area-inset-right))
+    max(5vh, env(safe-area-inset-bottom)) max(5vw, env(safe-area-inset-left));
   text-align: center;
 }
 

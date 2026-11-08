@@ -7,7 +7,8 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 5vh 5vw;
+  padding: max(5vh, env(safe-area-inset-top)) max(5vw, env(safe-area-inset-right))
+    max(5vh, env(safe-area-inset-bottom)) max(5vw, env(safe-area-inset-left));
   background: rgba(10, 16, 32, 0.85);
 }
 

@@ -107,7 +107,7 @@
   left: 0;
   right: 0;
   z-index: 50;
-  padding: 0.4rem;
+  padding: calc(0.4rem + env(safe-area-inset-top)) 0.4rem 0.4rem;
   background: var(--destaque);
   color: var(--botao-texto);
   font-weight: 700;
