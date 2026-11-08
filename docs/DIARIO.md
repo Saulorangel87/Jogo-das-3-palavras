@@ -494,3 +494,11 @@ Pedido do Saulo, para a futura "letra de graça" da roleta ter mais o que abrir.
 
 **Verificado:** 217 testes, incluindo sorteio com tema sem nenhuma dupla (não trava), com poucas duplas e a posição da dupla variando. Medido no banco real em 2.000 partidas: de 67% para 100% das partidas com ao menos uma dupla, e a média de painéis duplos foi de 1,06 para 1,63 por partida. **Não verificado:** a tela. Ainda faltam as palavras compostas novas (etapa seguinte).
 
+## 2026-11-08 — Etapa 37: palavras compostas no Avançado
+
+Continuação da etapa 36. O banco do Avançado ganhou 111 itens de duas palavras em 16 temas, a maioria compostas que levam hífen na escrita (`GUARDA CHUVA`, `BEIJA FLOR`, `QUEBRA CABEÇA`, `SEGUNDA FEIRA`, `ARCO ÍRIS`) e outras palavras soltas (`CAFÉ PRETO`, `BOM HUMOR`). Eu as escrevi como dois blocos, sem hífen, para não mexer no painel, na comparação da resposta nem no teste de formato. O hífen não aparece na tela, e a letra de graça da roleta vai valer para as duas partes.
+
+Antes de inserir, uma checagem tirou 12 itens que já existiam no banco e corrigiu uma dica que entregava a resposta (`FEIRA LIVRE`). O banco foi de 1.018 para 1.129 itens, e os de duas palavras, de 326 para 437.
+
+**Verificado:** 217 testes, que conferem formato, repetição e dica que entrega a resposta, e o JSON continua válido com o diff só de acréscimos. **Não verificado:** a tela e a revisão de cada dica por um adulto, que vale a pena fazer antes de publicar.
+

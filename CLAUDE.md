@@ -145,7 +145,7 @@ Tudo gerado por código com a **Web Audio API direta, sem biblioteca** (decisão
 }
 ```
 
-Textos só com letras maiúsculas (com acentos) e espaços, sem hífen, e no máximo 12 letras por palavra (no iniciante, no máximo 8, e a dica escrita curta, de preferência até uns 27 caracteres, em linguagem de criança), para caber no celular.
+Textos só com letras maiúsculas (com acentos) e espaços, sem hífen (palavras compostas com hífen entram escritas como dois blocos: `GUARDA CHUVA`, `BEIJA FLOR`, `SEGUNDA FEIRA`; o hífen não aparece na tela e a letra de graça vale para as duas partes), e no máximo 12 letras por palavra (no iniciante, no máximo 8, e a dica escrita curta, de preferência até uns 27 caracteres, em linguagem de criança), para caber no celular.
 
 Regras do banco (conferidas em `src/data/palavras.test.js`): mínimo de 1000 itens por nível, sem repetição, cada tema com 3 itens ou mais. Cada item tem `emoji` **ou** `dica` escrita. Emoji só de Unicode antigo (até a versão 9), por causa de TV e navegador antigos; sem emoji seguro, usa-se dica escrita. A dica escrita não pode conter a palavra da resposta. Nada de marcas, pessoas reais ou palavras ofensivas.
 

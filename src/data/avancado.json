@@ -222,7 +222,22 @@
       {"texto": "FRANGO COM QUIABO", "dica": "Prato mineiro"},
       {"texto": "ANGU COM CARNE", "dica": "Comida de milho"},
       {"texto": "LEITE DE COCO", "dica": "Líquido branco da fruta"},
-      {"texto": "ÁGUA DE COCO GELADA", "dica": "Bebida da praia"}
+      {"texto": "ÁGUA DE COCO GELADA", "dica": "Bebida da praia"},
+      {"texto": "COUVE FLOR", "dica": "Verdura branca em forma de pequenas árvores"},
+      {"texto": "MILHO VERDE", "dica": "Grãozinhos doces da salada e da pamonha"},
+      {"texto": "QUEIJO COALHO", "dica": "Firme, vai à brasa e é comum na praia"},
+      {"texto": "CAFÉ PRETO", "dica": "Bebida escura e forte, sem leite"},
+      {"texto": "ARROZ DOCE", "dica": "Sobremesa cremosa com canela"},
+      {"texto": "BATATA FRITA", "dica": "Palitos dourados e crocantes"},
+      {"texto": "OVO COZIDO", "dica": "Sai da panela com a casca dura"},
+      {"texto": "BOLO CASEIRO", "dica": "Feito em casa, no forno, com carinho"},
+      {"texto": "FEIJÃO TROPEIRO", "dica": "Prato mineiro com farofa e linguiça"},
+      {"texto": "MASSA FOLHADA", "dica": "Camadas finas e crocantes de farinha e manteiga"},
+      {"texto": "LEITE CONDENSADO", "dica": "Lata cremosa e doce para brigadeiros"},
+      {"texto": "SUCO NATURAL", "dica": "Bebida feita só com frutas espremidas"},
+      {"texto": "TIRA GOSTO", "dica": "Petisco servido antes da refeição"},
+      {"texto": "CHOCOLATE QUENTE", "dica": "Bebida cremosa que esquenta no inverno"},
+      {"texto": "CHEIRO VERDE", "dica": "Salsinha e cebolinha juntas para temperar"}
     ]
   },
   {
@@ -287,7 +302,18 @@
       {"texto": "OLIMPÍADA DE MATEMÁTICA", "dica": "Concurso de raciocínio"},
       {"texto": "CONCURSO DE POESIA", "dica": "Disputa de versos"},
       {"texto": "ENCONTRO DE PAIS", "dica": "Reunião com as famílias"},
-      {"texto": "FORMATURA DO ENSINO MÉDIO", "dica": "Cerimônia de fim de curso"}
+      {"texto": "FORMATURA DO ENSINO MÉDIO", "dica": "Cerimônia de fim de curso"},
+      {"texto": "PORTA LÁPIS", "dica": "Potinho que guarda canetas na mesa"},
+      {"texto": "MAPA MÚNDI", "dica": "Desenho que mostra todos os continentes"},
+      {"texto": "ANO LETIVO", "dica": "Período de aulas, de fevereiro a dezembro"},
+      {"texto": "QUADRO NEGRO", "dica": "Superfície escura onde o professor escreve com giz"},
+      {"texto": "LIVRO DIDÁTICO", "dica": "Usado nas aulas, cheio de lições"},
+      {"texto": "LÍNGUA PORTUGUESA", "dica": "Matéria que ensina a ler e escrever em nosso idioma"},
+      {"texto": "SEGUNDA FEIRA", "dica": "O dia que abre a semana de aulas"},
+      {"texto": "TERÇA FEIRA", "dica": "Vem logo depois do primeiro dia útil"},
+      {"texto": "QUARTA FEIRA", "dica": "O dia do meio da semana útil"},
+      {"texto": "QUINTA FEIRA", "dica": "Falta só um dia para sexta"},
+      {"texto": "SEXTA FEIRA", "dica": "Último dia útil, a turma já pensa no fim de semana"}
     ]
   },
   {
@@ -354,7 +380,14 @@
       {"texto": "LIMPAR A PRAIA", "dica": "Tirar o lixo da areia"},
       {"texto": "FLORESTA PROTEGIDA", "dica": "Mata cuidada"},
       {"texto": "RIO POLUÍDO", "dica": "Água cheia de sujeira"},
-      {"texto": "FOGUEIRA APAGADA", "dica": "Cinzas e nada de chamas"}
+      {"texto": "FOGUEIRA APAGADA", "dica": "Cinzas e nada de chamas"},
+      {"texto": "ARCO ÍRIS", "dica": "Aparece depois da chuva com sete cores"},
+      {"texto": "AMOR PERFEITO", "dica": "Flor de pétalas coloridas com nome de sentimento"},
+      {"texto": "SEMPRE VIVA", "dica": "Flor que dura muito depois de colhida"},
+      {"texto": "ESTRELA CADENTE", "dica": "Risco de luz no céu para fazer um pedido"},
+      {"texto": "BURACO NEGRO", "dica": "Região do espaço que prende até a luz"},
+      {"texto": "MATA ATLÂNTICA", "dica": "Floresta que cobre parte do litoral brasileiro"},
+      {"texto": "ÁGUA VIVA", "dica": "Animal marinho transparente que queima ao toque"}
     ]
   },
   {
@@ -425,7 +458,20 @@
       {"texto": "TAMANDUÁ COM LÍNGUA LONGA", "dica": "Bicho que come formigas"},
       {"texto": "PREGUIÇA NA ÁRVORE", "dica": "Bicho lento pendurado"},
       {"texto": "CAPIVARA NO RIO", "dica": "Roedor gigante que gosta de água"},
-      {"texto": "SERIEMA NO CAMPO", "dica": "Ave de pernas longas"}
+      {"texto": "SERIEMA NO CAMPO", "dica": "Ave de pernas longas"},
+      {"texto": "BEIJA FLOR", "dica": "Ave minúscula que paira no ar e bebe néctar"},
+      {"texto": "CAVALO MARINHO", "dica": "Peixinho de focinho comprido que nada em pé"},
+      {"texto": "PEIXE BOI", "dica": "Mamífero aquático manso que come plantas"},
+      {"texto": "PEIXE ESPADA", "dica": "Habitante do mar de corpo longo e prateado"},
+      {"texto": "LOBO GUARÁ", "dica": "Canídeo de pernas compridas do cerrado"},
+      {"texto": "CÃO GUIA", "dica": "Ajuda pessoas cegas a andar na rua"},
+      {"texto": "BICHO PREGUIÇA", "dica": "Vive pendurado nas árvores e anda devagar"},
+      {"texto": "TUBARÃO MARTELO", "dica": "Tem a cabeça larga como uma ferramenta"},
+      {"texto": "COBRA CORAL", "dica": "Pequena serpente de anéis vermelhos e pretos"},
+      {"texto": "SAPO BOI", "dica": "Anfíbio grande que ronca como o gado"},
+      {"texto": "TATU BOLA", "dica": "Se enrola como uma esfera para se proteger"},
+      {"texto": "MICO LEÃO", "dica": "Macaquinho de juba dourada da Mata Atlântica"},
+      {"texto": "GATO SIAMÊS", "dica": "Felino de olhos azuis e focinho escuro"}
     ]
   },
   {
@@ -502,7 +548,21 @@
       {"texto": "MORAR NO SÍTIO", "dica": "Viver no campo"},
       {"texto": "MORAR NA CIDADE", "dica": "Viver entre prédios"},
       {"texto": "VIZINHO SIMPÁTICO", "dica": "Quem mora ao lado e cumprimenta"},
-      {"texto": "FESTA NA RUA", "dica": "Evento da vizinhança"}
+      {"texto": "FESTA NA RUA", "dica": "Evento da vizinhança"},
+      {"texto": "GUARDA ROUPA", "dica": "Móvel do quarto onde ficam as vestimentas"},
+      {"texto": "GUARDA CHUVA", "dica": "Abre para nos proteger quando cai água do céu"},
+      {"texto": "GUARDA LOUÇA", "dica": "Armário da cozinha de portas de vidro"},
+      {"texto": "LAVA LOUÇAS", "dica": "Máquina que limpa pratos e talheres sozinha"},
+      {"texto": "LAVA ROUPAS", "dica": "Máquina que limpa as peças sujas"},
+      {"texto": "TIRA MANCHAS", "dica": "Produto que ajuda a limpar tecido sujo"},
+      {"texto": "PORTA RETRATO", "dica": "Moldura que guarda uma foto em cima do móvel"},
+      {"texto": "MEIA CALÇA", "dica": "Peça justa que cobre as pernas"},
+      {"texto": "MÃE CORUJA", "dica": "Mãe que mima e protege demais os filhos"},
+      {"texto": "BEM ESTAR", "dica": "Sensação de conforto e felicidade"},
+      {"texto": "MAL ESTAR", "dica": "Sensação ruim e desconfortável"},
+      {"texto": "TIRA TEIMA", "dica": "Confere quem tem razão numa disputa"},
+      {"texto": "BEIRA MAR", "dica": "Faixa de terra junto à água salgada"},
+      {"texto": "MEIO DIA", "dica": "Hora em que o sol está bem no alto"}
     ]
   },
   {
@@ -635,7 +695,15 @@
       {"texto": "CHAMA OLÍMPICA", "dica": "Fogo que viaja até o estádio"},
       {"texto": "CAPOEIRA NA RODA", "dica": "Luta dançada ao som do berimbau"},
       {"texto": "ARTES MARCIAIS", "dica": "Lutas de origem oriental"},
-      {"texto": "ALONGAR AS PERNAS", "dica": "Exercício antes de correr"}
+      {"texto": "ALONGAR AS PERNAS", "dica": "Exercício antes de correr"},
+      {"texto": "QUEBRA CABEÇA", "dica": "Jogo de montar peças para formar uma imagem"},
+      {"texto": "PULA CORDA", "dica": "Brincadeira de saltar com um fio girando"},
+      {"texto": "PULA PULA", "dica": "Cama elástica das festas"},
+      {"texto": "PEGA PEGA", "dica": "Brincadeira em que um corre atrás dos outros"},
+      {"texto": "ESCONDE ESCONDE", "dica": "Todos se ocultam e um conta até dez"},
+      {"texto": "CAMPO MINADO", "dica": "Jogo de computador cheio de bombas escondidas"},
+      {"texto": "GOL CONTRA", "dica": "Quando a bola entra na própria meta"},
+      {"texto": "SALTO ALTO", "dica": "Calçado que deixa a pessoa mais alta"}
     ]
   },
   {
@@ -684,7 +752,12 @@
       {"texto": "MALABARISTA DE BOLAS", "dica": "Artista que joga e pega"},
       {"texto": "TEATRO DE FANTOCHES", "dica": "Espetáculo de bonecos"},
       {"texto": "PEÇA DE TEATRO", "dica": "Encenação no palco"},
-      {"texto": "SHOW DE MÁGICA", "dica": "Espetáculo de ilusão"}
+      {"texto": "SHOW DE MÁGICA", "dica": "Espetáculo de ilusão"},
+      {"texto": "ANO NOVO", "dica": "Festa de 31 de dezembro com fogos"},
+      {"texto": "PAPAI NOEL", "dica": "Velhinho de barba branca que entrega presentes"},
+      {"texto": "SEMANA SANTA", "dica": "Período de lembrança antes da Páscoa"},
+      {"texto": "AMIGO SECRETO", "dica": "Troca de presentes em que ninguém sabe quem tirou"},
+      {"texto": "FESTA SURPRESA", "dica": "Convidados se escondem até o aniversariante chegar"}
     ]
   },
   {
@@ -732,7 +805,13 @@
       {"texto": "HORA DE DESCANSAR", "dica": "Pausa necessária"},
       {"texto": "SONO TRANQUILO", "dica": "Descanso profundo"},
       {"texto": "SONHAR BONITO", "dica": "Imaginar dormindo"},
-      {"texto": "ACORDAR DISPOSTO", "dica": "Despertar cheio de energia"}
+      {"texto": "ACORDAR DISPOSTO", "dica": "Despertar cheio de energia"},
+      {"texto": "PRIMEIROS SOCORROS", "dica": "Cuidados rápidos antes de chegar o médico"},
+      {"texto": "PRESSÃO ARTERIAL", "dica": "Medida com um aparelho no braço"},
+      {"texto": "FIO DENTAL", "dica": "Fino cordão para limpar entre os dentes"},
+      {"texto": "ÁLCOOL GEL", "dica": "Higieniza as mãos sem precisar de água"},
+      {"texto": "BATIMENTO CARDÍACO", "dica": "O que o médico ouve no peito"},
+      {"texto": "SONO PROFUNDO", "dica": "Descanso tão bom que nem se ouve barulho"}
     ]
   },
   {
@@ -789,7 +868,10 @@
       {"texto": "EXPLORADOR NA SELVA", "dica": "Descobre lugares novos"},
       {"texto": "DETETIVE ESPERTO", "dica": "Resolve mistérios"},
       {"texto": "JUIZ DE FUTEBOL", "dica": "Apita os jogos"},
-      {"texto": "TREINADOR DE ATLETAS", "dica": "Prepara os esportistas"}
+      {"texto": "TREINADOR DE ATLETAS", "dica": "Prepara os esportistas"},
+      {"texto": "GUARDA NOTURNO", "dica": "Vigia o bairro enquanto todos dormem"},
+      {"texto": "GUARDA FLORESTAL", "dica": "Protege as matas e seus bichos"},
+      {"texto": "ENGENHEIRO CIVIL", "dica": "Projeta e acompanha construções"}
     ]
   },
   {
@@ -836,7 +918,11 @@
       {"texto": "FIO DE ENERGIA", "dica": "Cabo da eletricidade"},
       {"texto": "ENERGIA SOLAR", "dica": "Luz do sol que vira força"},
       {"texto": "ENERGIA DO VENTO", "dica": "Força das hélices"},
-      {"texto": "USINA DE ENERGIA", "dica": "Lugar que gera eletricidade"}
+      {"texto": "USINA DE ENERGIA", "dica": "Lugar que gera eletricidade"},
+      {"texto": "PEN DRIVE", "dica": "Pequeno aparelho que guarda arquivos e se espeta no computador"},
+      {"texto": "REDE SOCIAL", "dica": "Lugar virtual para compartilhar fotos e mensagens"},
+      {"texto": "BANDA LARGA", "dica": "Tipo de internet rápida"},
+      {"texto": "CAIXA ELETRÔNICO", "dica": "Máquina do banco que entrega dinheiro"}
     ]
   },
   {
@@ -878,7 +964,9 @@
       {"texto": "LUVAS DE LÃ", "dica": "Aquecem as mãos"},
       {"texto": "CACHECOL LISTRADO", "dica": "Enrolado no pescoço"},
       {"texto": "TÊNIS NOVO", "dica": "Calçado de esporte"},
-      {"texto": "SAPATO DE COURO", "dica": "Calçado elegante"}
+      {"texto": "SAPATO DE COURO", "dica": "Calçado elegante"},
+      {"texto": "FRENTE FRIA", "dica": "Massa de ar que derruba a temperatura"},
+      {"texto": "TEMPO FECHADO", "dica": "Céu coberto de nuvens escuras"}
     ]
   },
   {
@@ -915,7 +1003,11 @@
       {"texto": "TESOURO ESCONDIDO", "dica": "Baú sob a areia"},
       {"texto": "MAPA DO PIRATA", "dica": "Papel com X"},
       {"texto": "ILHA DOS TESOUROS", "dica": "Terra de aventura"},
-      {"texto": "SEREIA CANTANDO", "dica": "Criatura de cauda e voz"}
+      {"texto": "SEREIA CANTANDO", "dica": "Criatura de cauda e voz"},
+      {"texto": "SALVA VIDAS", "dica": "Vigia quem nada na praia e resgata em perigo"},
+      {"texto": "GUARDA SOL", "dica": "Grande, abre na areia para dar sombra"},
+      {"texto": "PRAIA DESERTA", "dica": "Faixa de areia sem ninguém"},
+      {"texto": "BARCO PIRATA", "dica": "Navio de bandeira com caveira"}
     ]
   },
   {
@@ -968,7 +1060,9 @@
       {"texto": "MOEDAS NO COFRE", "dica": "Dinheiro guardado"},
       {"texto": "DINHEIRO NA CARTEIRA", "dica": "Notas guardadas no bolso"},
       {"texto": "POUPAR PARA O FUTURO", "dica": "Guardar um pouco a cada mês"},
-      {"texto": "TROCAR FIGURINHAS", "dica": "Negócio de crianças"}
+      {"texto": "TROCAR FIGURINHAS", "dica": "Negócio de crianças"},
+      {"texto": "SUPER MERCADO", "dica": "Lugar grande com corredores cheios de produtos"},
+      {"texto": "FEIRA LIVRE", "dica": "Barracas ao ar aberto vendendo frutas e verduras"}
     ]
   },
   {
@@ -1014,7 +1108,11 @@
       {"texto": "LARANJA FORTE", "dica": "Tom de fruta"},
       {"texto": "BRANCO NEVE", "dica": "Tom do gelo"},
       {"texto": "PRETO NOITE", "dica": "Tom escuro"},
-      {"texto": "CINZA NUVEM", "dica": "Tom do céu nublado"}
+      {"texto": "CINZA NUVEM", "dica": "Tom do céu nublado"},
+      {"texto": "BANDA MARCIAL", "dica": "Desfila tocando tambores e trompetes"},
+      {"texto": "ARTE URBANA", "dica": "Grafites e pinturas pelas paredes da cidade"},
+      {"texto": "DESENHO ANIMADO", "dica": "Quadrinhos que se mexem na televisão"},
+      {"texto": "FILME MUDO", "dica": "Antigo, sem som, só imagens"}
     ]
   },
   {
@@ -1061,7 +1159,13 @@
       {"texto": "ESPERAR A VEZ", "dica": "Respeitar a fila"},
       {"texto": "FAZER AMIGOS", "dica": "Conhecer pessoas"},
       {"texto": "BRINCAR JUNTOS", "dica": "Divertir-se em grupo"},
-      {"texto": "DIVIDIR BRINQUEDOS", "dica": "Compartilhar com amigos"}
+      {"texto": "DIVIDIR BRINQUEDOS", "dica": "Compartilhar com amigos"},
+      {"texto": "BOM HUMOR", "dica": "Alegria logo de manhã"},
+      {"texto": "MAU HUMOR", "dica": "Cara fechada o dia inteiro"},
+      {"texto": "BOA VONTADE", "dica": "Disposição para ajudar sem reclamar"},
+      {"texto": "AMOR PRÓPRIO", "dica": "Gostar de si mesmo"},
+      {"texto": "BOM SENSO", "dica": "Saber agir com cuidado e equilíbrio"},
+      {"texto": "BEM VINDO", "dica": "Palavra de recepção na porta de casa"}
     ]
   },
   {
@@ -1109,7 +1213,14 @@
       {"texto": "CONTO DE FADAS", "dica": "História de reinos encantados"},
       {"texto": "ERA UMA VEZ", "dica": "Início de história antiga"},
       {"texto": "FIM DA HISTÓRIA", "dica": "Último capítulo"},
-      {"texto": "VIVERAM FELIZES PARA SEMPRE", "dica": "Final de conto"}
+      {"texto": "VIVERAM FELIZES PARA SEMPRE", "dica": "Final de conto"},
+      {"texto": "CAPA INVISÍVEL", "dica": "Faz quem a veste sumir"},
+      {"texto": "VARINHA MÁGICA", "dica": "Bastão de bruxo que faz feitiços"},
+      {"texto": "CAVALO ALADO", "dica": "Animal de montaria com asas, nas lendas"},
+      {"texto": "LOBO MAU", "dica": "Vilão do capuz vermelho nos contos"},
+      {"texto": "CASA ASSOMBRADA", "dica": "Dizem que tem fantasmas lá dentro"},
+      {"texto": "DISCO VOADOR", "dica": "Objeto que gira no ar, nome das naves de ETs"},
+      {"texto": "PLANETA ANÃO", "dica": "Plutão é um exemplo"}
     ]
   }
 ]
