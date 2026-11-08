@@ -526,3 +526,9 @@ O Saulo notou, testando a roleta, que a tela subia um pouco ao girar e descia al
 
 **Verificado no Chrome:** em janela larga, a roleta e o teclado ficaram parados em 473 px em todos os momentos (parado, girando, depois de girar, depois de letra certa e errada). Em quadro de 385 px (celular), com as mensagens mais longas (bônus, escudo, letra errada com escudo), o deslocamento ficou abaixo de 1 px. **Não verificado:** celular real. No celular a tela já passava da altura da janela e rola um pouco; isso não mudou por causa desta correção, mas a reserva de mensagens acrescenta uns 40 px de altura lá.
 
+## 2026-11-08 — Etapa 40: versão 1.3.0 no ar
+
+Publicação das etapas 35 a 39: relógio de 30 segundos por vez, painéis de duas palavras no Avançado (sorteio e 111 palavras novas), roleta com fatias de efeito (bônus ×2, giro extra, letra grátis, escudo e soneca, além da fatia de 100) e a correção da tela que pulava ao girar e ao escolher uma letra. Versão subida de 1.2.3 para 1.3.0, porque há recursos novos e as regras do jogo mudaram.
+
+**Atenção ao publicar:** o servidor online guarda as salas só na memória, então uma partida online em andamento na hora da publicação é encerrada.
+
