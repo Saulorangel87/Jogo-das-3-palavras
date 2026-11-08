@@ -502,3 +502,5 @@ Antes de inserir, uma checagem tirou 12 itens que já existiam no banco e corrig
 
 **Verificado:** 217 testes, que conferem formato, repetição e dica que entrega a resposta, e o JSON continua válido com o diff só de acréscimos. **Não verificado:** a tela e a revisão de cada dica por um adulto, que vale a pena fazer antes de publicar.
 
+**Verificado no Chrome (etapas 36 e 37):** partida local no Avançado com 2 jogadores. Na primeira partida caiu um painel de duas palavras, desenhado como dois blocos separados de 6 casas, com a dica e o relógio de 30 segundos ao lado. **Ainda não verificado:** nenhuma das palavras novas vista na tela uma a uma.
+
