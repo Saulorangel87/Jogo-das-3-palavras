@@ -58,6 +58,16 @@
   margin: 0 0.5rem;
 }
 
+.jogo-ficha {
+  margin-left: 0.35rem;
+  padding: 0.05rem 0.45rem;
+  border-radius: 1rem;
+  background: var(--destaque);
+  color: #14213d;
+  font-size: 0.7rem;
+  font-weight: 800;
+}
+
 .jogo-equipe {
   margin-bottom: 0.4rem;
   font-size: 0.9rem;

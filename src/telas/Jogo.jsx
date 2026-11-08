@@ -2,12 +2,14 @@ import { useEffect, useRef, useState } from 'react';
 import Estrelas from '../componentes/Estrelas.jsx';
 import Painel from '../componentes/Painel.jsx';
 import { atrasoDaCelebracao } from '../componentes/celebracao.js';
+import { DURACAO_GIRO } from '../componentes/giro.js';
 import Roleta, { GRAUS, proximoAngulo } from '../componentes/Roleta.jsx';
 import Teclado from '../componentes/Teclado.jsx';
 import {
   ACOES,
   FASES,
   JOGADAS,
+  JOGADAS_BOAS,
   MODOS,
   indiceDaFatia,
   multiplicadorAtual,
@@ -29,7 +31,6 @@ import { expressaoNoJogo } from '../personagens/expressao.js';
 import Fundo from '../fundos/Fundo.jsx';
 import './Jogo.css';
 
-const DURACAO_GIRO = 2600;
 // Nos últimos segundos da vez o relógio muda de cor e faz um tique por segundo.
 const SEGUNDOS_DE_AVISO = 5;
 // O botão de seguir nasce onde estava a resposta: um toque duplo não pode pular a palavra.
@@ -37,15 +38,25 @@ const ESPERA_PARA_SEGUIR_MS = 1000;
 
 function textoDaJogada(jogada, competitivo) {
   if (!jogada) return null;
-  if (jogada.tipo === JOGADAS.LETRA_ERRADA) return `Não tem a letra ${jogada.letra}.`;
+  if (jogada.tipo === JOGADAS.LETRA_ERRADA) {
+    return jogada.protegida
+      ? `Não tem a letra ${jogada.letra}, mas o escudo guardou a sua vez!`
+      : `Não tem a letra ${jogada.letra}.`;
+  }
   if (jogada.tipo === JOGADAS.TEMPO_ESGOTADO) return 'Acabou o tempo!';
+  if (jogada.tipo === JOGADAS.BONUS) return 'Bônus! A próxima letra certa vale em dobro. Gire de novo!';
+  if (jogada.tipo === JOGADAS.GIRO_EXTRA) return 'Giro extra! Gire de novo.';
+  if (jogada.tipo === JOGADAS.ESCUDO) return 'Escudo! Se errar uma letra, você não perde a vez. Gire de novo!';
+  if (jogada.tipo === JOGADAS.SONECA) return 'Soneca! A vez passa, sem perder pontos.';
   if (jogada.tipo === JOGADAS.CHUTE_ERRADO) {
     // Online, o servidor não repassa o que foi digitado casa a casa.
     return jogada.resposta ? `Não é ${jogada.resposta}.` : 'Essa não é a resposta.';
   }
   const casas = jogada.quantidade === 1 ? '1 letra' : `${jogada.quantidade} letras`;
   const pontos = competitivo ? ` +${jogada.pontos} pontos!` : '';
-  return `Tem ${casas} ${jogada.letra}!${pontos}`;
+  const bonus = jogada.bonus ? ' (bônus ×2)' : '';
+  const gratis = jogada.gratis ? 'Letra grátis! ' : '';
+  return `${gratis}Tem ${casas} ${jogada.letra}!${pontos}${bonus}`;
 }
 
 function textoDaInstrucao(estado, nome, girando, minhaVez) {
@@ -104,6 +115,10 @@ export default function Jogo({ estado, despachar, aoSair, online = null }) {
   const segundosRelogio = useSegundosRestantes(comRelogio ? msDaVezRelogio : null, estado.turno);
   const quemSaiu = online ? estado.jogadores.filter((j) => j.saiu).map((j) => j.nome) : [];
   const podeLetra = podeEscolherLetra(estado) && !girando && minhaVez;
+  // A letra grátis só aparece quando a roleta para: antes disso ela entregaria o resultado do giro.
+  const letraGratis = estado.ultimaJogada && estado.ultimaJogada.gratis ? estado.ultimaJogada.letra : null;
+  const letrasVisiveis =
+    girando && letraGratis ? estado.letrasUsadas.filter((l) => l !== letraGratis) : estado.letrasUsadas;
   const comOpcoes = Boolean(painel.opcoes);
   const opcoesDisponiveis = comOpcoes
     ? painel.opcoes.filter((o) => !estado.descartadas.includes(o))
@@ -206,7 +221,7 @@ export default function Jogo({ estado, despachar, aoSair, online = null }) {
     }
     const sorteio = Math.random();
     animarGiro(indiceDaFatia(sorteio));
-    despachar({ tipo: ACOES.GIRAR, sorteio });
+    despachar({ tipo: ACOES.GIRAR, sorteio, sorteioLetra: Math.random() });
   }
 
   function resolver(resposta) {
@@ -216,8 +231,7 @@ export default function Jogo({ estado, despachar, aoSair, online = null }) {
   }
 
   const jogada = textoDaJogada(estado.ultimaJogada, competitivo);
-  const jogadaRuim =
-    estado.ultimaJogada && estado.ultimaJogada.tipo !== JOGADAS.LETRA_CERTA;
+  const jogadaRuim = estado.ultimaJogada && !JOGADAS_BOAS.has(estado.ultimaJogada.tipo);
 
   return (
     <main className="tela jogo">
@@ -259,6 +273,8 @@ export default function Jogo({ estado, despachar, aoSair, online = null }) {
               {!j.saiu && online && online.jogadores.find((o) => o.id === j.id)?.conexao === 'reconectando' && ' (reconectando)'}
             </span>
             {competitivo && <strong>{j.pontos}</strong>}
+            {j.bonus && <span className="jogo-ficha" title="A próxima letra certa vale em dobro">×2</span>}
+            {j.escudo && <span className="jogo-ficha" title="A próxima letra errada não passa a vez">Escudo</span>}
           </li>
         ))}
       </ul>
@@ -268,7 +284,7 @@ export default function Jogo({ estado, despachar, aoSair, online = null }) {
 
       <Painel
         texto={painel.texto}
-        letrasUsadas={estado.letrasUsadas}
+        letrasUsadas={letrasVisiveis}
         aberto={resolvido}
         atraso={atrasoDaCelebracao(estado)}
         digitadas={preenchendo ? digitadas : null}
@@ -418,7 +434,7 @@ export default function Jogo({ estado, despachar, aoSair, online = null }) {
             </div>
             <Teclado
               letras={painel.letras}
-              usadas={estado.letrasUsadas}
+              usadas={letrasVisiveis}
               texto={painel.texto}
               habilitado={podeLetra}
               focoInicial={podeLetra}

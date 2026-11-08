@@ -14,7 +14,7 @@ Cada partida tem **3 painéis** do mesmo tema. O painel mostra uma casa fechada 
 | Resolver | escolher entre 3 opções escritas | preencher as casas fechadas | preencher as casas fechadas |
 
 **Modos**
-- **Competitivo:** 2 a 4 jogadores em turnos, com roleta e **relógio de 30 segundos por vez**: acabou o tempo, a vez passa, sem perder pontos. Acertar uma letra e continuar reinicia o relógio; girar a roleta não. Letra certa vale `valor da roleta × letras abertas × multiplicador do painel` (×1, ×2 e ×3), e quem acerta continua. Vence quem tiver mais pontos.
+- **Competitivo:** 2 a 4 jogadores em turnos, com roleta e **relógio de 30 segundos por vez**: acabou o tempo, a vez passa, sem perder pontos. Acertar uma letra e continuar reinicia o relógio; girar a roleta não. A roleta tem fatias com pontos (5 a 50, e uma estreita de 100) e fatias com efeito: **Bônus ×2** (a próxima letra certa vale em dobro), **Giro extra** (gira de novo), **Letra grátis** (abre uma letra do painel e paga por ela), **Escudo** (a próxima letra errada não passa a vez) e **Soneca** (a vez passa, sem perder pontos). Ninguém perde pontos. Letra certa vale `valor da roleta × letras abertas × multiplicador do painel` (×1, ×2 e ×3), e quem acerta continua. Vence quem tiver mais pontos.
 - **Cooperativo:** 2 a 4 jogadores na mesma equipe, sem roleta. Cada painel vale até 3 estrelas, conforme os erros da equipe.
 
 Há 8 personagens originais (Lalá Lápis, Bóris Borracha, Capitão Til, Galinha Cedilha, Tito Tatu, Vó Vírgula, Zuca Zebra e Sapo Soletra), cada um com seu instrumento e sua música. A trilha acompanha a partida: o andamento sobe conforme as letras abrem.

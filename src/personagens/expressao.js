@@ -1,4 +1,4 @@
-import { FASES, JOGADAS, MODOS } from '../logica/jogo.js';
+import { FASES, JOGADAS_BOAS, MODOS } from '../logica/jogo.js';
 
 // Traduz o estado do jogo na cara de cada jogador. Só lê o estado: nenhuma regra aqui.
 export function expressaoNoJogo(estado, indice) {
@@ -8,7 +8,7 @@ export function expressaoNoJogo(estado, indice) {
   }
   const jogada = estado.ultimaJogada;
   if (jogada && jogada.quem === indice) {
-    return jogada.tipo === JOGADAS.LETRA_CERTA ? 'comemorando' : 'quase';
+    return JOGADAS_BOAS.has(jogada.tipo) ? 'comemorando' : 'quase';
   }
   return indice === estado.vez ? 'pensando' : 'normal';
 }

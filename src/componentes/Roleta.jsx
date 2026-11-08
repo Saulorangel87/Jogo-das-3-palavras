@@ -1,8 +1,18 @@
-import { FATIAS_ROLETA, limitesDasFatias } from '../logica/jogo.js';
+import { FATIAS_ROLETA, TIPOS_DE_FATIA, limitesDasFatias } from '../logica/jogo.js';
 import './Roleta.css';
 
 const CORES = ['#ffd23f', '#8ecae6', '#ff8fab', '#95d5b2', '#f4a261', '#cdb4db', '#a8dadc', '#ffb703'];
 const COR_JACKPOT = '#ffb703';
+// Fatias com efeito: fundo escuro e letras claras, para se distinguirem das de pontos.
+const COR_ESPECIAL = '#14213d';
+const COR_TEXTO_ESPECIAL = '#fdf6e3';
+const ROTULOS = {
+  [TIPOS_DE_FATIA.BONUS]: '×2',
+  [TIPOS_DE_FATIA.GIRO_EXTRA]: '+GIRO',
+  [TIPOS_DE_FATIA.LETRA_GRATIS]: 'LETRA',
+  [TIPOS_DE_FATIA.ESCUDO]: 'ESCUDO',
+  [TIPOS_DE_FATIA.SONECA]: 'SONECA',
+};
 const CENTRO = 100;
 const RAIO = 96;
 const LIMITES = limitesDasFatias();
@@ -39,6 +49,16 @@ export function proximoAngulo(anguloAtual, indice) {
   return voltasCompletas * 360 + (360 - meio);
 }
 
+function rotuloDaFatia(fatia) {
+  return fatia.tipo === TIPOS_DE_FATIA.PONTOS ? String(fatia.valor) : ROTULOS[fatia.tipo];
+}
+
+// Número grande para pontos e ×2; palavras ficam menores para caber na fatia.
+function tamanhoDoTexto(fatia, rotulo) {
+  if (rotulo.length > 3) return (fatia.peso ?? 1) < 1 ? 11 : 13;
+  return (fatia.peso ?? 1) < 1 ? 14 : 22;
+}
+
 export default function Roleta({ angulo, duracao }) {
   return (
     <svg className="roleta" viewBox="0 0 200 200" aria-hidden="true">
@@ -51,27 +71,29 @@ export default function Roleta({ angulo, duracao }) {
       >
         {FATIAS_ROLETA.map((fatia, i) => {
           const meio = (inicioDaFatia(i) + fimDaFatia(i)) / 2;
-          const texto = ponto(meio, RAIO * 0.68);
-          const estreita = (fatia.peso ?? 1) < 1;
+          const rotulo = rotuloDaFatia(fatia);
+          const especial = fatia.tipo !== TIPOS_DE_FATIA.PONTOS;
+          const fundo = fatia.jackpot ? COR_JACKPOT : especial ? COR_ESPECIAL : CORES[i % CORES.length];
+          // Palavras e a fatia estreita não cabem atravessando a fatia: o texto segue o raio, e do lado
+          // esquerdo gira meia volta para ficar de pé. Números curtos continuam atravessados.
+          const noRaio = rotulo.length > 2 || (fatia.peso ?? 1) < 1;
+          const giroDoTexto = !noRaio ? meio : meio < 180 ? meio - 90 : meio + 90;
+          const raioDoTexto = fatia.jackpot ? 0.72 : rotulo.length > 3 ? 0.6 : 0.68;
+          const texto = ponto(meio, RAIO * raioDoTexto);
           return (
             <g key={i}>
-              <path
-                d={caminhoDaFatia(i)}
-                fill={fatia.jackpot ? COR_JACKPOT : CORES[i % CORES.length]}
-                stroke="#14213d"
-                strokeWidth="2"
-              />
+              <path d={caminhoDaFatia(i)} fill={fundo} stroke="#14213d" strokeWidth="2" />
               <text
                 x={texto.x}
                 y={texto.y}
-                fill="#14213d"
-                fontSize={estreita ? 15 : 22}
+                fill={especial ? COR_TEXTO_ESPECIAL : '#14213d'}
+                fontSize={tamanhoDoTexto(fatia, rotulo)}
                 fontWeight="800"
                 textAnchor="middle"
                 dominantBaseline="central"
-                transform={`rotate(${meio} ${texto.x} ${texto.y})`}
+                transform={`rotate(${giroDoTexto} ${texto.x} ${texto.y})`}
               >
-                {fatia.valor}
+                {rotulo}
               </text>
             </g>
           );

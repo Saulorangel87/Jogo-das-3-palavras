@@ -47,6 +47,32 @@ export const EFEITOS = {
     return 0.05;
   },
 
+  // Prêmio da roleta sem pontos (bônus, escudo, giro extra): três notas subindo.
+  premio(ctx, destino, quando) {
+    [1047, 1319, 1760].forEach((freq, i) => {
+      bip(ctx, destino, { tipo: 'sine', freq, quando: quando + i * 0.08, dur: 0.22, vol: 0.28 });
+      bip(ctx, destino, { tipo: 'triangle', freq: freq * 2, quando: quando + i * 0.08, dur: 0.12, vol: 0.05 });
+    });
+    return 0.5;
+  },
+
+  // Soneca: duas notas suaves descendo, como um bocejo.
+  soneca(ctx, destino, quando) {
+    bip(ctx, destino, { tipo: 'sine', freq: 440, ate: 330, quando, dur: 0.35, vol: 0.25 });
+    bip(ctx, destino, { tipo: 'sine', freq: 330, ate: 247, quando: quando + 0.3, dur: 0.5, vol: 0.22 });
+    return 0.8;
+  },
+
+  // Fatia de 100 pontos: arpejo brilhante subindo e um acorde cheio no fim.
+  jackpot(ctx, destino, quando) {
+    const duracao = arpejo(ctx, destino, 'xilofone', [76, 79, 84, 88, 91, 96], quando, 0.07, 0.3);
+    const acorde = quando + 0.45;
+    [76, 84, 88, 91].forEach((nota) => {
+      bip(ctx, destino, { tipo: 'triangle', freq: frequencia(nota), quando: acorde, dur: 0.8, vol: 0.12 });
+    });
+    return Math.max(duracao, 0.45 + 0.8);
+  },
+
   letraCerta(ctx, destino, quando, { quantidade = 1 } = {}) {
     const notas = [1047, 1319, 1568].slice(0, Math.min(Math.max(quantidade, 1), 3));
     notas.forEach((freq, i) => {

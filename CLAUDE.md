@@ -53,7 +53,15 @@ Inspirada no formato clássico de descobrir letras em um painel. Só a mecânica
 - 2 a 4 jogadores em turnos, na mesma tela.
 - Na sua vez, o jogador **gira a roleta** e escolhe uma letra, ou tenta **resolver**.
 - Letra certa: ganha `valor da roleta × casas abertas × multiplicador do painel` e continua jogando.
-- Letra errada: a vez passa.
+- Letra errada: a vez passa (a menos que o jogador tenha o escudo).
+- **Fatias da roleta** (14, em `FATIAS_ROLETA`, `src/logica/regras.js`; cada fatia tem `tipo`, `valor` e `peso`, e o peso é a largura: fatia estreita sai menos). Nenhuma tira pontos:
+  - **Pontos** (5, 10, 15, 20, 25, 30, 40, 50): a letra certa vale `valor` por casa. A de **100** (jackpot) é a mais estreita.
+  - **Bônus ×2** (`bonus`): a próxima letra certa vale em dobro. Fica marcado no placar (ficha ×2) até ser usado, e errar não o gasta. Gira de novo.
+  - **Giro extra** (`giro-extra`): gira de novo sem gastar a vez. Não dá pontos.
+  - **Letra grátis** (`letra-gratis`): abre uma letra aleatória do painel e paga `20 × casas × multiplicador do painel` (em dobro com o bônus). Nunca fecha o painel sozinha: se sobrar uma letra só, vira giro extra. Gira de novo. O servidor sorteia a letra (`sorteioLetra` na ação `GIRAR`).
+  - **Escudo** (`escudo`): a próxima letra errada não passa a vez (um por jogador, ficha "Escudo"). Não protege de chute errado nem do fim do tempo. Gira de novo.
+  - **Soneca** (`soneca`): a vez passa para o próximo, sem perder pontos nem poderes.
+  - Quem cai em Bônus ou Escudo que já tem recebe giro extra, para não acumular. A letra grátis só aparece no painel quando a roleta para de girar.
 - **Relógio da vez: 30 segundos** (`TEMPO_DA_VEZ_S` em `regras.js`), só no competitivo. Acabou o tempo, a vez passa sem erro e sem perder pontos, e o giro não usado se perde (ação `TEMPO_ESGOTADO`, jogada `tempo-esgotado`). O relógio reinicia quando o `turno` do estado muda: toda ação que muda o jogo sobe o `turno`, menos o giro. Acertar uma letra e continuar reinicia; girar não. A lógica é pura e não tem relógio: quem conta o tempo pede a ação (no jogo local, `Jogo.jsx`; no online, o servidor em `verificarPrazos`, com `turnoMs` em `servidor/salas.js`). Nos últimos 5 segundos o relógio fica vermelho e faz um tique para quem está na vez.
 - Resolver certo: ganha 20 pontos por casa ainda fechada × multiplicador do painel, recompensando quem descobre cedo.
 - Resolver errado: a vez passa, e a opção fica riscada no iniciante. Um giro ainda não usado se perde.

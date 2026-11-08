@@ -504,3 +504,17 @@ Antes de inserir, uma checagem tirou 12 itens que já existiam no banco e corrig
 
 **Verificado no Chrome (etapas 36 e 37):** partida local no Avançado com 2 jogadores. Na primeira partida caiu um painel de duas palavras, desenhado como dois blocos separados de 6 casas, com a dica e o relógio de 30 segundos ao lado. **Ainda não verificado:** nenhuma das palavras novas vista na tela uma a uma.
 
+## 2026-11-08 — Etapa 38: roleta com fatias de efeito
+
+Pedido do Saulo, para dar mais dinamismo à roleta: pular a vez, bônus e outras ideias. Feito em três commits.
+
+**A. Fatias com largura própria.** `FATIAS_ROLETA` deixou de ser uma lista de números e virou uma lista de objetos com `tipo`, `valor` e `peso`. O sorteio cai em cada fatia na proporção da largura, e a roleta desenha com os mesmos limites. Entrou a fatia de 100 pontos, mais estreita.
+
+**B. Efeitos na lógica e no servidor.** A roleta tem 14 fatias: oito de pontos, a de 100, **Bônus ×2**, **Giro extra**, **Letra grátis**, **Escudo** e **Soneca** (esta é o "pular a vez" que o Saulo pediu; ninguém perde pontos). O estado dos jogadores ganhou `bonus` e `escudo`. A letra grátis nunca fecha o painel sozinha (nesse caso vira giro extra) e usa um segundo sorteio, feito pelo servidor no online. A soneca reinicia o relógio da vez; os outros giros não. Congelar (fazer o próximo perder a vez) ficou de fora, por ser o mais provável de gerar choro com criança pequena.
+
+**C. Interface.** Cada fatia tem um rótulo na roleta (palavras ao longo do raio, `100` também), a roleta cresceu de 9 para 11 rem, o placar mostra as fichas "×2" e "Escudo", e há uma mensagem para cada resultado. A letra grátis fica escondida até a roleta parar. Sons novos para prêmio, soneca e a fatia de 100, que tocam depois do giro.
+
+**Limitações:** o **Giro extra** é só um novo giro, sem pontos, então é a fatia mais fraca; vale trocar por algo melhor se achar sem graça. A média de pontos por giro mudou (a fatia de 100 sobe, e as fatias sem pontos descem): vale conferir o equilíbrio com crianças, e os valores ficam em `src/logica/regras.js`. No Avançado a letra grátis fica melhor com os painéis de duas palavras da etapa 36.
+
+**Verificado:** 249 testes, que cobrem cada fatia, o servidor decidindo o sorteio, o relógio com a soneca e o cooperativo sem mudança. No Chrome, jogo local com 2 jogadores, forçando cada fatia: bônus (ficha ×2 e depois pontos em dobro), letra grátis (escondida durante o giro e aberta depois, com +40 pontos pelo bônus), escudo (letra errada manteve a vez e gastou a ficha), giro extra e soneca (a vez passou e o relógio reiniciou). **Não verificado:** os sons novos (não ouço), a roleta em celular de 360 px, o online com aparelhos reais e a fatia de 100 na tela.
+
