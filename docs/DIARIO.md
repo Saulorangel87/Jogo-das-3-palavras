@@ -553,7 +553,7 @@ Experimento aprovado pelo Saulo para tentar tirar a linha de 1 pixel na divisa c
 
 Depois da 1.3.1 (`viewport-fit=cover`), o Saulo confirmou no celular que a linha continua. Decisão dele: não vale a pena insistir. A linha de 1 px na divisa com a barra de navegação do Android é, muito provavelmente, um divisor desenhado pelo sistema, fora do alcance da página. O experimento da etapa 41 ficou no ar (é inofensivo: no celular comum as áreas de segurança valem 0 e em aparelhos com entalhe as margens evitam esconder conteúdo), sem reverter. Se um dia voltar ao assunto: reverter o commit `4a1897c` devolve o layout anterior; não há outra via conhecida pelo manifesto ou pelo CSS.
 
-## 2026-11-09 — Etapa 42: telas mais compactas no celular e na TV (ainda não publicada)
+## 2026-11-09 — Etapa 42: telas mais compactas no celular e na TV (versão 1.3.2)
 
 Pedido do Saulo: menos rolagem no celular e na TV. Medi o quanto a tela do jogo passava da altura (4 jogadores, nível Avançado, no Chrome, em quadros de iframe): **celular 390×780: 305 px a mais; 360×640: 349 px; celular deitado 780×360: 90 px; TV 1920×1080: sem rolagem, mas com apenas 16 px de folga, então um painel de duas linhas de palavras já rolava (+101 px)**. As telas de início, modo, nível, número de jogadores e personagens já cabiam.
 
@@ -563,3 +563,5 @@ Pedido do Saulo: menos rolagem no celular e na TV. Medi o quanto a tela do jogo 
 - *Paisagem (TV e celular deitado)*: teclado em 13 colunas, 2 fileiras largas (40rem); roleta de 9rem (7rem se a altura é menor que 500 px); casas do painel mais baixas (2,7rem); abaixo de 500 px de altura, margens de 2vh, avatares de 2rem e teclas de 2rem.
 
 **Resultado (mesma medição):** 390×780, 360×740, 360×640, 780×360, 1920×1080, 1280×720 e 960×540 ficam **sem rolagem**. Pior caso (painel com uma linha de palavras a mais): TV sem rolagem; 390×780 com 1 px; 360×740 com 13 px; 360×640 com 33 px; celular deitado com 30 px. 249 testes e build passam. **Não verificado:** em um celular de verdade (o Saulo precisa abrir depois da publicação e dizer se o teclado em 9 colunas e a roleta menor ficaram bons para os dedos), nem as telas de resultado e do online (lobby), que não medi. Para desfazer, reverter o commit desta etapa.
+
+**Publicação (versão 1.3.2):** subida de 1.3.1 para 1.3.2 (ajuste de layout, sem regra nova). Só o front-end mudou (CSS e o topo de `Jogo.jsx`); `servidor/` e `src/logica/` ficaram iguais, então o contêiner `tres-palavras-online` não deve ser recriado e as salas online abertas não são apagadas (conferido depois do deploy, abaixo).
