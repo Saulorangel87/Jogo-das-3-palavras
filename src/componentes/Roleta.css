@@ -7,7 +7,15 @@
 
 @media (max-width: 600px) {
   .roleta {
-    width: 8.5rem;
-    height: 8.5rem;
+    width: 7rem;
+    height: 7rem;
+  }
+}
+
+/* Em paisagem a altura é o limite: a roleta encolhe um pouco para o jogo caber sem rolar. */
+@media (min-aspect-ratio: 1/1) {
+  .roleta {
+    width: 9rem;
+    height: 9rem;
   }
 }

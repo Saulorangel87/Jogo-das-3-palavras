@@ -26,3 +26,24 @@
 .teclado-errada:disabled {
   text-decoration: line-through;
 }
+
+/* Em paisagem (TV, celular deitado) o alfabeto cabe em duas fileiras largas. */
+@media (min-aspect-ratio: 1/1) {
+  .teclado {
+    grid-template-columns: repeat(13, minmax(0, 1fr));
+    max-width: 40rem;
+  }
+}
+
+/* Celular em pé: nove colunas deixam o alfabeto em três fileiras em vez de quatro. */
+@media (max-width: 600px) and (max-aspect-ratio: 1/1) {
+  .teclado {
+    grid-template-columns: repeat(9, minmax(0, 1fr));
+    grid-gap: 0.25rem;
+  }
+
+  .teclado-letra {
+    min-height: 2.2rem;
+    font-size: 1.1rem;
+  }
+}

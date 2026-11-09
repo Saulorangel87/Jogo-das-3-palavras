@@ -51,6 +51,18 @@
   }
 }
 
+/* Em paisagem as casas ficam mais baixas: painéis de duas linhas não empurram o resto da tela. */
+@media (min-aspect-ratio: 1/1) {
+  .painel-casa {
+    max-height: 2.7rem;
+    font-size: 1.5rem;
+  }
+
+  .painel-palavra {
+    margin: 0.1rem 0.6rem;
+  }
+}
+
 /* Painel resolvido: onda de pulinhos, brilho no quadro e casas verdes que ficam. */
 .painel-resolvido {
   animation: painel-brilho 1.2s ease-out;

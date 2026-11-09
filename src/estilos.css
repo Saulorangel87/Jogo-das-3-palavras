@@ -69,6 +69,23 @@ p {
   margin-bottom: 1.2rem;
 }
 
+/* Celular em pé: a margem da TV (5vh) não faz sentido, e cada pixel de altura evita rolagem. */
+@media (max-width: 600px) and (max-aspect-ratio: 1/1) {
+  .tela {
+    padding-top: max(1.5vh, env(safe-area-inset-top));
+    padding-bottom: max(1.5vh, env(safe-area-inset-bottom));
+  }
+
+  .titulo {
+    font-size: 1.8rem;
+    margin-bottom: 0.8rem;
+  }
+
+  .rodape {
+    margin-top: 1rem;
+  }
+}
+
 .botao {
   min-height: 3rem;
   padding: 0.6rem 1.4rem;

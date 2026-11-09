@@ -237,9 +237,19 @@ export default function Jogo({ estado, despachar, aoSair, online = null }) {
     <main className="tela jogo">
       <Fundo tipo="jogo" variante={estado.modo} />
       <header className="jogo-topo">
-        <span>
-          {estado.tema} · Painel {estado.indicePainel + 1} de {totalPaineis}
-          {competitivo && ` · pontos ×${multiplicadorAtual(estado)}`}
+        <span className="jogo-topo-texto">
+          <span className="jogo-tema">{estado.tema}</span>
+          <span className="jogo-painel-num">
+            <span className="jogo-separador">{' · '}</span>
+            <span className="jogo-longo">
+              Painel {estado.indicePainel + 1} de {totalPaineis}
+              {competitivo && ` · pontos ×${multiplicadorAtual(estado)}`}
+            </span>
+            <span className="jogo-curto" aria-hidden="true">
+              Painel {estado.indicePainel + 1}/{totalPaineis}
+              {competitivo && ` · ×${multiplicadorAtual(estado)}`}
+            </span>
+          </span>
         </span>
         <div className="jogo-topo-botoes">
           <BotaoSom
