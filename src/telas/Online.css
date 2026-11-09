@@ -114,13 +114,50 @@
   text-align: center;
 }
 
+/* Celular: os jogadores da sala ficam em duas colunas e mais baixos, para 4 caberem sem rolar. */
 @media (max-width: 600px) {
   .online-jogadoras {
-    grid-template-columns: minmax(0, 1fr);
+    grid-gap: 0.4rem;
+    margin-bottom: 0.6rem;
+  }
+
+  .online-jogadora {
+    grid-template-columns: 2.1rem minmax(0, 1fr);
+    grid-column-gap: 0.4rem;
+    padding: 0.3rem 0.4rem;
+    font-size: 0.85rem;
+    overflow-wrap: anywhere;
+  }
+
+  .online-jogadora .personagem {
+    width: 2.1rem;
+    height: 2.1rem;
+  }
+
+  .online-codigo {
+    font-size: 2.2rem;
+    margin-bottom: 0.3rem;
   }
 
   .online-botoes {
     grid-auto-flow: row;
     width: 100%;
+  }
+}
+
+/* Celular deitado: o teclado do código e o código ficam um pouco menores. */
+@media (min-aspect-ratio: 1/1) and (max-height: 500px) {
+  .online-codigo {
+    font-size: 2rem;
+    margin-bottom: 0.3rem;
+  }
+
+  .online-teclas {
+    grid-gap: 0.3rem;
+  }
+
+  .online-tecla {
+    min-height: 2.4rem;
+    padding: 0.2rem;
   }
 }

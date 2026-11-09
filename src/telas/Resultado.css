@@ -72,3 +72,20 @@
     letter-spacing: 0;
   }
 }
+
+/* Celular deitado: 4 jogadores no ranking precisam caber na altura. */
+@media (min-aspect-ratio: 1/1) and (max-height: 500px) {
+  .resultado-item {
+    margin-bottom: 0.3rem;
+    padding: 0.2rem 0.8rem 0.2rem 0.2rem;
+  }
+
+  .resultado-item .personagem {
+    width: 2.4rem;
+    height: 2.4rem;
+  }
+
+  .resultado-botoes {
+    margin-top: 0.8rem;
+  }
+}
